@@ -1,0 +1,94 @@
+\doxysection{Project/\+\+I2C.h File Reference}
+\hypertarget{_i2_c_8h}{}\label{_i2_c_8h}\index{Project/I2C.h@{Project/I2C.h}}
+
+
+I2C communication module for STM32\+F303\+K8.  
+
+
+{\ttfamily \+\#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \doxymbox{\hyperlink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{I2\+C1\+\_\+\+Config}} (void)
+\begin{DoxyCompactList}\small\item\em Configures I2\+C1 on pins PB6 (SCL) and PB7 (SDA) for 400 k\+Hz operation. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_i2_c_8h_abf6214e9f9eff0fed955ca315a309efa}{I2\+C1\+\_\+\+Write}} (uint8\+\_\+t slave, uint8\+\_\+t addr, uint8\+\_\+t data)
+\begin{DoxyCompactList}\small\item\em Writes a single byte to an I2C slave device register. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_i2_c_8h_a60d96d215561adbe3410d7fcfbf0a818}{I2\+C1\+\_\+\+Read}} (uint8\+\_\+t slave, uint8\+\_\+t addr, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Reads multiple bytes from an I2C slave device register. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+I2C communication module for STM32\+F303\+K8. 
+
+This module provides functions to configure and communicate with I2\+C1 peripheral on pins PB6 (SCL) and PB7 (SDA) at 400 k\+Hz operation speed. \begin{DoxyAuthor}{Author}
+Julio Fajardo 
+\end{DoxyAuthor}
+
+
+\label{doc-func-members}
+\Hypertarget{_i2_c_8h_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}\index{I2C.h@{I2C.h}!I2C1\_Config@{I2C1\_Config}}
+\index{I2C1\_Config@{I2C1\_Config}!I2C.h@{I2C.h}}
+\doxysubsubsection{\texorpdfstring{I2C1\_Config()}{I2C1\_Config()}}
+{\footnotesize\ttfamily \label{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8} 
+void I2\+C1\+\_\+\+Config (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Configures I2\+C1 on pins PB6 (SCL) and PB7 (SDA) for 400 k\+Hz operation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{_i2_c_8h_a60d96d215561adbe3410d7fcfbf0a818}\index{I2C.h@{I2C.h}!I2C1\_Read@{I2C1\_Read}}
+\index{I2C1\_Read@{I2C1\_Read}!I2C.h@{I2C.h}}
+\doxysubsubsection{\texorpdfstring{I2C1\_Read()}{I2C1\_Read()}}
+{\footnotesize\ttfamily \label{_i2_c_8h_a60d96d215561adbe3410d7fcfbf0a818} 
+void I2\+C1\+\_\+\+Read (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{slave}{, }\item[{uint8\+\_\+t}]{addr}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{size}{}\end{DoxyParamCaption})}
+
+
+
+Reads multiple bytes from an I2C slave device register. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em slave} & 7-\/bit slave address (not shifted) \\
+\hline
+{\em addr} & Register address to read from \\
+\hline
+{\em data} & Pointer to buffer to store the read bytes \\
+\hline
+{\em size} & Number of bytes to read \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{_i2_c_8h_abf6214e9f9eff0fed955ca315a309efa}\index{I2C.h@{I2C.h}!I2C1\_Write@{I2C1\_Write}}
+\index{I2C1\_Write@{I2C1\_Write}!I2C.h@{I2C.h}}
+\doxysubsubsection{\texorpdfstring{I2C1\_Write()}{I2C1\_Write()}}
+{\footnotesize\ttfamily \label{_i2_c_8h_abf6214e9f9eff0fed955ca315a309efa} 
+void I2\+C1\+\_\+\+Write (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{slave}{, }\item[{uint8\+\_\+t}]{addr}{, }\item[{uint8\+\_\+t}]{data}{}\end{DoxyParamCaption})}
+
+
+
+Writes a single byte to an I2C slave device register. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em slave} & 7-\/bit slave address (not shifted) \\
+\hline
+{\em addr} & Register address to write to \\
+\hline
+{\em data} & Data byte to write \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}

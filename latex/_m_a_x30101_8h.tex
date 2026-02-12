@@ -1,0 +1,171 @@
+\doxysection{Project/\+\+MAX30101.h File Reference}
+\hypertarget{_m_a_x30101_8h}{}\label{_m_a_x30101_8h}\index{Project/MAX30101.h@{Project/MAX30101.h}}
+
+
+MAX30101 Pulse Oximetry and NIRS Module.  
+
+
+{\ttfamily \+\#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{_m_a_x30101_8h_a94825a8eb50fe1bf187ececa255858d5}\label{_m_a_x30101_8h_a94825a8eb50fe1bf187ececa255858d5} 
+\+\#define {\bfseries SENSOR\+\_\+\+ADDR}~0x\+AE
+\item 
+\Hypertarget{_m_a_x30101_8h_a0a03ffc596b07c17f06064c10f721793}\label{_m_a_x30101_8h_a0a03ffc596b07c17f06064c10f721793} 
+\+\#define {\bfseries INTR\+\_\+\+STATUS1}~0x00
+\item 
+\Hypertarget{_m_a_x30101_8h_a16cf594d55c33820e7839ab13429e17c}\label{_m_a_x30101_8h_a16cf594d55c33820e7839ab13429e17c} 
+\+\#define {\bfseries INTR\+\_\+\+STATUS2}~0x01
+\item 
+\Hypertarget{_m_a_x30101_8h_a5d42af87c7bb6c38da6e9dad28a6c3f2}\label{_m_a_x30101_8h_a5d42af87c7bb6c38da6e9dad28a6c3f2} 
+\+\#define {\bfseries INTR\+\_\+\+ENABLE1}~0x02
+\item 
+\Hypertarget{_m_a_x30101_8h_a3f2ae99d490975325f8a5575c68b6784}\label{_m_a_x30101_8h_a3f2ae99d490975325f8a5575c68b6784} 
+\+\#define {\bfseries INTR\+\_\+\+ENABLE2}~0x03
+\item 
+\Hypertarget{_m_a_x30101_8h_a377561d1d608ea407b60945ab0dd145e}\label{_m_a_x30101_8h_a377561d1d608ea407b60945ab0dd145e} 
+\+\#define {\bfseries FIFO\+\_\+\+WRITPTR}~0x04
+\item 
+\Hypertarget{_m_a_x30101_8h_a4e271f09c452a8c16492978ea5f37400}\label{_m_a_x30101_8h_a4e271f09c452a8c16492978ea5f37400} 
+\+\#define {\bfseries OVRF\+\_\+\+COUNTER}~0x05
+\item 
+\Hypertarget{_m_a_x30101_8h_a719a3749ba666436530560b5576ee34b}\label{_m_a_x30101_8h_a719a3749ba666436530560b5576ee34b} 
+\+\#define {\bfseries FIFO\+\_\+\+READPTR}~0x06
+\item 
+\Hypertarget{_m_a_x30101_8h_a22233bba45164be1e5309d0650bb2cd8}\label{_m_a_x30101_8h_a22233bba45164be1e5309d0650bb2cd8} 
+\+\#define {\bfseries FIFO\+\_\+\+DATAREG}~0x07
+\item 
+\Hypertarget{_m_a_x30101_8h_a0eca3f0303b4f82b66f10fb06be87178}\label{_m_a_x30101_8h_a0eca3f0303b4f82b66f10fb06be87178} 
+\+\#define {\bfseries FIFO\+\_\+\+CONFIG}~0x08
+\item 
+\Hypertarget{_m_a_x30101_8h_a5552a5de9b59914458ab99d568bf2763}\label{_m_a_x30101_8h_a5552a5de9b59914458ab99d568bf2763} 
+\+\#define {\bfseries MODE\+\_\+\+CONFIG}~0x09
+\item 
+\Hypertarget{_m_a_x30101_8h_a088c88c3c5bd0d09efc6f64816c16ba1}\label{_m_a_x30101_8h_a088c88c3c5bd0d09efc6f64816c16ba1} 
+\+\#define {\bfseries SPO2\+\_\+\+CONFIG}~0x0A
+\item 
+\Hypertarget{_m_a_x30101_8h_aca7c8ca63b805432e5f70a24512d6bbe}\label{_m_a_x30101_8h_aca7c8ca63b805432e5f70a24512d6bbe} 
+\+\#define {\bfseries SPO2\+\_\+\+CONFIG}~0x0A
+\item 
+\Hypertarget{_m_a_x30101_8h_ada0e10b454c413f804fba6187d920409}\label{_m_a_x30101_8h_ada0e10b454c413f804fba6187d920409} 
+\+\#define {\bfseries LED1\+\_\+\+PAMPLI}~0x0C
+\item 
+\Hypertarget{_m_a_x30101_8h_a8012892d3915984ebb27a4c83a1dd018}\label{_m_a_x30101_8h_a8012892d3915984ebb27a4c83a1dd018} 
+\+\#define {\bfseries LED2\+\_\+\+PAMPLI}~0x0D
+\item 
+\Hypertarget{_m_a_x30101_8h_a18578fb98c9abbd3a0745c4412e4dd44}\label{_m_a_x30101_8h_a18578fb98c9abbd3a0745c4412e4dd44} 
+\+\#define {\bfseries LED3\+\_\+\+PAMPLI}~0x0E
+\item 
+\Hypertarget{_m_a_x30101_8h_aa2ef9161bc1bbe93798706215f5a0bc2}\label{_m_a_x30101_8h_aa2ef9161bc1bbe93798706215f5a0bc2} 
+\+\#define {\bfseries LED4\+\_\+\+PAMPLI}~0x0F
+\item 
+\Hypertarget{_m_a_x30101_8h_ac9ddc78ecd455ddc1412f37417530a82}\label{_m_a_x30101_8h_ac9ddc78ecd455ddc1412f37417530a82} 
+\+\#define {\bfseries MLED\+\_\+\+CONFG1}~0x11
+\item 
+\Hypertarget{_m_a_x30101_8h_a1b918ecf041cc0b9270c926676276c13}\label{_m_a_x30101_8h_a1b918ecf041cc0b9270c926676276c13} 
+\+\#define {\bfseries MLED\+\_\+\+CONFG2}~0x12
+\item 
+\Hypertarget{_m_a_x30101_8h_af1a51145ec099d5b0009b11db3846494}\label{_m_a_x30101_8h_af1a51145ec099d5b0009b11db3846494} 
+\+\#define {\bfseries DIE\+\_\+\+TEMPINT}~0x1F
+\item 
+\Hypertarget{_m_a_x30101_8h_a47c0a4ad6722094f81a5ac1d1a760550}\label{_m_a_x30101_8h_a47c0a4ad6722094f81a5ac1d1a760550} 
+\+\#define {\bfseries DIE\+\_\+\+TEMPFRC}~0x20
+\item 
+\Hypertarget{_m_a_x30101_8h_ad3aed79a12f1254a191bc633e943a399}\label{_m_a_x30101_8h_ad3aed79a12f1254a191bc633e943a399} 
+\+\#define {\bfseries DIE\+\_\+\+TEMPCFG}~0x21
+\item 
+\Hypertarget{_m_a_x30101_8h_ad30db9cf28b11700d58caa3a417a596c}\label{_m_a_x30101_8h_ad30db9cf28b11700d58caa3a417a596c} 
+\+\#define {\bfseries BUFFERBLOCKSIZE}~0x8
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \doxymbox{\hyperlink{_m_a_x30101_8h_a87df0a0c89e55c84dfce7ddc5ddd93af}{MAX30101\+\_\+\+Init}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes MAX30101 for Sp\+O2 (blood oxygen) measurement -\/ Standard mode. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_m_a_x30101_8h_a6353bf923aa1e5f944ed74e65799b0c4}{MAX30101\+\_\+\+Init\+SPO2\+Lite}} (void)
+\begin{DoxyCompactList}\small\item\em Initializes MAX30101 for Sp\+O2 measurement -\/ Low power mode. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{_m_a_x30101_8h_afed94d9d5ac9210cd437c79f6a7376eb}{MAX30101\+\_\+\+Init\+Muscle\+Ox}} (uint8\+\_\+t led\+Power)
+\begin{DoxyCompactList}\small\item\em Initializes MAX30101 for muscle oxygenation (NIRS) measurement. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+MAX30101 Pulse Oximetry and NIRS Module. 
+
+This module provides functions to configure and control the AD MAX30101 optical sensor for pulse oximetry (Sp\+O2), heart rate monitoring, and NIRS (Near-\/\+Infrared Spectroscopy) measurements for muscle oxygenation analysis. \begin{DoxyAuthor}{Author}
+Julio Fajardo 
+\end{DoxyAuthor}
+
+
+\label{doc-func-members}
+\Hypertarget{_m_a_x30101_8h_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_m_a_x30101_8h_a87df0a0c89e55c84dfce7ddc5ddd93af}\index{MAX30101.h@{MAX30101.h}!MAX30101\_Init@{MAX30101\_Init}}
+\index{MAX30101\_Init@{MAX30101\_Init}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_Init()}{MAX30101\_Init()}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a87df0a0c89e55c84dfce7ddc5ddd93af} 
+void MAX30101\+\_\+\+Init (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Initializes MAX30101 for Sp\+O2 (blood oxygen) measurement -\/ Standard mode. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Uses 2 LEDs (Red + IR), 400 Hz sample rate, 18-\/bit resolution 
+
+High accuracy, higher power consumption 
+\end{DoxyNote}
+\Hypertarget{_m_a_x30101_8h_afed94d9d5ac9210cd437c79f6a7376eb}\index{MAX30101.h@{MAX30101.h}!MAX30101\_InitMuscleOx@{MAX30101\_InitMuscleOx}}
+\index{MAX30101\_InitMuscleOx@{MAX30101\_InitMuscleOx}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_InitMuscleOx()}{MAX30101\_InitMuscleOx()}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_afed94d9d5ac9210cd437c79f6a7376eb} 
+void MAX30101\+\_\+\+Init\+Muscle\+Ox (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{led\+Power}{}\end{DoxyParamCaption})}
+
+
+
+Initializes MAX30101 for muscle oxygenation (NIRS) measurement. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Uses 3 LEDs (Red + IR + Green), 100 Hz sample rate, lower power consumption 
+
+Better for tissue penetration in muscle applications 
+\end{DoxyNote}
+\Hypertarget{_m_a_x30101_8h_a6353bf923aa1e5f944ed74e65799b0c4}\index{MAX30101.h@{MAX30101.h}!MAX30101\_InitSPO2Lite@{MAX30101\_InitSPO2Lite}}
+\index{MAX30101\_InitSPO2Lite@{MAX30101\_InitSPO2Lite}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_InitSPO2Lite()}{MAX30101\_InitSPO2Lite()}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a6353bf923aa1e5f944ed74e65799b0c4} 
+void MAX30101\+\_\+\+Init\+SPO2\+Lite (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Initializes MAX30101 for Sp\+O2 measurement -\/ Low power mode. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Uses 2 LEDs (Red + IR), 50 Hz sample rate, 16-\/bit resolution 
+
+Lower power consumption, suitable for wearables and battery-\/powered devices 
+\end{DoxyNote}

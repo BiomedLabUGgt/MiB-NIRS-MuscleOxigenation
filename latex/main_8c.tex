@@ -1,0 +1,100 @@
+\doxysection{Project/\+main.c File Reference}
+\hypertarget{main_8c}{}\label{main_8c}\index{Project/main.c@{Project/main.c}}
+
+
+Main program for MAX30101 muscle oxygenation measurement.  
+
+
+{\ttfamily \+\#include "{}stm32f303x8.\+h"{}}\newline
+{\ttfamily \+\#include $<$stdint.\+h$>$}\newline
+{\ttfamily \+\#include "{}LED.\+h"{}}\newline
+{\ttfamily \+\#include "{}I2\+C.\+h"{}}\newline
+{\ttfamily \+\#include "{}MAX30101.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \doxymbox{\hyperlink{main_8c_af2f06cca719d7bf8120401b18b0c792c}{clk\+\_\+config}} (void)
+\begin{DoxyCompactList}\small\item\em Configures the system clock to 64 MHz using PLL with HSI as the source. \end{DoxyCompactList}\item 
+int \doxymbox{\hyperlink{main_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\begin{DoxyCompactList}\small\item\em Main function, initializes the GPIO and Sys\+Tick timer. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{main_8c_ab5e09814056d617c521549e542639b7e}{Sys\+Tick\+\_\+\+Handler}} (void)
+\begin{DoxyCompactList}\small\item\em Sys\+Tick interrupt handler, toggles the LED on PB3 every 100ms. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{main_8c_a51322ddb267b4729d6b5f2bb05d49fff}\label{main_8c_a51322ddb267b4729d6b5f2bb05d49fff} 
+uint32\+\_\+t {\bfseries counter} = 0
+\item 
+\Hypertarget{main_8c_ab3507a48ae247ff252738ca350810b21}\label{main_8c_ab3507a48ae247ff252738ca350810b21} 
+uint32\+\_\+t {\bfseries ticks} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Main program for MAX30101 muscle oxygenation measurement. 
+
+\begin{DoxyAuthor}{Author}
+Julio Fajardo 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2024-\/06-\/01
+\end{DoxyDate}
+This program initializes the MAX30101 sensor for muscle oxygenation measurement using the I2C interface. It configures the system clock to 64 MHz, sets up a GPIO pin for an LED indicator, and uses the Sys\+Tick timer to toggle the LED every 100 ms. The MAX30101 is configured to use 3 LEDs (Red, IR, Green) with a sample rate of 100 Hz and medium LED power for optimal tissue penetration in muscle applications. 
+
+\label{doc-func-members}
+\Hypertarget{main_8c_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{main_8c_af2f06cca719d7bf8120401b18b0c792c}\index{main.c@{main.c}!clk\_config@{clk\_config}}
+\index{clk\_config@{clk\_config}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{clk\_config()}{clk\_config()}}
+{\footnotesize\ttfamily \label{main_8c_af2f06cca719d7bf8120401b18b0c792c} 
+void clk\+\_\+config (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Configures the system clock to 64 MHz using PLL with HSI as the source. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{main_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\index{main.c@{main.c}!main@{main}}
+\index{main@{main}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{main_8c_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int main (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Main function, initializes the GPIO and Sys\+Tick timer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+\Hypertarget{main_8c_ab5e09814056d617c521549e542639b7e}\index{main.c@{main.c}!SysTick\_Handler@{SysTick\_Handler}}
+\index{SysTick\_Handler@{SysTick\_Handler}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{SysTick\_Handler()}{SysTick\_Handler()}}
+{\footnotesize\ttfamily \label{main_8c_ab5e09814056d617c521549e542639b7e} 
+void Sys\+Tick\+\_\+\+Handler (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Sys\+Tick interrupt handler, toggles the LED on PB3 every 100ms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}

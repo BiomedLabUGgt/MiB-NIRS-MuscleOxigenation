@@ -1,0 +1,45 @@
+\doxysection{MAX30101.\+h}
+\hypertarget{_m_a_x30101_8h_source}{}\label{_m_a_x30101_8h_source}\index{Project/MAX30101.h@{Project/MAX30101.h}}
+\doxymbox{\hyperlink{_m_a_x30101_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ MAX30101\_H\_}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ MAX30101\_H\_}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ \ \ \ \ SENSOR\_ADDR\ \ \ \ \ \ \ \ \ 0xAE}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_STATUS1\ \ \ \ \ \ \ \ 0x00}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_STATUS2\ \ \ \ \ \ \ \ 0x01}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_ENABLE1\ \ \ \ \ \ \ \ 0x02}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_ENABLE2\ \ \ \ \ \ \ \ 0x03}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_WRITPTR\ \ \ \ \ \ \ \ 0x04}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ \ \ \ \ OVRF\_COUNTER\ \ \ \ \ \ \ \ 0x05}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_READPTR\ \ \ \ \ \ \ \ 0x06}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_DATAREG\ \ \ \ \ \ \ \ 0x07}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_CONFIG\ \ \ \ \ \ \ \ \ 0x08}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ \ \ \ \ MODE\_CONFIG\ \ \ \ \ \ \ \ \ 0x09}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ \ \ \ \ SPO2\_CONFIG\ \ \ \ \ \ \ \ \ 0x0A}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ \ \ \ \ SPO2\_CONFIG\ \ \ \ \ \ \ \ \ 0x0A}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED1\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0C}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED2\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0D}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED3\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0E}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED4\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0F}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ \ \ \ \ MLED\_CONFG1\ \ \ \ \ \ \ \ \ 0x11}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ \ \ \ \ MLED\_CONFG2\ \ \ \ \ \ \ \ \ 0x12}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ \ \ \ \ DIE\_TEMPINT\ \ \ \ \ \ \ \ \ 0x1F}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ \ \ \ \ DIE\_TEMPFRC\ \ \ \ \ \ \ \ \ 0x20}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ \ \ \ \ DIE\_TEMPCFG\ \ \ \ \ \ \ \ \ 0x21}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ \ \ \ \ BUFFERBLOCKSIZE\ \ \ \ \ 0x8}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{_m_a_x30101_8h_a87df0a0c89e55c84dfce7ddc5ddd93af}{MAX30101\_Init}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{_m_a_x30101_8h_a6353bf923aa1e5f944ed74e65799b0c4}{MAX30101\_InitSPO2Lite}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{_m_a_x30101_8h_afed94d9d5ac9210cd437c79f6a7376eb}{MAX30101\_InitMuscleOx}}(uint8\_t\ ledPower);}
+\DoxyCodeLine{00043\ \textcolor{comment}{//void\ MAX30101\_ReadFIFO(uint8\_t\ *buffer,\ uint8\_t\ size);}}
+\DoxyCodeLine{00044\ \textcolor{comment}{//void\ MAX30101\_ReadTemp(float\ *temp);}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MAX30101\_H\_\ */}\textcolor{preprocessor}{\ \ }}
+
+\end{DoxyCode}
