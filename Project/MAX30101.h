@@ -1,3 +1,12 @@
+/**
+ * @file MAX30101.h
+ * @brief MAX30101 Pulse Oximetry and NIRS Module
+ * @details This module provides functions to configure and control the AD MAX30101
+ * optical sensor for pulse oximetry (SpO2), heart rate monitoring, and NIRS (Near-Infrared
+ * Spectroscopy) measurements for muscle oxygenation analysis.
+ * @author Julio Fajardo
+ */
+
 #ifndef MAX30101_H_
 #define MAX30101_H_
 
