@@ -1,12 +1,13 @@
-/**
- * @file main.c
- * @brief Main program for STM32F303: LED control, SysTick, and I2C
- * @details Initializes the system clock, configures GPIO for the LED on PB3,
- *          sets up the SysTick timer, and provides a basic configuration
- *          function for I2C1. Intended as an example and starting point.
- * @author Julio Fajardo
- * @date 2026-02-12
- */
+/** 
+    * @file main.c
+    * @brief Main program for MAX30101 muscle oxygenation measurement
+    * @author Julio Fajardo
+    * @date 2024-06-01
+    * 
+    * This program initializes the MAX30101 sensor for muscle oxygenation measurement using the I2C interface. 
+    * It configures the system clock to 64 MHz, sets up a GPIO pin for an LED indicator, and uses the SysTick timer to toggle the LED every 100 ms.
+    * The MAX30101 is configured to use 3 LEDs (Red, IR, Green) with a sample rate of 100 Hz and medium LED power for optimal tissue penetration in muscle applications.
+*/
 
 #include "stm32f303x8.h"
 #include <stdint.h>
