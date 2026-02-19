@@ -9,6 +9,7 @@
     * The MAX30101 is configured to use 3 LEDs (Red, IR, Green) with a sample rate of 100 Hz and medium LED power for optimal tissue penetration in muscle applications.
 */
 
+#include "arm_math_types.h"
 #include "stm32f303x8.h"
 #include <stdint.h>
 
@@ -21,7 +22,9 @@
 uint32_t counter = 0;
 uint32_t ticks = 0;
 
-// Function prototypes
+// Global variable to hold the latest sample data in float format (current in nanoamps)
+MAX30101_SampleCurrent MAX30101_SampleCurrentData = {0.0f, 0.0f, 0.0f};  /**< Global variable to hold converted current values in nanoamps (nA) */
+
 void clk_config(void);
 
 /** 
@@ -56,6 +59,7 @@ int main() {
 void SysTick_Handler(void) {
     ticks++;
     LED_Toggle();
+    
 }
 
 /** 

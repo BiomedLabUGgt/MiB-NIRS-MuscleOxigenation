@@ -68,17 +68,6 @@ typedef struct {
 } MAX30101_SampleData;
 
 /**
- * @struct MAX30101_SampleVoltage
- * @brief Holds one complete sample with data converted to voltage (V)
- * @details Each channel value is converted to voltage using ADC reference voltage
- */
-typedef struct {
-    float red;           /**< Red LED voltage in volts */
-    float ir;            /**< IR LED voltage in volts */
-    float green;         /**< Green LED voltage in volts */
-} MAX30101_SampleVoltage;
-
-/**
  * @struct MAX30101_SampleCurrent
  * @brief Holds one complete sample with data converted to current (nA)
  * @details Each channel value is converted to current in nanoamps using LSB size
