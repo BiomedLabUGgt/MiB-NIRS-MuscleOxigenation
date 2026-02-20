@@ -1,10 +1,15 @@
 /**
  * @file MAX30101.h
- * @brief MAX30101 Pulse Oximetry and NIRS Module
- * @details This module provides functions to configure and control the AD MAX30101
- * optical sensor for pulse oximetry (SpO2), heart rate monitoring, and NIRS (Near-Infrared
- * Spectroscopy) measurements for muscle oxygenation analysis.
- * @author Julio Fajardo
+ * @brief MAX30101 Optical Biosensor Driver for NIRS Muscle Oxygenation
+ * @details Complete driver for Maxim Integrated MAX30101 optical sensor supporting:
+ *          - Multi-LED mode (Red, IR, Green) for NIRS measurements
+ *          - Dual-LED mode (Red, IR) for SpO2 measurements
+ *          - Direct current readout in nanoamps (nA) with 7.81 pA resolution
+ *          - 16-bit ADC with 2048 nA full-scale range
+ *          - 32-sample FIFO with wrap-around support
+ * @author Julio Fajardo, PhD
+ * @date 2024-06-01
+ * @version 2.0
  */
 
 #ifndef MAX30101_H_
@@ -47,19 +52,27 @@
 
 /**
  * @struct MAX30101_Sample
- * @brief Holds one complete sample from MAX30101 FIFO in multi-LED mode
- * @details Each channel (Red, IR, Green) is stored as a 2-byte value (16-bit)
+ * @brief Raw FIFO sample data directly read from sensor (6 bytes) in multi-LED mode
+ * @details Intermediate storage for raw 2-byte ADC values from each LED channel.
+ *          Format: 3 channels × 2 bytes (MSB, LSB) per sample
+ *          Total: 6 bytes per complete sample in multi-LED mode
+ * @note Use MAX30101_ReadFIFO() to populate this structure
+ * @see MAX30101_ReadFIFO, MAX30101_ConvertSampleToUint16
  */
 typedef struct {
-    uint8_t red[2];      /**< Red LED sample (2 bytes) */
-    uint8_t ir[2];       /**< IR LED sample (2 bytes) */
-    uint8_t green[2];    /**< Green LED sample (2 bytes) */
+    uint8_t red[2];      /**< Red LED ADC raw bytes (MSB, LSB) */
+    uint8_t ir[2];       /**< IR LED ADC raw bytes (MSB, LSB) */
+    uint8_t green[2];    /**< Green LED ADC raw bytes (MSB, LSB) */
 } MAX30101_Sample;
 
 /**
  * @struct MAX30101_SampleData
- * @brief Holds one complete sample with 2-byte values converted to uint16_t
- * @details Each channel is converted from 2 bytes to a 16-bit value in uint16_t
+ * @brief 16-bit unsigned integer representation of ADC counts
+ * @details Intermediate format after combining 2 raw bytes per channel.
+ *          Range: 0 to 65535 (16-bit ADC counts)
+ *          Represents: Photodiode current as raw ADC values
+ * @note Use MAX30101_ConvertSampleToUint16() to convert from raw samples
+ * @see MAX30101_ConvertSampleToUint16, MAX30101_ReadFIFO_Current
  */
 typedef struct {
     uint16_t red;        /**< Red LED 16-bit value as uint16_t */
@@ -69,13 +82,17 @@ typedef struct {
 
 /**
  * @struct MAX30101_SampleCurrent
- * @brief Holds one complete sample with data converted to current (nA)
- * @details Each channel value is converted to current in nanoamps using LSB size
+ * @brief Calibrated photodiode current in nanoamps (nA)
+ * @details Final processed format: ADC values scaled to current using 7.81 pA LSB.
+ *          Range: 0 to 2048 nA (full-scale current)
+ *          Resolution: 0.00781 nA per LSB
+ * @note Use MAX30101_ReadFIFO_Current() or MAX30101_ConvertUint16ToCurrent() to generate
+ * @see MAX30101_ReadFIFO_Current, MAX30101_ConvertUint16ToCurrent
  */
 typedef struct {
-    float32_t red;       /**< Red LED current in nanoamps (nA) */
-    float32_t ir;        /**< IR LED current in nanoamps (nA) */
-    float32_t green;     /**< Green LED current in nanoamps (nA) */
+    float32_t red;       /**< Red LED current (0–2048 nA) */
+    float32_t ir;        /**< IR LED current (0–2048 nA) */
+    float32_t green;     /**< Green LED current (0–2048 nA) */
 } MAX30101_SampleCurrent;
 
 void MAX30101_InitSPO2Lite(void);

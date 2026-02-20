@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['led_2eh_0',['LED.h',['../_l_e_d_8h.html',1,'']]],
-  ['led_5fconfig_1',['LED_config',['../_l_e_d_8h.html#a1eba03f25b9d10a66d906572d494d731',1,'LED.c']]],
-  ['led_5foff_2',['LED_Off',['../_l_e_d_8h.html#af842f9996045107cd0841a4f0707fc65',1,'LED.c']]],
-  ['led_5fon_3',['LED_On',['../_l_e_d_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d',1,'LED.c']]],
-  ['led_5ftoggle_4',['LED_Toggle',['../_l_e_d_8h.html#a3b0db98f4b9d8da4c54223aa39ebc557',1,'LED.c']]]
+  ['file_20configures_20the_20system_20clock_20as_20follows_3a_0',['3. This file configures the system clock as follows:',['../system__stm32f3xx_8c.html#autotoc_md14',1,'']]],
+  ['flow_1',['Flow',['../_l_e_d_8h.html#autotoc_md13',1,'Data Flow'],['../todo.html#_todo000002',1,'Data Flow']]],
+  ['follows_3a_2',['3. This file configures the system clock as follows:',['../system__stm32f3xx_8c.html#autotoc_md14',1,'']]],
+  ['for_20apb1_2032_20mhz_20target_20400_20khz_3',['I2C TIMINGR = 0x00C50F26 (for APB1 = 32 MHz, target 400 kHz)',['../_i2_c_8h.html#autotoc_md1',1,'']]]
 ];

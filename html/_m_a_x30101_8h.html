@@ -93,82 +93,606 @@ $(function(){initNavTree('_m_a_x30101_8h.html','',''); });
 </div><!--header-->
 <div class="contents">
 
-<p>MAX30101 Pulse Oximetry and NIRS Module.  
+<p>MAX30101 Optical Biosensor Driver for NIRS Muscle Oxygenation.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
+<code>#include &quot;arm_math.h&quot;</code><br />
 </div>
 <p><a href="_m_a_x30101_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:MAX30101_5FSample" id="r_MAX30101_5FSample"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_m_a_x30101___sample.html">MAX30101_Sample</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Raw FIFO sample data directly read from sensor (6 bytes) in multi-LED mode.  <a href="struct_m_a_x30101___sample.html#details">More...</a><br /></td></tr>
+<tr class="memitem:MAX30101_5FSampleData" id="r_MAX30101_5FSampleData"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_m_a_x30101___sample_data.html">MAX30101_SampleData</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">16-bit unsigned integer representation of ADC counts  <a href="struct_m_a_x30101___sample_data.html#details">More...</a><br /></td></tr>
+<tr class="memitem:MAX30101_5FSampleCurrent" id="r_MAX30101_5FSampleCurrent"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_m_a_x30101___sample_current.html">MAX30101_SampleCurrent</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calibrated photodiode current in nanoamps (nA).  <a href="struct_m_a_x30101___sample_current.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a94825a8eb50fe1bf187ececa255858d5" id="r_a94825a8eb50fe1bf187ececa255858d5"><td class="memItemLeft"><a id="a94825a8eb50fe1bf187ececa255858d5" name="a94825a8eb50fe1bf187ececa255858d5"></a>
-#define&#160;</td><td class="memItemRight"><b>SENSOR_ADDR</b>&#160;&#160;&#160;0xAE</td></tr>
-<tr class="memitem:a0a03ffc596b07c17f06064c10f721793" id="r_a0a03ffc596b07c17f06064c10f721793"><td class="memItemLeft"><a id="a0a03ffc596b07c17f06064c10f721793" name="a0a03ffc596b07c17f06064c10f721793"></a>
-#define&#160;</td><td class="memItemRight"><b>INTR_STATUS1</b>&#160;&#160;&#160;0x00</td></tr>
-<tr class="memitem:a16cf594d55c33820e7839ab13429e17c" id="r_a16cf594d55c33820e7839ab13429e17c"><td class="memItemLeft"><a id="a16cf594d55c33820e7839ab13429e17c" name="a16cf594d55c33820e7839ab13429e17c"></a>
-#define&#160;</td><td class="memItemRight"><b>INTR_STATUS2</b>&#160;&#160;&#160;0x01</td></tr>
-<tr class="memitem:a5d42af87c7bb6c38da6e9dad28a6c3f2" id="r_a5d42af87c7bb6c38da6e9dad28a6c3f2"><td class="memItemLeft"><a id="a5d42af87c7bb6c38da6e9dad28a6c3f2" name="a5d42af87c7bb6c38da6e9dad28a6c3f2"></a>
-#define&#160;</td><td class="memItemRight"><b>INTR_ENABLE1</b>&#160;&#160;&#160;0x02</td></tr>
-<tr class="memitem:a3f2ae99d490975325f8a5575c68b6784" id="r_a3f2ae99d490975325f8a5575c68b6784"><td class="memItemLeft"><a id="a3f2ae99d490975325f8a5575c68b6784" name="a3f2ae99d490975325f8a5575c68b6784"></a>
-#define&#160;</td><td class="memItemRight"><b>INTR_ENABLE2</b>&#160;&#160;&#160;0x03</td></tr>
-<tr class="memitem:a377561d1d608ea407b60945ab0dd145e" id="r_a377561d1d608ea407b60945ab0dd145e"><td class="memItemLeft"><a id="a377561d1d608ea407b60945ab0dd145e" name="a377561d1d608ea407b60945ab0dd145e"></a>
-#define&#160;</td><td class="memItemRight"><b>FIFO_WRITPTR</b>&#160;&#160;&#160;0x04</td></tr>
-<tr class="memitem:a4e271f09c452a8c16492978ea5f37400" id="r_a4e271f09c452a8c16492978ea5f37400"><td class="memItemLeft"><a id="a4e271f09c452a8c16492978ea5f37400" name="a4e271f09c452a8c16492978ea5f37400"></a>
-#define&#160;</td><td class="memItemRight"><b>OVRF_COUNTER</b>&#160;&#160;&#160;0x05</td></tr>
-<tr class="memitem:a719a3749ba666436530560b5576ee34b" id="r_a719a3749ba666436530560b5576ee34b"><td class="memItemLeft"><a id="a719a3749ba666436530560b5576ee34b" name="a719a3749ba666436530560b5576ee34b"></a>
-#define&#160;</td><td class="memItemRight"><b>FIFO_READPTR</b>&#160;&#160;&#160;0x06</td></tr>
-<tr class="memitem:a22233bba45164be1e5309d0650bb2cd8" id="r_a22233bba45164be1e5309d0650bb2cd8"><td class="memItemLeft"><a id="a22233bba45164be1e5309d0650bb2cd8" name="a22233bba45164be1e5309d0650bb2cd8"></a>
-#define&#160;</td><td class="memItemRight"><b>FIFO_DATAREG</b>&#160;&#160;&#160;0x07</td></tr>
-<tr class="memitem:a0eca3f0303b4f82b66f10fb06be87178" id="r_a0eca3f0303b4f82b66f10fb06be87178"><td class="memItemLeft"><a id="a0eca3f0303b4f82b66f10fb06be87178" name="a0eca3f0303b4f82b66f10fb06be87178"></a>
-#define&#160;</td><td class="memItemRight"><b>FIFO_CONFIG</b>&#160;&#160;&#160;0x08</td></tr>
-<tr class="memitem:a5552a5de9b59914458ab99d568bf2763" id="r_a5552a5de9b59914458ab99d568bf2763"><td class="memItemLeft"><a id="a5552a5de9b59914458ab99d568bf2763" name="a5552a5de9b59914458ab99d568bf2763"></a>
-#define&#160;</td><td class="memItemRight"><b>MODE_CONFIG</b>&#160;&#160;&#160;0x09</td></tr>
-<tr class="memitem:a088c88c3c5bd0d09efc6f64816c16ba1" id="r_a088c88c3c5bd0d09efc6f64816c16ba1"><td class="memItemLeft"><a id="a088c88c3c5bd0d09efc6f64816c16ba1" name="a088c88c3c5bd0d09efc6f64816c16ba1"></a>
-#define&#160;</td><td class="memItemRight"><b>SPO2_CONFIG</b>&#160;&#160;&#160;0x0A</td></tr>
-<tr class="memitem:aca7c8ca63b805432e5f70a24512d6bbe" id="r_aca7c8ca63b805432e5f70a24512d6bbe"><td class="memItemLeft"><a id="aca7c8ca63b805432e5f70a24512d6bbe" name="aca7c8ca63b805432e5f70a24512d6bbe"></a>
-#define&#160;</td><td class="memItemRight"><b>SPO2_CONFIG</b>&#160;&#160;&#160;0x0A</td></tr>
-<tr class="memitem:ada0e10b454c413f804fba6187d920409" id="r_ada0e10b454c413f804fba6187d920409"><td class="memItemLeft"><a id="ada0e10b454c413f804fba6187d920409" name="ada0e10b454c413f804fba6187d920409"></a>
-#define&#160;</td><td class="memItemRight"><b>LED1_PAMPLI</b>&#160;&#160;&#160;0x0C</td></tr>
-<tr class="memitem:a8012892d3915984ebb27a4c83a1dd018" id="r_a8012892d3915984ebb27a4c83a1dd018"><td class="memItemLeft"><a id="a8012892d3915984ebb27a4c83a1dd018" name="a8012892d3915984ebb27a4c83a1dd018"></a>
-#define&#160;</td><td class="memItemRight"><b>LED2_PAMPLI</b>&#160;&#160;&#160;0x0D</td></tr>
-<tr class="memitem:a18578fb98c9abbd3a0745c4412e4dd44" id="r_a18578fb98c9abbd3a0745c4412e4dd44"><td class="memItemLeft"><a id="a18578fb98c9abbd3a0745c4412e4dd44" name="a18578fb98c9abbd3a0745c4412e4dd44"></a>
-#define&#160;</td><td class="memItemRight"><b>LED3_PAMPLI</b>&#160;&#160;&#160;0x0E</td></tr>
-<tr class="memitem:aa2ef9161bc1bbe93798706215f5a0bc2" id="r_aa2ef9161bc1bbe93798706215f5a0bc2"><td class="memItemLeft"><a id="aa2ef9161bc1bbe93798706215f5a0bc2" name="aa2ef9161bc1bbe93798706215f5a0bc2"></a>
-#define&#160;</td><td class="memItemRight"><b>LED4_PAMPLI</b>&#160;&#160;&#160;0x0F</td></tr>
-<tr class="memitem:ac9ddc78ecd455ddc1412f37417530a82" id="r_ac9ddc78ecd455ddc1412f37417530a82"><td class="memItemLeft"><a id="ac9ddc78ecd455ddc1412f37417530a82" name="ac9ddc78ecd455ddc1412f37417530a82"></a>
-#define&#160;</td><td class="memItemRight"><b>MLED_CONFG1</b>&#160;&#160;&#160;0x11</td></tr>
-<tr class="memitem:a1b918ecf041cc0b9270c926676276c13" id="r_a1b918ecf041cc0b9270c926676276c13"><td class="memItemLeft"><a id="a1b918ecf041cc0b9270c926676276c13" name="a1b918ecf041cc0b9270c926676276c13"></a>
-#define&#160;</td><td class="memItemRight"><b>MLED_CONFG2</b>&#160;&#160;&#160;0x12</td></tr>
-<tr class="memitem:af1a51145ec099d5b0009b11db3846494" id="r_af1a51145ec099d5b0009b11db3846494"><td class="memItemLeft"><a id="af1a51145ec099d5b0009b11db3846494" name="af1a51145ec099d5b0009b11db3846494"></a>
-#define&#160;</td><td class="memItemRight"><b>DIE_TEMPINT</b>&#160;&#160;&#160;0x1F</td></tr>
-<tr class="memitem:a47c0a4ad6722094f81a5ac1d1a760550" id="r_a47c0a4ad6722094f81a5ac1d1a760550"><td class="memItemLeft"><a id="a47c0a4ad6722094f81a5ac1d1a760550" name="a47c0a4ad6722094f81a5ac1d1a760550"></a>
-#define&#160;</td><td class="memItemRight"><b>DIE_TEMPFRC</b>&#160;&#160;&#160;0x20</td></tr>
-<tr class="memitem:ad3aed79a12f1254a191bc633e943a399" id="r_ad3aed79a12f1254a191bc633e943a399"><td class="memItemLeft"><a id="ad3aed79a12f1254a191bc633e943a399" name="ad3aed79a12f1254a191bc633e943a399"></a>
-#define&#160;</td><td class="memItemRight"><b>DIE_TEMPCFG</b>&#160;&#160;&#160;0x21</td></tr>
-<tr class="memitem:ad30db9cf28b11700d58caa3a417a596c" id="r_ad30db9cf28b11700d58caa3a417a596c"><td class="memItemLeft"><a id="ad30db9cf28b11700d58caa3a417a596c" name="ad30db9cf28b11700d58caa3a417a596c"></a>
-#define&#160;</td><td class="memItemRight"><b>BUFFERBLOCKSIZE</b>&#160;&#160;&#160;0x8</td></tr>
+<tr class="memitem:a94825a8eb50fe1bf187ececa255858d5" id="r_a94825a8eb50fe1bf187ececa255858d5"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a94825a8eb50fe1bf187ececa255858d5">SENSOR_ADDR</a>&#160;&#160;&#160;0xAE</td></tr>
+<tr class="memitem:a0a03ffc596b07c17f06064c10f721793" id="r_a0a03ffc596b07c17f06064c10f721793"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a0a03ffc596b07c17f06064c10f721793">INTR_STATUS1</a>&#160;&#160;&#160;0x00</td></tr>
+<tr class="memitem:a16cf594d55c33820e7839ab13429e17c" id="r_a16cf594d55c33820e7839ab13429e17c"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a16cf594d55c33820e7839ab13429e17c">INTR_STATUS2</a>&#160;&#160;&#160;0x01</td></tr>
+<tr class="memitem:a5d42af87c7bb6c38da6e9dad28a6c3f2" id="r_a5d42af87c7bb6c38da6e9dad28a6c3f2"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a5d42af87c7bb6c38da6e9dad28a6c3f2">INTR_ENABLE1</a>&#160;&#160;&#160;0x02</td></tr>
+<tr class="memitem:a3f2ae99d490975325f8a5575c68b6784" id="r_a3f2ae99d490975325f8a5575c68b6784"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a3f2ae99d490975325f8a5575c68b6784">INTR_ENABLE2</a>&#160;&#160;&#160;0x03</td></tr>
+<tr class="memitem:a377561d1d608ea407b60945ab0dd145e" id="r_a377561d1d608ea407b60945ab0dd145e"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a377561d1d608ea407b60945ab0dd145e">FIFO_WRITPTR</a>&#160;&#160;&#160;0x04</td></tr>
+<tr class="memitem:a4e271f09c452a8c16492978ea5f37400" id="r_a4e271f09c452a8c16492978ea5f37400"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a4e271f09c452a8c16492978ea5f37400">OVRF_COUNTER</a>&#160;&#160;&#160;0x05</td></tr>
+<tr class="memitem:a719a3749ba666436530560b5576ee34b" id="r_a719a3749ba666436530560b5576ee34b"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a719a3749ba666436530560b5576ee34b">FIFO_READPTR</a>&#160;&#160;&#160;0x06</td></tr>
+<tr class="memitem:a22233bba45164be1e5309d0650bb2cd8" id="r_a22233bba45164be1e5309d0650bb2cd8"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a22233bba45164be1e5309d0650bb2cd8">FIFO_DATAREG</a>&#160;&#160;&#160;0x07</td></tr>
+<tr class="memitem:a0eca3f0303b4f82b66f10fb06be87178" id="r_a0eca3f0303b4f82b66f10fb06be87178"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a0eca3f0303b4f82b66f10fb06be87178">FIFO_CONFIG</a>&#160;&#160;&#160;0x08</td></tr>
+<tr class="memitem:a5552a5de9b59914458ab99d568bf2763" id="r_a5552a5de9b59914458ab99d568bf2763"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a5552a5de9b59914458ab99d568bf2763">MODE_CONFIG</a>&#160;&#160;&#160;0x09</td></tr>
+<tr class="memitem:a088c88c3c5bd0d09efc6f64816c16ba1" id="r_a088c88c3c5bd0d09efc6f64816c16ba1"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a088c88c3c5bd0d09efc6f64816c16ba1">SPO2_CONFIG</a>&#160;&#160;&#160;0x0A</td></tr>
+<tr class="memitem:aca7c8ca63b805432e5f70a24512d6bbe" id="r_aca7c8ca63b805432e5f70a24512d6bbe"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#aca7c8ca63b805432e5f70a24512d6bbe">SPO2_CONFIG</a>&#160;&#160;&#160;0x0A</td></tr>
+<tr class="memitem:ada0e10b454c413f804fba6187d920409" id="r_ada0e10b454c413f804fba6187d920409"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ada0e10b454c413f804fba6187d920409">LED1_PAMPLI</a>&#160;&#160;&#160;0x0C</td></tr>
+<tr class="memitem:a8012892d3915984ebb27a4c83a1dd018" id="r_a8012892d3915984ebb27a4c83a1dd018"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a8012892d3915984ebb27a4c83a1dd018">LED2_PAMPLI</a>&#160;&#160;&#160;0x0D</td></tr>
+<tr class="memitem:a18578fb98c9abbd3a0745c4412e4dd44" id="r_a18578fb98c9abbd3a0745c4412e4dd44"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a18578fb98c9abbd3a0745c4412e4dd44">LED3_PAMPLI</a>&#160;&#160;&#160;0x0E</td></tr>
+<tr class="memitem:aa2ef9161bc1bbe93798706215f5a0bc2" id="r_aa2ef9161bc1bbe93798706215f5a0bc2"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#aa2ef9161bc1bbe93798706215f5a0bc2">LED4_PAMPLI</a>&#160;&#160;&#160;0x0F</td></tr>
+<tr class="memitem:ac9ddc78ecd455ddc1412f37417530a82" id="r_ac9ddc78ecd455ddc1412f37417530a82"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ac9ddc78ecd455ddc1412f37417530a82">MLED_CONFG1</a>&#160;&#160;&#160;0x11</td></tr>
+<tr class="memitem:a1b918ecf041cc0b9270c926676276c13" id="r_a1b918ecf041cc0b9270c926676276c13"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a1b918ecf041cc0b9270c926676276c13">MLED_CONFG2</a>&#160;&#160;&#160;0x12</td></tr>
+<tr class="memitem:af1a51145ec099d5b0009b11db3846494" id="r_af1a51145ec099d5b0009b11db3846494"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#af1a51145ec099d5b0009b11db3846494">DIE_TEMPINT</a>&#160;&#160;&#160;0x1F</td></tr>
+<tr class="memitem:a47c0a4ad6722094f81a5ac1d1a760550" id="r_a47c0a4ad6722094f81a5ac1d1a760550"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a47c0a4ad6722094f81a5ac1d1a760550">DIE_TEMPFRC</a>&#160;&#160;&#160;0x20</td></tr>
+<tr class="memitem:ad3aed79a12f1254a191bc633e943a399" id="r_ad3aed79a12f1254a191bc633e943a399"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ad3aed79a12f1254a191bc633e943a399">DIE_TEMPCFG</a>&#160;&#160;&#160;0x21</td></tr>
+<tr class="memitem:ad30db9cf28b11700d58caa3a417a596c" id="r_ad30db9cf28b11700d58caa3a417a596c"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ad30db9cf28b11700d58caa3a417a596c">BUFFERBLOCKSIZE</a>&#160;&#160;&#160;0x8</td></tr>
+<tr class="memitem:ad23c173774e20090f654a509c5b19773" id="r_ad23c173774e20090f654a509c5b19773"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ad23c173774e20090f654a509c5b19773">MAX30101_ADC_VREF</a>&#160;&#160;&#160;3.3f</td></tr>
+<tr class="memitem:af69b3a3b8412dc5a37845e36f863ae76" id="r_af69b3a3b8412dc5a37845e36f863ae76"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#af69b3a3b8412dc5a37845e36f863ae76">MAX30101_ADC_BITS</a>&#160;&#160;&#160;16</td></tr>
+<tr class="memitem:a82d9250f2be0921620dbbfce49e8d570" id="r_a82d9250f2be0921620dbbfce49e8d570"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a82d9250f2be0921620dbbfce49e8d570">MAX30101_ADC_MAX</a>&#160;&#160;&#160;((1 &lt;&lt; <a class="el" href="#af69b3a3b8412dc5a37845e36f863ae76">MAX30101_ADC_BITS</a>) - 1)</td></tr>
+<tr class="memitem:ada4a12677bb863852ec1718c77eeef0d" id="r_ada4a12677bb863852ec1718c77eeef0d"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ada4a12677bb863852ec1718c77eeef0d">MAX30101_CURRENT_LSB_PA</a>&#160;&#160;&#160;7.81f</td></tr>
+<tr class="memitem:ab646e31650ff0cfc41f9bc2368b9ccdd" id="r_ab646e31650ff0cfc41f9bc2368b9ccdd"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ab646e31650ff0cfc41f9bc2368b9ccdd">MAX30101_CURRENT_LSB_NA</a>&#160;&#160;&#160;(<a class="el" href="#ada4a12677bb863852ec1718c77eeef0d">MAX30101_CURRENT_LSB_PA</a> / 1000.0f)</td></tr>
+<tr class="memitem:a911395e645196908a78fde416b986b85" id="r_a911395e645196908a78fde416b986b85"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a911395e645196908a78fde416b986b85">MAX30101_CURRENT_FULLSCALE</a>&#160;&#160;&#160;2048.0f</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a87df0a0c89e55c84dfce7ddc5ddd93af" id="r_a87df0a0c89e55c84dfce7ddc5ddd93af"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a87df0a0c89e55c84dfce7ddc5ddd93af">MAX30101_Init</a> (void)</td></tr>
-<tr class="memdesc:a87df0a0c89e55c84dfce7ddc5ddd93af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes MAX30101 for SpO2 (blood oxygen) measurement - Standard mode.  <br /></td></tr>
 <tr class="memitem:a6353bf923aa1e5f944ed74e65799b0c4" id="r_a6353bf923aa1e5f944ed74e65799b0c4"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a6353bf923aa1e5f944ed74e65799b0c4">MAX30101_InitSPO2Lite</a> (void)</td></tr>
-<tr class="memdesc:a6353bf923aa1e5f944ed74e65799b0c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes MAX30101 for SpO2 measurement - Low power mode.  <br /></td></tr>
 <tr class="memitem:afed94d9d5ac9210cd437c79f6a7376eb" id="r_afed94d9d5ac9210cd437c79f6a7376eb"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#afed94d9d5ac9210cd437c79f6a7376eb">MAX30101_InitMuscleOx</a> (uint8_t ledPower)</td></tr>
-<tr class="memdesc:afed94d9d5ac9210cd437c79f6a7376eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes MAX30101 for muscle oxygenation (NIRS) measurement.  <br /></td></tr>
+<tr class="memitem:a8a7cab2225b858a2316022bfd3185c90" id="r_a8a7cab2225b858a2316022bfd3185c90"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="#a8a7cab2225b858a2316022bfd3185c90">MAX30101_GetNumAvailableSamples</a> (void)</td></tr>
+<tr class="memitem:a1703394f82b418ad4b72597cbe551b89" id="r_a1703394f82b418ad4b72597cbe551b89"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a1703394f82b418ad4b72597cbe551b89">MAX30101_ReadFIFO</a> (<a class="el" href="struct_m_a_x30101___sample.html">MAX30101_Sample</a> *samples, uint8_t num_samples)</td></tr>
+<tr class="memitem:a6381c7dfcfc51a5f420e4676cdf3bfa0" id="r_a6381c7dfcfc51a5f420e4676cdf3bfa0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a6381c7dfcfc51a5f420e4676cdf3bfa0">MAX30101_ReadFIFO_Current</a> (<a class="el" href="struct_m_a_x30101___sample_current.html">MAX30101_SampleCurrent</a> *samples, uint8_t num_samples)</td></tr>
+<tr class="memitem:af3961815f2082ad8db546c068ff1ce33" id="r_af3961815f2082ad8db546c068ff1ce33"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#af3961815f2082ad8db546c068ff1ce33">MAX30101_ConvertSampleToUint16</a> (<a class="el" href="struct_m_a_x30101___sample.html">MAX30101_Sample</a> *sample_in, <a class="el" href="struct_m_a_x30101___sample_data.html">MAX30101_SampleData</a> *sample_out)</td></tr>
+<tr class="memitem:a083ca48a8652b600591d581058224c1d" id="r_a083ca48a8652b600591d581058224c1d"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a083ca48a8652b600591d581058224c1d">MAX30101_ConvertUint16ToCurrent</a> (<a class="el" href="struct_m_a_x30101___sample_data.html">MAX30101_SampleData</a> *sample_in, <a class="el" href="struct_m_a_x30101___sample_current.html">MAX30101_SampleCurrent</a> *sample_out)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>MAX30101 Pulse Oximetry and NIRS Module. </p>
-<p>This module provides functions to configure and control the AD MAX30101 optical sensor for pulse oximetry (SpO2), heart rate monitoring, and NIRS (Near-Infrared Spectroscopy) measurements for muscle oxygenation analysis. </p><dl class="section author"><dt>Author</dt><dd>Julio Fajardo </dd></dl>
-</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
-<a id="a87df0a0c89e55c84dfce7ddc5ddd93af" name="a87df0a0c89e55c84dfce7ddc5ddd93af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87df0a0c89e55c84dfce7ddc5ddd93af">&#9670;&#160;</a></span>MAX30101_Init()</h2>
+<div class="textblock"><p>MAX30101 Optical Biosensor Driver for NIRS Muscle Oxygenation. </p>
+<p>Complete driver for Maxim Integrated MAX30101 optical sensor supporting:</p><ul>
+<li>Multi-LED mode (Red, IR, Green) for NIRS measurements</li>
+<li>Dual-LED mode (Red, IR) for SpO2 measurements</li>
+<li>Direct current readout in nanoamps (nA) with 7.81 pA resolution</li>
+<li>16-bit ADC with 2048 nA full-scale range</li>
+<li>32-sample FIFO with wrap-around support <dl class="section author"><dt>Author</dt><dd>Julio Fajardo, PhD </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2024-06-01 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>2.0 </dd></dl>
+</li>
+</ul>
+
+<p class="definition">Definition in file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="ad30db9cf28b11700d58caa3a417a596c" name="ad30db9cf28b11700d58caa3a417a596c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad30db9cf28b11700d58caa3a417a596c">&#9670;&#160;</a></span>BUFFERBLOCKSIZE</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void MAX30101_Init </td>
+          <td class="memname">#define BUFFERBLOCKSIZE&#160;&#160;&#160;0x8</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00045">45</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="ad3aed79a12f1254a191bc633e943a399" name="ad3aed79a12f1254a191bc633e943a399"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3aed79a12f1254a191bc633e943a399">&#9670;&#160;</a></span>DIE_TEMPCFG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DIE_TEMPCFG&#160;&#160;&#160;0x21</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00043">43</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a47c0a4ad6722094f81a5ac1d1a760550" name="a47c0a4ad6722094f81a5ac1d1a760550"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47c0a4ad6722094f81a5ac1d1a760550">&#9670;&#160;</a></span>DIE_TEMPFRC</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DIE_TEMPFRC&#160;&#160;&#160;0x20</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00042">42</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="af1a51145ec099d5b0009b11db3846494" name="af1a51145ec099d5b0009b11db3846494"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1a51145ec099d5b0009b11db3846494">&#9670;&#160;</a></span>DIE_TEMPINT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DIE_TEMPINT&#160;&#160;&#160;0x1F</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00041">41</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a0eca3f0303b4f82b66f10fb06be87178" name="a0eca3f0303b4f82b66f10fb06be87178"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0eca3f0303b4f82b66f10fb06be87178">&#9670;&#160;</a></span>FIFO_CONFIG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FIFO_CONFIG&#160;&#160;&#160;0x08</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00031">31</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a22233bba45164be1e5309d0650bb2cd8" name="a22233bba45164be1e5309d0650bb2cd8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22233bba45164be1e5309d0650bb2cd8">&#9670;&#160;</a></span>FIFO_DATAREG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FIFO_DATAREG&#160;&#160;&#160;0x07</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00030">30</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a719a3749ba666436530560b5576ee34b" name="a719a3749ba666436530560b5576ee34b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a719a3749ba666436530560b5576ee34b">&#9670;&#160;</a></span>FIFO_READPTR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FIFO_READPTR&#160;&#160;&#160;0x06</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00029">29</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a377561d1d608ea407b60945ab0dd145e" name="a377561d1d608ea407b60945ab0dd145e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a377561d1d608ea407b60945ab0dd145e">&#9670;&#160;</a></span>FIFO_WRITPTR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FIFO_WRITPTR&#160;&#160;&#160;0x04</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00027">27</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a5d42af87c7bb6c38da6e9dad28a6c3f2" name="a5d42af87c7bb6c38da6e9dad28a6c3f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d42af87c7bb6c38da6e9dad28a6c3f2">&#9670;&#160;</a></span>INTR_ENABLE1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define INTR_ENABLE1&#160;&#160;&#160;0x02</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00025">25</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a3f2ae99d490975325f8a5575c68b6784" name="a3f2ae99d490975325f8a5575c68b6784"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f2ae99d490975325f8a5575c68b6784">&#9670;&#160;</a></span>INTR_ENABLE2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define INTR_ENABLE2&#160;&#160;&#160;0x03</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00026">26</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a0a03ffc596b07c17f06064c10f721793" name="a0a03ffc596b07c17f06064c10f721793"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a03ffc596b07c17f06064c10f721793">&#9670;&#160;</a></span>INTR_STATUS1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define INTR_STATUS1&#160;&#160;&#160;0x00</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00023">23</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a16cf594d55c33820e7839ab13429e17c" name="a16cf594d55c33820e7839ab13429e17c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16cf594d55c33820e7839ab13429e17c">&#9670;&#160;</a></span>INTR_STATUS2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define INTR_STATUS2&#160;&#160;&#160;0x01</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00024">24</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="ada0e10b454c413f804fba6187d920409" name="ada0e10b454c413f804fba6187d920409"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada0e10b454c413f804fba6187d920409">&#9670;&#160;</a></span>LED1_PAMPLI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LED1_PAMPLI&#160;&#160;&#160;0x0C</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00035">35</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a8012892d3915984ebb27a4c83a1dd018" name="a8012892d3915984ebb27a4c83a1dd018"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8012892d3915984ebb27a4c83a1dd018">&#9670;&#160;</a></span>LED2_PAMPLI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LED2_PAMPLI&#160;&#160;&#160;0x0D</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00036">36</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a18578fb98c9abbd3a0745c4412e4dd44" name="a18578fb98c9abbd3a0745c4412e4dd44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18578fb98c9abbd3a0745c4412e4dd44">&#9670;&#160;</a></span>LED3_PAMPLI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LED3_PAMPLI&#160;&#160;&#160;0x0E</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00037">37</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="aa2ef9161bc1bbe93798706215f5a0bc2" name="aa2ef9161bc1bbe93798706215f5a0bc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2ef9161bc1bbe93798706215f5a0bc2">&#9670;&#160;</a></span>LED4_PAMPLI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LED4_PAMPLI&#160;&#160;&#160;0x0F</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00038">38</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="af69b3a3b8412dc5a37845e36f863ae76" name="af69b3a3b8412dc5a37845e36f863ae76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af69b3a3b8412dc5a37845e36f863ae76">&#9670;&#160;</a></span>MAX30101_ADC_BITS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAX30101_ADC_BITS&#160;&#160;&#160;16</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>ADC resolution in bits </p>
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00047">47</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a82d9250f2be0921620dbbfce49e8d570" name="a82d9250f2be0921620dbbfce49e8d570"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82d9250f2be0921620dbbfce49e8d570">&#9670;&#160;</a></span>MAX30101_ADC_MAX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAX30101_ADC_MAX&#160;&#160;&#160;((1 &lt;&lt; <a class="el" href="#af69b3a3b8412dc5a37845e36f863ae76">MAX30101_ADC_BITS</a>) - 1)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Max ADC count (65535 for 16-bit) </p>
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00048">48</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="ad23c173774e20090f654a509c5b19773" name="ad23c173774e20090f654a509c5b19773"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad23c173774e20090f654a509c5b19773">&#9670;&#160;</a></span>MAX30101_ADC_VREF</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAX30101_ADC_VREF&#160;&#160;&#160;3.3f</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>ADC reference voltage in volts </p>
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00046">46</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a911395e645196908a78fde416b986b85" name="a911395e645196908a78fde416b986b85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a911395e645196908a78fde416b986b85">&#9670;&#160;</a></span>MAX30101_CURRENT_FULLSCALE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAX30101_CURRENT_FULLSCALE&#160;&#160;&#160;2048.0f</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Full scale current range in nanoamps (nA) </p>
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00051">51</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="ab646e31650ff0cfc41f9bc2368b9ccdd" name="ab646e31650ff0cfc41f9bc2368b9ccdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab646e31650ff0cfc41f9bc2368b9ccdd">&#9670;&#160;</a></span>MAX30101_CURRENT_LSB_NA</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAX30101_CURRENT_LSB_NA&#160;&#160;&#160;(<a class="el" href="#ada4a12677bb863852ec1718c77eeef0d">MAX30101_CURRENT_LSB_PA</a> / 1000.0f)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>LSB size in nanoamps (nA) </p>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example.html#_a10">/Users/juliofajardo/Documents/ARM/SlidesNuevos/NIRS-MAX30101/Project/MAX30101.c</a>.</dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00050">50</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="ada4a12677bb863852ec1718c77eeef0d" name="ada4a12677bb863852ec1718c77eeef0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada4a12677bb863852ec1718c77eeef0d">&#9670;&#160;</a></span>MAX30101_CURRENT_LSB_PA</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAX30101_CURRENT_LSB_PA&#160;&#160;&#160;7.81f</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>LSB size in picoamps (pA) </p>
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00049">49</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="ac9ddc78ecd455ddc1412f37417530a82" name="ac9ddc78ecd455ddc1412f37417530a82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9ddc78ecd455ddc1412f37417530a82">&#9670;&#160;</a></span>MLED_CONFG1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MLED_CONFG1&#160;&#160;&#160;0x11</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00039">39</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a1b918ecf041cc0b9270c926676276c13" name="a1b918ecf041cc0b9270c926676276c13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b918ecf041cc0b9270c926676276c13">&#9670;&#160;</a></span>MLED_CONFG2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MLED_CONFG2&#160;&#160;&#160;0x12</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00040">40</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a5552a5de9b59914458ab99d568bf2763" name="a5552a5de9b59914458ab99d568bf2763"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5552a5de9b59914458ab99d568bf2763">&#9670;&#160;</a></span>MODE_CONFIG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MODE_CONFIG&#160;&#160;&#160;0x09</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00032">32</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a4e271f09c452a8c16492978ea5f37400" name="a4e271f09c452a8c16492978ea5f37400"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e271f09c452a8c16492978ea5f37400">&#9670;&#160;</a></span>OVRF_COUNTER</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define OVRF_COUNTER&#160;&#160;&#160;0x05</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00028">28</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a94825a8eb50fe1bf187ececa255858d5" name="a94825a8eb50fe1bf187ececa255858d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94825a8eb50fe1bf187ececa255858d5">&#9670;&#160;</a></span>SENSOR_ADDR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SENSOR_ADDR&#160;&#160;&#160;0xAE</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00021">21</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="aca7c8ca63b805432e5f70a24512d6bbe" name="aca7c8ca63b805432e5f70a24512d6bbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca7c8ca63b805432e5f70a24512d6bbe">&#9670;&#160;</a></span>SPO2_CONFIG <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SPO2_CONFIG&#160;&#160;&#160;0x0A</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00033">33</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a id="a088c88c3c5bd0d09efc6f64816c16ba1" name="a088c88c3c5bd0d09efc6f64816c16ba1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a088c88c3c5bd0d09efc6f64816c16ba1">&#9670;&#160;</a></span>SPO2_CONFIG <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SPO2_CONFIG&#160;&#160;&#160;0x0A</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8h_source.html#l00033">33</a> of file <a class="el" href="_m_a_x30101_8h_source.html">MAX30101.h</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="af3961815f2082ad8db546c068ff1ce33" name="af3961815f2082ad8db546c068ff1ce33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3961815f2082ad8db546c068ff1ce33">&#9670;&#160;</a></span>MAX30101_ConvertSampleToUint16()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MAX30101_ConvertSampleToUint16 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_m_a_x30101___sample.html">MAX30101_Sample</a> *</td>          <td class="paramname"><span class="paramname"><em>sample_in</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_m_a_x30101___sample_data.html">MAX30101_SampleData</a> *</td>          <td class="paramname"><span class="paramname"><em>sample_out</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8c_source.html#l00165">165</a> of file <a class="el" href="_m_a_x30101_8c_source.html">MAX30101.c</a>.</p>
+
+</div>
+</div>
+<a id="a083ca48a8652b600591d581058224c1d" name="a083ca48a8652b600591d581058224c1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a083ca48a8652b600591d581058224c1d">&#9670;&#160;</a></span>MAX30101_ConvertUint16ToCurrent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MAX30101_ConvertUint16ToCurrent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_m_a_x30101___sample_data.html">MAX30101_SampleData</a> *</td>          <td class="paramname"><span class="paramname"><em>sample_in</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_m_a_x30101___sample_current.html">MAX30101_SampleCurrent</a> *</td>          <td class="paramname"><span class="paramname"><em>sample_out</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8c_source.html#l00198">198</a> of file <a class="el" href="_m_a_x30101_8c_source.html">MAX30101.c</a>.</p>
+
+</div>
+</div>
+<a id="a8a7cab2225b858a2316022bfd3185c90" name="a8a7cab2225b858a2316022bfd3185c90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a7cab2225b858a2316022bfd3185c90">&#9670;&#160;</a></span>MAX30101_GetNumAvailableSamples()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t MAX30101_GetNumAvailableSamples </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -176,17 +700,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes MAX30101 for SpO2 (blood oxygen) measurement - Standard mode. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Uses 2 LEDs (Red + IR), 400 Hz sample rate, 18-bit resolution </dd>
-<dd>
-High accuracy, higher power consumption </dd></dl>
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8c_source.html#l00086">86</a> of file <a class="el" href="_m_a_x30101_8c_source.html">MAX30101.c</a>.</p>
 
 </div>
 </div>
@@ -205,17 +719,7 @@ High accuracy, higher power consumption </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes MAX30101 for muscle oxygenation (NIRS) measurement. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Uses 3 LEDs (Red + IR + Green), 100 Hz sample rate, lower power consumption </dd>
-<dd>
-Better for tissue penetration in muscle applications </dd></dl>
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8c_source.html#l00055">55</a> of file <a class="el" href="_m_a_x30101_8c_source.html">MAX30101.c</a>.</p>
 
 </div>
 </div>
@@ -234,17 +738,53 @@ Better for tissue penetration in muscle applications </dd></dl>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes MAX30101 for SpO2 measurement - Low power mode. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">None</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Uses 2 LEDs (Red + IR), 50 Hz sample rate, 16-bit resolution </dd>
-<dd>
-Lower power consumption, suitable for wearables and battery-powered devices </dd></dl>
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8c_source.html#l00023">23</a> of file <a class="el" href="_m_a_x30101_8c_source.html">MAX30101.c</a>.</p>
+
+</div>
+</div>
+<a id="a1703394f82b418ad4b72597cbe551b89" name="a1703394f82b418ad4b72597cbe551b89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1703394f82b418ad4b72597cbe551b89">&#9670;&#160;</a></span>MAX30101_ReadFIFO()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MAX30101_ReadFIFO </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_m_a_x30101___sample.html">MAX30101_Sample</a> *</td>          <td class="paramname"><span class="paramname"><em>samples</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>num_samples</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8c_source.html#l00126">126</a> of file <a class="el" href="_m_a_x30101_8c_source.html">MAX30101.c</a>.</p>
+
+</div>
+</div>
+<a id="a6381c7dfcfc51a5f420e4676cdf3bfa0" name="a6381c7dfcfc51a5f420e4676cdf3bfa0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6381c7dfcfc51a5f420e4676cdf3bfa0">&#9670;&#160;</a></span>MAX30101_ReadFIFO_Current()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MAX30101_ReadFIFO_Current </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_m_a_x30101___sample_current.html">MAX30101_SampleCurrent</a> *</td>          <td class="paramname"><span class="paramname"><em>samples</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>num_samples</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_m_a_x30101_8c_source.html#l00236">236</a> of file <a class="el" href="_m_a_x30101_8c_source.html">MAX30101.c</a>.</p>
 
 </div>
 </div>

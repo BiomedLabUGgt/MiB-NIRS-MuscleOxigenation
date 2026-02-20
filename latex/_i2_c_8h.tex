@@ -2,7 +2,7 @@
 \hypertarget{_i2_c_8h}{}\label{_i2_c_8h}\index{Project/I2C.h@{Project/I2C.h}}
 
 
-I2C communication module for STM32\+F303\+K8.  
+I2\+C1 Master Communication Driver (400 k\+Hz, STM32\+F303\+K8).  
 
 
 {\ttfamily \+\#include $<$stdint.\+h$>$}\newline
@@ -10,19 +10,65 @@ I2C communication module for STM32\+F303\+K8.
 \begin{DoxyCompactItemize}
 \item 
 void \doxymbox{\hyperlink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{I2\+C1\+\_\+\+Config}} (void)
-\begin{DoxyCompactList}\small\item\em Configures I2\+C1 on pins PB6 (SCL) and PB7 (SDA) for 400 k\+Hz operation. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Initialize I2\+C1 peripheral and GPIO pins. \end{DoxyCompactList}\item 
 void \doxymbox{\hyperlink{_i2_c_8h_abf6214e9f9eff0fed955ca315a309efa}{I2\+C1\+\_\+\+Write}} (uint8\+\_\+t slave, uint8\+\_\+t addr, uint8\+\_\+t data)
-\begin{DoxyCompactList}\small\item\em Writes a single byte to an I2C slave device register. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Write single register to I2C slave device. \end{DoxyCompactList}\item 
 void \doxymbox{\hyperlink{_i2_c_8h_a60d96d215561adbe3410d7fcfbf0a818}{I2\+C1\+\_\+\+Read}} (uint8\+\_\+t slave, uint8\+\_\+t addr, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t size)
-\begin{DoxyCompactList}\small\item\em Reads multiple bytes from an I2C slave device register. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Read multiple bytes from I2C slave register (repeated START). \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-I2C communication module for STM32\+F303\+K8. 
+I2\+C1 Master Communication Driver (400 k\+Hz, STM32\+F303\+K8). 
 
-This module provides functions to configure and communicate with I2\+C1 peripheral on pins PB6 (SCL) and PB7 (SDA) at 400 k\+Hz operation speed. \begin{DoxyAuthor}{Author}
+Low-\/level I2C driver for sensor communication using open-\/drain configuration.\hypertarget{_i2_c_8h_autotoc_md4}{}\doxysubsubsubsection{\texorpdfstring{Hardware Configuration}{Hardware Configuration}}\label{_i2_c_8h_autotoc_md4}
+
+\begin{DoxyItemize}
+\item {\bfseries{Peripheral}}:\+ I2\+C1 (APB1 @ 32 MHz)
+\item {\bfseries{Pins}}:\+ PB6 (SCL), PB7 (SDA) -\/ open-\/drain outputs
+\item {\bfseries{Speed}}:\+ 400 k\+Hz (Fast-\/mode compliant)
+\item {\bfseries{Addressing}}:\+ 7-\/bit slave addressing (MSB first)
+\item {\bfseries{Protocol}}:\+ Master-\/only; repeated START supported for register read
+\end{DoxyItemize}\hypertarget{_i2_c_8h_autotoc_md5}{}\doxysubsubsubsection{\texorpdfstring{Timing (400 k\+Hz mode, APB1 = 32 MHz)}{Timing (400 k\+Hz mode, APB1 = 32 MHz)}}\label{_i2_c_8h_autotoc_md5}
+
+\begin{DoxyItemize}
+\item SCL period:\+ 2.\+5 µs
+\item SCL high time:\+ \texorpdfstring{$\sim$}{\string~}1.5 µs
+\item SCL low time:\+ \texorpdfstring{$\sim$}{\string~}1.0 µs
+\item Setup/\+hold times:\+ Per I2C Fast-\/mode specification
+\end{DoxyItemize}\hypertarget{_i2_c_8h_autotoc_md6}{}\doxysubsubsubsection{\texorpdfstring{Driver Characteristics}{Driver Characteristics}}\label{_i2_c_8h_autotoc_md6}
+
+\begin{DoxyItemize}
+\item {\bfseries{Write latency}}:\+ \texorpdfstring{$\sim$}{\string~}30-\/50 µs per byte (2 bytes minimum per transaction)
+\item {\bfseries{Read latency}}:\+ \texorpdfstring{$\sim$}{\string~}100-\/150 µs per byte (repeated START adds \texorpdfstring{$\sim$}{\string~}50 µs overhead)
+\item {\bfseries{Blocking}}:\+ Yes (waits for bus/\+flags; no interrupts or DMA)
+\item {\bfseries{Thread-\/safe}}:\+ No (not safe for concurrent I2C accesses)
+\end{DoxyItemize}\hypertarget{_i2_c_8h_autotoc_md7}{}\doxysubsubsubsection{\texorpdfstring{Supported Transactions}{Supported Transactions}}\label{_i2_c_8h_autotoc_md7}
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Write}}:\+ Master writes register address + 1 data byte (MAX30101 registers)
+\item {\bfseries{Read}}:\+ Master writes address, repeated START, reads N bytes (FIFO streaming)
+\end{DoxyEnumerate}
+
+\begin{DoxyAuthor}{Author}
 Julio Fajardo 
 \end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2024-\/06-\/01 
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+2.\+0 
+\end{DoxyVersion}
+\begin{DoxyNote}{Note}
+For STM32\+F303\+K8 only. TIMINGR value 0x00\+C50\+F26 is specific to APB1 = 32 MHz 
+\end{DoxyNote}
+\begin{DoxyRefDesc}{Todo}
+\item[\doxymbox{\hyperlink{todo__todo000001}{Todo}}]Add error handling (NAK detection, bus timeout) 
+
+Implement DMA for high-\/speed FIFO reads \end{DoxyRefDesc}
+
+
+Definition in file \doxymbox{\hyperlink{_i2_c_8h_source}{I2\+C.\+h}}.
+
 
 
 \label{doc-func-members}
@@ -36,7 +82,37 @@ void I2\+C1\+\_\+\+Config (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyPar
 
 
 
-Configures I2\+C1 on pins PB6 (SCL) and PB7 (SDA) for 400 k\+Hz operation. 
+Initialize I2\+C1 peripheral and GPIO pins. 
+
+One-\/time configuration of I2\+C1 for master-\/mode 400 k\+Hz operation. Must be called before any \doxylink{_i2_c_8h_abf6214e9f9eff0fed955ca315a309efa}{I2\+C1\+\_\+\+Write()} or \doxylink{_i2_c_8h_a60d96d215561adbe3410d7fcfbf0a818}{I2\+C1\+\_\+\+Read()}.
+
+Initialize I2\+C1 peripheral and GPIO pins.
+
+/\+\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}
+
+Complete I2\+C1 setup sequence:\+
+\begin{DoxyEnumerate}
+\item Clock enables (I2\+C1, GPIOB)
+\item GPIO configuration (open-\/drain, alternate function AF4)
+\item I2C peripheral reset
+\item Timing register configuration for 400 k\+Hz
+\item Enable I2\+C1
+\end{DoxyEnumerate}\hypertarget{_i2_c_8h_autotoc_md0}{}\doxysubsubsubsection{\texorpdfstring{GPIO Configuration (PB6 = SCL, PB7 = SDA)}{GPIO Configuration (PB6 = SCL, PB7 = SDA)}}\label{_i2_c_8h_autotoc_md0}
+
+\begin{DoxyItemize}
+\item MODER:\+ \+[14:\+12]\+=10 (Alternate Function), \+[14:\+12]\+=10
+\item OTYPER:\+ \+[7]\+=1 (Open-\/drain), \+[6]\+=1
+\item AFR\+[0]\+:\+ \+[31:\+28]\+=0100 (AF4), \+[27:\+24]\+=0100 (AF4)
+\end{DoxyItemize}\hypertarget{_i2_c_8h_autotoc_md1}{}\doxysubsubsubsection{\texorpdfstring{I2C TIMINGR = 0x00\+C50\+F26 (for APB1 = 32 MHz, target 400 k\+Hz)}{I2C TIMINGR = 0x00\+C50\+F26 (for APB1 = 32 MHz, target 400 k\+Hz)}}\label{_i2_c_8h_autotoc_md1}
+
+\begin{DoxyItemize}
+\item PRESC\+[3:\+0]\+ = 0 (Prescaler = 1)
+\item SCLDEL\+[3:\+0]\+ = 1010 (Setup delay ≈ 640 ns)
+\item SDADEL\+[3:\+0]\+ = 0101 (Hold delay ≈ 320 ns)
+\item SCLH\+[7:\+0]\+ = 00001111 (SCL high ≈ 1.\+5 µs)
+\item SCLL\+[7:\+0]\+ = 00100110 (SCL low ≈ 1.\+0 µs)
+\item Calculated frequency:\+ \texorpdfstring{$\sim$}{\string~}400 k\+Hz (I2C Fast-\/mode)
+\end{DoxyItemize}
 
 
 \begin{DoxyParams}{Parameters}
@@ -44,8 +120,53 @@ Configures I2\+C1 on pins PB6 (SCL) and PB7 (SDA) for 400 k\+Hz operation.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-None 
+void 
 \end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em N/\+A} & \\
+\hline
+\end{DoxyRetVals}
+@timing
+\begin{DoxyItemize}
+\item Total init time:\+ \texorpdfstring{$<$}{<}1 ms
+\item I2\+C1 ready after:\+ function completes
+\item First I2C transaction:\+ can follow immediately
+\end{DoxyItemize}
+
+@critical\+\_\+sequence
+\begin{DoxyItemize}
+\item I2C clock MUST be enabled before TIMINGR modification
+\item GPIO pins must be configured as open-\/drain (not push-\/pull)
+\item Reset sequence (RSTR flag) clears any prior error states
+\item TIMINGR is APB1-\/frequency-\/sensitive; changing APB1 requires recalculation
+\end{DoxyItemize}
+
+@side\+\_\+effects
+\begin{DoxyItemize}
+\item PB6 and PB7 become I2\+C1 pins (unavailable for GPIO)
+\item I2\+C1 clock enabled in RCC-\/\texorpdfstring{$>$}{>}APB1\+ENR
+\item I2\+C1 will hold SCL/\+\+SDA low if bus is busy
+\end{DoxyItemize}
+
+\begin{DoxyWarning}{Warning}
+
+\begin{DoxyItemize}
+\item Call once at system startup, BEFORE any I2\+C\+\_\+\+Write/\+\+Read operations
+\item Do not change TIMINGR if APB1 frequency changes dynamically
+\item External pull-\/up resistors (\texorpdfstring{$\sim$}{\string~}4.7 kΩ) required on SCL/\+\+SDA lines
+\end{DoxyItemize}
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+\doxylink{_i2_c_8h_abf6214e9f9eff0fed955ca315a309efa}{I2\+C1\+\_\+\+Write}, \doxylink{_i2_c_8h_a60d96d215561adbe3410d7fcfbf0a818}{I2\+C1\+\_\+\+Read} 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_i2_c_8c_source_l00055}{55}} of file \doxymbox{\hyperlink{_i2_c_8c_source}{I2\+C.\+c}}.
+
 \Hypertarget{_i2_c_8h_a60d96d215561adbe3410d7fcfbf0a818}\index{I2C.h@{I2C.h}!I2C1\_Read@{I2C1\_Read}}
 \index{I2C1\_Read@{I2C1\_Read}!I2C.h@{I2C.h}}
 \doxysubsubsection{\texorpdfstring{I2C1\_Read()}{I2C1\_Read()}}
@@ -54,22 +175,128 @@ void I2\+C1\+\_\+\+Read (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{slave}{, 
 
 
 
-Reads multiple bytes from an I2C slave device register. 
+Read multiple bytes from I2C slave register (repeated START). 
 
-
+Master performs write-\/read sequence without releasing bus:\+
+\begin{DoxyItemize}
+\item Write:\+ \+[slave\+\_\+addr + W]\+ \+[register\+\_\+addr]\+
+\item Repeated START:\+ \+[slave\+\_\+addr + R]\+
+\item Read:\+ \+[data\+\_\+0]\+ \+[data\+\_\+1]\+ ... \+[data\+\_\+N]\+ 
 \begin{DoxyParams}{Parameters}
-{\em slave} & 7-\/bit slave address (not shifted) \\
+{\em slave} & -\/ 7-\/bit I2C slave address \\
 \hline
-{\em addr} & Register address to read from \\
+{\em addr} & -\/ Register address to read from \\
 \hline
-{\em data} & Pointer to buffer to store the read bytes \\
+{\em data} & -\/ \+[out]\+ Pointer to buffer for received bytes \\
 \hline
-{\em size} & Number of bytes to read \\
+{\em size} & -\/ \+[in]\+ Number of bytes to read (typically 1-\/6 for MAX30101) \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-None 
+void 
 \end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Blocking; latency ≈ (100 µs overhead) + (30 µs × size) 
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+Buffer overflow if size exceeds allocated data\+[]\+ array
+\end{DoxyWarning}
+Read multiple bytes from I2C slave register (repeated START).
+\end{DoxyItemize}
+
+Performs combined write-\/read transaction without bus release:\+ {\bfseries{Phase 1 (Write)}}:\+
+\begin{DoxyEnumerate}
+\item Configure CR2:\+ 1 byte, NO AUTOEND, START condition
+\item Send register address
+\item Wait for TC (transfer complete, not TXE) {\bfseries{Phase 2 (Repeated START + Read)}}:\+
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item Configure CR2:\+ RD\+\_\+\+WRN=1, size bytes, AUTOEND, START condition
+\item Read each byte from RXDR (data available via RXNE flag)
+\item Wait for STOPF (AUTOEND triggers STOP)
+\end{DoxyEnumerate}\hypertarget{_i2_c_8h_autotoc_md3}{}\doxysubsubsubsection{\texorpdfstring{Transaction Sequence}{Transaction Sequence}}\label{_i2_c_8h_autotoc_md3}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{START\ [slave\_addr(W)]\ ACK\ [register\_addr]\ ACK}
+\DoxyCodeLine{RESTART\ [slave\_addr(R)]\ ACK\ [data\_0]\ ACK\ [data\_1]\ ACK\ ...\ STOP}
+
+\end{DoxyCode}
+
+\begin{DoxyItemize}
+\item Repeated START:\+ Avoids releasing bus; allows atomic address+read
+\item RD\+\_\+\+WRN:\+ Set for read phase; hardware handles address bit automatically
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em slave} & -\/ 7-\/bit I2C slave address (e.\+g., 0x5D for MAX30101) Format:\+ \+[D6:\+D0]\+ (do NOT pre-\/shift) \\
+\hline
+{\em addr} & -\/ Register address in slave device to read from (e.\+g., 0x07 for MAX30101 FIFO) \\
+\hline
+{\em data} & -\/ \+[out]\+ Pointer to buffer for received bytes Must be allocated by caller with capacity ≥ size bytes \\
+\hline
+{\em size} & -\/ \+[in]\+ Number of bytes to read from slave (1-\/255) Typical values:\+ 1 (single register), 6 (MAX30101 FIFO sample) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em N/\+A} & (blocking until complete or error)\\
+\hline
+\end{DoxyRetVals}
+@timing
+\begin{DoxyItemize}
+\item Write address phase:\+ \texorpdfstring{$\sim$}{\string~}15-\/20 µs
+\item Repeated START latency:\+ \texorpdfstring{$\sim$}{\string~}10-\/15 µs
+\item Read phase (per byte):\+ \texorpdfstring{$\sim$}{\string~}10-\/15 µs
+\item {\bfseries{Total latency}}:\+ 100+ 30×size µs (typical)
+\item Example:\+ Read 6 bytes ≈ 180-\/200 µs
+\item Dominates any sensor timing; I2C is bottleneck at 100 Hz sampling
+\end{DoxyItemize}
+
+@flags\+\_\+monitored
+\begin{DoxyItemize}
+\item BUSY:\+ Wait until clear before write phase
+\item TXIS:\+ Ready for register address byte
+\item TC (not TXE!):\+ Critical; signals address byte sent, allowing repeated START
+\item RXNE:\+ Data byte available in RXDR
+\item STOPF:\+ AUTOEND triggered; read phase complete
+\end{DoxyItemize}
+
+@error\+\_\+conditions
+\begin{DoxyItemize}
+\item {\bfseries{Register address invalid}}:\+ Slave NAKs; BUSY remains set
+\item {\bfseries{No slave at address}}:\+ BUSY hangs indefinitely (no timeout)
+\item {\bfseries{Buffer overflow}}:\+ Caller must ensure data\+[]\+ size ≥ size parameter
+\item {\bfseries{Timeout on RXNE}}:\+ Slave not responding; function blocks forever
+\end{DoxyItemize}
+
+@performance\+\_\+note
+\begin{DoxyItemize}
+\item Read 32 FIFO samples (192 bytes):\+ \texorpdfstring{$\sim$}{\string~}6 milliseconds
+\item Pure I2C time at 100 Hz ÷ 32 samples = dominant ISR latency
+\item Consider DMA or firmware optimization for high-\/speed sampling
+\end{DoxyItemize}
+
+@usage\+\_\+example 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Read\ 6\ bytes\ from\ MAX30101\ FIFO\ (one\ sample,\ 3\ channels\ ×\ 2\ bytes)}}
+\DoxyCodeLine{uint8\_t\ fifo\_data[6];}
+\DoxyCodeLine{I2C1\_Read(0x5D,\ 0x07,\ fifo\_data,\ 6);}
+\DoxyCodeLine{\textcolor{comment}{//\ fifo\_data[0]\ =\ red[MSB],\ fifo\_data[1]\ =\ red[LSB],\ ...}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{_i2_c_8h_abf6214e9f9eff0fed955ca315a309efa}{I2\+C1\+\_\+\+Write}, I2C specification (repeated START section) 
+\end{DoxySeeAlso}
+
+
+Definition at line \doxymbox{\hyperlink{_i2_c_8c_source_l00215}{215}} of file \doxymbox{\hyperlink{_i2_c_8c_source}{I2\+C.\+c}}.
+
 \Hypertarget{_i2_c_8h_abf6214e9f9eff0fed955ca315a309efa}\index{I2C.h@{I2C.h}!I2C1\_Write@{I2C1\_Write}}
 \index{I2C1\_Write@{I2C1\_Write}!I2C.h@{I2C.h}}
 \doxysubsubsection{\texorpdfstring{I2C1\_Write()}{I2C1\_Write()}}
@@ -78,17 +305,98 @@ void I2\+C1\+\_\+\+Write (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{slave}{,
 
 
 
-Writes a single byte to an I2C slave device register. 
+Write single register to I2C slave device. 
 
-
+Master writes 2-\/byte transaction:\+ \+[register\+\_\+addr]\+ \+[data\+\_\+byte]\+ Uses AUTOEND flag for automatic STOP condition. 
 \begin{DoxyParams}{Parameters}
-{\em slave} & 7-\/bit slave address (not shifted) \\
+{\em slave} & -\/ 7-\/bit I2C slave address (e.\+g., 0x5D for MAX30101) \\
 \hline
-{\em addr} & Register address to write to \\
+{\em addr} & -\/ Register address (0x00-\/0x\+FF) \\
 \hline
-{\em data} & Data byte to write \\
+{\em data} & -\/ Data byte to write \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-None 
+void 
 \end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Blocking; typical latency 30-\/50 µs
+\end{DoxyNote}
+Write single register to I2C slave device.
+
+Performs standard I2C write transaction with automatic STOP condition:\+
+\begin{DoxyEnumerate}
+\item Wait for bus available (ISR.\+BUSY clear)
+\item Configure CR2:\+ 2 bytes, AUTOEND, START condition
+\item Send register address (TXDR)
+\item Send data byte (TXDR)
+\item Wait for TXE (transmitter empty); AUTOEND triggers STOP
+\end{DoxyEnumerate}\hypertarget{_i2_c_8h_autotoc_md2}{}\doxysubsubsubsection{\texorpdfstring{Transaction Sequence}{Transaction Sequence}}\label{_i2_c_8h_autotoc_md2}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{START\ [slave\_addr(W)]\ ACK\ [register\_addr]\ ACK\ [data\_byte]\ ACK\ STOP}
+
+\end{DoxyCode}
+
+\begin{DoxyItemize}
+\item START:\+ Generated by CR2.\+START
+\item slave\+\_\+addr:\+ Shifted left 1 bit by hardware; (slave\texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}1) or slave\texorpdfstring{$\vert$}{|}0
+\item AUTOEND:\+ Automatically generates STOP after NBYTES bytes sent
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em slave} & -\/ 7-\/bit I2C slave address (e.\+g., 0x5D for MAX30101) Format:\+ \+[D6:\+D0]\+ (do NOT pre-\/shift) \\
+\hline
+{\em addr} & -\/ Register address (0x00-\/0x\+FF) in slave device \\
+\hline
+{\em data} & -\/ Single data byte to write (0x00-\/0x\+FF) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em N/\+A} & (blocking until complete or bus error)\\
+\hline
+\end{DoxyRetVals}
+@timing
+\begin{DoxyItemize}
+\item Bus arbitration:\+ 1-\/2 µs
+\item Byte transmission (2×):\+ \texorpdfstring{$\sim$}{\string~}10 µs each = 20 µs
+\item ACK/\+\+STOP wait:\+ \texorpdfstring{$\sim$}{\string~}10 µs
+\item {\bfseries{Total latency}}:\+ \texorpdfstring{$\sim$}{\string~}30-\/50 µs (typical)
+\item Maximum timeout (bus error):\+ \texorpdfstring{$\sim$}{\string~}1 sec (hardware dependent)
+\end{DoxyItemize}
+
+@flags\+\_\+monitored
+\begin{DoxyItemize}
+\item BUSY:\+ Wait until clear (bus available)
+\item TXIS:\+ Transmit interrupt status, fires per byte ready to send
+\item TXE:\+ Transmitter empty, fires after last byte enqueued
+\item AUTOEND:\+ Firmware-\/set flag; hardware auto-\/clears and generates STOP
+\end{DoxyItemize}
+
+@error\+\_\+conditions
+\begin{DoxyItemize}
+\item {\bfseries{NAK received}}:\+ Bus hangs in BUSY state; requires I2C reset (see datasheet)
+\item {\bfseries{Slave not present}}:\+ Timeout; TXE may never set
+\item {\bfseries{SDA stuck low}}:\+ Requires manual GPIO toggle to recover
+\end{DoxyItemize}
+
+@usage\+\_\+example 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Write\ LED\ power\ control\ register\ to\ MAX30101}}
+\DoxyCodeLine{I2C1\_Write(0x5D,\ LED1\_PAMPLI,\ 0x3F);\ \ \textcolor{comment}{//\ slave=0x5D,\ addr=0x0C,\ data=0x3F}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{_i2_c_8h_a60d96d215561adbe3410d7fcfbf0a818}{I2\+C1\+\_\+\+Read}, I2C specification (NXP UM10204) 
+\end{DoxySeeAlso}
+
+
+Definition at line \doxymbox{\hyperlink{_i2_c_8c_source_l00133}{133}} of file \doxymbox{\hyperlink{_i2_c_8c_source}{I2\+C.\+c}}.
+

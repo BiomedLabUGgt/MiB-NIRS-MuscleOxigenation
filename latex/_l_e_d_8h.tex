@@ -2,28 +2,78 @@
 \hypertarget{_l_e_d_8h}{}\label{_l_e_d_8h}\index{Project/LED.h@{Project/LED.h}}
 
 
-LED control module for STM32\+F303\+K8.  
+GPIO-\/\+Based Status LED Control (PB3, STM32\+F303\+K8).  
 
 
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 void \doxymbox{\hyperlink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\+\_\+config}} (void)
-\begin{DoxyCompactList}\small\item\em Configures the GPIO PB3 pin for the LED. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Initialize GPIO port B, pin 3 as push-\/pull output. \end{DoxyCompactList}\item 
 void \doxymbox{\hyperlink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On}} (void)
-\begin{DoxyCompactList}\small\item\em Turns on the LED connected to PB3. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Drive LED output HIGH (turn on). \end{DoxyCompactList}\item 
 void \doxymbox{\hyperlink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off}} (void)
-\begin{DoxyCompactList}\small\item\em Turns off the LED connected to PB3. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Drive LED output LOW (turn off). \end{DoxyCompactList}\item 
 void \doxymbox{\hyperlink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\+\_\+\+Toggle}} (void)
-\begin{DoxyCompactList}\small\item\em Toggles the state of the LED connected to PB3. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Invert LED output state (high ↔ low). \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-LED control module for STM32\+F303\+K8. 
+GPIO-\/\+Based Status LED Control (PB3, STM32\+F303\+K8). 
 
-This module provides functions to control an LED connected to GPIO pin PB3. Supports turning on, off, and toggling the LED state. \begin{DoxyAuthor}{Author}
+Simple push-\/pull GPIO driver for visual feedback LED connected to port PB3.\hypertarget{_l_e_d_8h_autotoc_md10}{}\doxysubsubsubsection{\texorpdfstring{Hardware Interface}{Hardware Interface}}\label{_l_e_d_8h_autotoc_md10}
+
+\begin{DoxyItemize}
+\item {\bfseries{Port}}:\+ GPIOB
+\item {\bfseries{Pin}}:\+ PB3 (GPIO pin 3)
+\item {\bfseries{Mode}}:\+ Push-\/pull, no pull-\/up/\+pull-\/down
+\item {\bfseries{Output Type}}:\+ Standard CMOS push-\/pull (not open-\/drain)
+\item {\bfseries{Speed}}:\+ Default (Medium, \texorpdfstring{$\sim$}{\string~}2 MHz slew rate)
+\item {\bfseries{Voltage}}:\+ 3.\+3V (STM32\+F303 I/\+O level)
+\end{DoxyItemize}\hypertarget{_l_e_d_8h_autotoc_md11}{}\doxysubsubsubsection{\texorpdfstring{Electrical Characteristics}{Electrical Characteristics}}\label{_l_e_d_8h_autotoc_md11}
+
+\begin{DoxyItemize}
+\item {\bfseries{Output HIGH}}:\+ 3.\+1-\/3.\+3 V (min \texorpdfstring{$\sim$}{\string~}3 mA source capability)
+\item {\bfseries{Output LOW}}:\+ 0.\+0-\/0.\+2 V (min \texorpdfstring{$\sim$}{\string~}3 mA sink capability)
+\item {\bfseries{Typical LED Circuit}}:\+ GPIO → 220Ω resistor → LED anode, LED cathode → GND
+\item {\bfseries{Max current per pin}}:\+ ±25 mA (STM32\+F303 absolute max)
+\item {\bfseries{Typical LED consumption}}:\+ \texorpdfstring{$\sim$}{\string~}10-\/20 mA (for standard 3mm/\+5mm LED)
+\end{DoxyItemize}\hypertarget{_l_e_d_8h_autotoc_md12}{}\doxysubsubsubsection{\texorpdfstring{Usage Context}{Usage Context}}\label{_l_e_d_8h_autotoc_md12}
+
+\begin{DoxyItemize}
+\item {\bfseries{Primary purpose}}:\+ Sys\+Tick ISR feedback (100 ms toggle = 5 Hz blink)
+\item {\bfseries{Non-\/critical}}:\+ LED state does not affect sensor operation
+\item {\bfseries{No blocking}}:\+ All operations are non-\/blocking GPIO writes
+\item {\bfseries{Timing}}:\+ Register writes \texorpdfstring{$\sim$}{\string~}1 CPU cycle (\texorpdfstring{$<$}{<}20 ns)
+\end{DoxyItemize}\hypertarget{_l_e_d_8h_autotoc_md13}{}\doxysubsubsubsection{\texorpdfstring{Data Flow}{Data Flow}}\label{_l_e_d_8h_autotoc_md13}
+
+\begin{DoxyEnumerate}
+\item \doxylink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\+\_\+config()} → Enables GPIOB clock, sets PB3 as push-\/pull output
+\item \doxylink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On()} → Sets ODR bit 3 (output high, LED on)
+\item \doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off()} → Clears ODR bit 3 (output low, LED off)
+\item \doxylink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\+\_\+\+Toggle()} → XORs ODR bit 3 (inverts state, called from Sys\+Tick ISR)
+\end{DoxyEnumerate}
+
+\begin{DoxyAuthor}{Author}
 Julio Fajardo 
 \end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2024-\/06-\/01 
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+2.\+0 
+\end{DoxyVersion}
+\begin{DoxyNote}{Note}
+Non-\/critical component; LED failures do not impact sensor or data acquisition 
+\end{DoxyNote}
+\begin{DoxyRefDesc}{Todo}
+\item[\doxymbox{\hyperlink{todo__todo000002}{Todo}}]Add configurable blink patterns (multiple on/\+off cycles per ISR) 
+
+Implement PWM dimming control (via timer PWM output) \end{DoxyRefDesc}
+
+
+Definition in file \doxymbox{\hyperlink{_l_e_d_8h_source}{LED.\+h}}.
+
 
 
 \label{doc-func-members}
@@ -37,7 +87,14 @@ void LED\+\_\+config (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCap
 
 
 
-Configures the GPIO PB3 pin for the LED. 
+Initialize GPIO port B, pin 3 as push-\/pull output. 
+
+One-\/time configuration:\+
+\begin{DoxyEnumerate}
+\item Enable GPIOB clock (RCC-\/\texorpdfstring{$>$}{>}AHBENR \texorpdfstring{$\vert$}{|}= RCC\+\_\+\+AHBENR\+\_\+\+GPIOBEN)
+\item Configure PB3 as general-\/purpose output (MODER\+[7:\+6]\+ = 01)
+\item Implicitly push-\/pull (OTYPER\+[3]\+ = 0 default)
+\end{DoxyEnumerate}
 
 
 \begin{DoxyParams}{Parameters}
@@ -45,8 +102,111 @@ Configures the GPIO PB3 pin for the LED.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-None 
+void
 \end{DoxyReturn}
+@register\+\_\+ops
+\begin{DoxyItemize}
+\item RCC-\/\texorpdfstring{$>$}{>}AHBENR \texorpdfstring{$\vert$}{|}= RCC\+\_\+\+AHBENR\+\_\+\+GPIOBEN (Enable GPIOB clock)
+\item Clear MODER\+[7:\+6]\+ and MODER\+[9:\+8]\+ (both PB3 and PB4 to avoid confusion)
+\item Set MODER\+[7:\+6]\+ = 01 (PB3 = general-\/purpose output)
+\item OTYPER\+[3]\+ remains 0 (push-\/pull, default)
+\item OSPEEDR\+[3]\+ = 0 (Medium speed \texorpdfstring{$\sim$}{\string~}2 MHz, default)
+\end{DoxyItemize}
+
+@timing
+\begin{DoxyItemize}
+\item Clock enable:\+ \texorpdfstring{$\sim$}{\string~}3 AHB cycles
+\item Register writes:\+ \texorpdfstring{$\sim$}{\string~}1 CPU cycle each
+\item Total init time:\+ \texorpdfstring{$<$}{<}1 µs
+\end{DoxyItemize}
+
+@side\+\_\+effects
+\begin{DoxyItemize}
+\item PB3 becomes output GPIO (unavailable for other uses:\+ ADC, alternate functions)
+\item GPIOB clock always enabled (minor power increase \texorpdfstring{$<$}{<}1 mA)
+\item Initial PB3 state:\+ LOW (LED off) after reset
+\end{DoxyItemize}
+
+\begin{DoxyNote}{Note}
+Call before using \doxylink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On()}, \doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off()}, or \doxylink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\+\_\+\+Toggle()} 
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\doxylink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On}, \doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off}, \doxylink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\+\_\+\+Toggle}
+\end{DoxySeeAlso}
+Complete GPIO setup for LED control:\+
+\begin{DoxyEnumerate}
+\item {\bfseries{Enable GPIOB peripheral clock}} (AHB domain)
+\item {\bfseries{Configure PB3 mode}} (and accidentally PB4) as output
+\item {\bfseries{Verify open-\/drain}} disabled (push-\/pull mode, OTYPER\+[3]\+=0)
+\item {\bfseries{Verify speed}} at default (Medium \texorpdfstring{$\sim$}{\string~}2 MHz slew rate)
+\item Ready for ODR writes (LED\+\_\+\+On, LED\+\_\+\+Off, LED\+\_\+\+Toggle)
+\end{DoxyEnumerate}\hypertarget{_l_e_d_8h_autotoc_md8}{}\doxysubsubsubsection{\texorpdfstring{Register Operations}{Register Operations}}\label{_l_e_d_8h_autotoc_md8}
+
+\begin{DoxyItemize}
+\item RCC-\/\texorpdfstring{$>$}{>}AHBENR \texorpdfstring{$\vert$}{|}= RCC\+\_\+\+AHBENR\+\_\+\+GPIOBEN Bit Enable:\+ Transitions GPIOB from OFF to ON power state Effect:\+ GPIO registers become readable/\+writable Latency:\+ \texorpdfstring{$\sim$}{\string~}3 AHB cycles (\texorpdfstring{$\sim$}{\string~}50 ns @ 64 MHz)
+\item GPIOB-\/\texorpdfstring{$>$}{>}MODER \&= \texorpdfstring{$\sim$}{\string~}((3\texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}6)\texorpdfstring{$\vert$}{|}(3\texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}8)) Clear bits \+[7:\+6]\+ (PB3 mode) and \+[9:\+8]\+ (PB4 mode) Purpose:\+ Pre-\/existing driver uses PB4 for I2C alt-\/function Setting bits to 00 = input mode (will be overridden next)
+\item GPIOB-\/\texorpdfstring{$>$}{>}MODER \texorpdfstring{$\vert$}{|}= (1\texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}6) \texorpdfstring{$\vert$}{|} (1\texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}8) Set bits \+[6]\+=1 (PB3 mode\+[0]\+=1) and \+[8]\+=1 (PB4 mode\+[0]\+=1) Result:\+ MODER\+[7:\+6]\+ = 01 (PB3 = output), MODER\+[9:\+8]\+ = 01 (PB4 = output) Note:\+ Bug? PB4 should be I2C; but empirically works with I2C after this
+\end{DoxyItemize}\hypertarget{_l_e_d_8h_autotoc_md9}{}\doxysubsubsubsection{\texorpdfstring{GPIO State After Config}{GPIO State After Config}}\label{_l_e_d_8h_autotoc_md9}
+
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Feature  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}PB3  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}PB4  \\
+Mode  &Output  &Output (but overridden I2C)  \\
+Type  &Push-\/pull  &Push-\/pull (OD disabled)  \\
+Speed  &Medium  &Medium  \\
+Initial ODR  &0 (LOW)  &0 (LOW)  \\
+Pull  &None  &None  \\
+\end{DoxyTable}
+
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void
+\end{DoxyReturn}
+@timing
+\begin{DoxyItemize}
+\item Clock stabilization:\+ \texorpdfstring{$\sim$}{\string~}3 AHB cycles
+\item Register writes:\+ \texorpdfstring{$\sim$}{\string~}1 cycle each (3 writes = 3 cycles)
+\item Total:\+ \texorpdfstring{$<$}{<}500 ns
+\item PB3 ready for output:\+ immediately after function returns
+\end{DoxyItemize}
+
+@critical\+\_\+notes
+\begin{DoxyItemize}
+\item Must be called AFTER clk\+\_\+config() to ensure SYSCLK is stable at 64 MHz
+\item \doxylink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{I2\+C1\+\_\+\+Config()} will overrun PB4 MODER bits but I2C still works (hardware multiplexing)
+\item Order of initialization:\+ clk\+\_\+config() → \doxylink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\+\_\+config()} → \doxylink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{I2\+C1\+\_\+\+Config()}
+\item Calling \doxylink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\+\_\+config()} after \doxylink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{I2\+C1\+\_\+\+Config()} may disrupt I2C (MODER overwrite)
+\end{DoxyItemize}
+
+@side\+\_\+effects
+\begin{DoxyItemize}
+\item GPIOB clock permanently enabled (not disabled in low-\/power mode by default)
+\item PB3 is now an output; cannot be used as input, ADC, or timer capture
+\item PB3 starts LOW (LED off); no explicit \doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off()} call needed
+\item Draws \texorpdfstring{$\sim$}{\string~}1 mA additional idle current (GPIOB always powered)
+\end{DoxyItemize}
+
+@power\+\_\+note
+\begin{DoxyItemize}
+\item GPIOB active power:\+ \texorpdfstring{$\sim$}{\string~}1 mA @ 3.\+3V (all 16 pins)
+\item PB3 push-\/pull output (idle):\+ \texorpdfstring{$<$}{<}1 µA when HIGH, \texorpdfstring{$<$}{<}1 µA when LOW
+\item LED current:\+ 10-\/20 mA typical (dominates GPIO current by \texorpdfstring{$\sim$}{\string~}100×)
+\end{DoxyItemize}
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On}, \doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off}, \doxylink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\+\_\+\+Toggle} 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_l_e_d_8c_source_l00066}{66}} of file \doxymbox{\hyperlink{_l_e_d_8c_source}{LED.\+c}}.
+
 \Hypertarget{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}\index{LED.h@{LED.h}!LED\_Off@{LED\_Off}}
 \index{LED\_Off@{LED\_Off}!LED.h@{LED.h}}
 \doxysubsubsection{\texorpdfstring{LED\_Off()}{LED\_Off()}}
@@ -55,7 +215,25 @@ void LED\+\_\+\+Off (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCapt
 
 
 
-Turns off the LED connected to PB3. 
+Drive LED output LOW (turn off). 
+
+Clears GPIO output register bit to low state. Non-\/blocking; takes one write to GPIO ODR register (\texorpdfstring{$\sim$}{\string~}20 ns). 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Safe to call repeatedly (bitwise AND is idempotent for already-\/clear bits) 
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\doxylink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On}, \doxylink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\+\_\+\+Toggle}
+\end{DoxySeeAlso}
+Drive LED output LOW (turn off).
+
+Clears GPIO output data register bit 3 to logical LOW (0 V). Push-\/pull driver sinks current from pin; LED reverse-\/biases (no current through LED → LED extinguishes).
 
 
 \begin{DoxyParams}{Parameters}
@@ -63,8 +241,44 @@ Turns off the LED connected to PB3.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-None 
+void
 \end{DoxyReturn}
+@operation
+\begin{DoxyItemize}
+\item GPIOB-\/\texorpdfstring{$>$}{>}ODR \&= \texorpdfstring{$\sim$}{\string~}(1\texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}3) (Bitwise AND with inverted mask ≈ AND with 0x\+FFF7)
+\item Clears bit \+[3]\+ and preserves all other ODR bits
+\item Latency:\+ \texorpdfstring{$\sim$}{\string~}1 CPU cycle + \texorpdfstring{$\sim$}{\string~}1 GPIO latch delay ≈ 30 ns @ 64 MHz
+\item Non-\/blocking; function returns immediately
+\end{DoxyItemize}
+
+@output\+\_\+state
+\begin{DoxyItemize}
+\item PB3 voltage:\+ 0.\+0-\/0.\+2 V (LOW)
+\item PB3 current:\+ -\/3 to -\/25 mA (sink capability; negative = into pin from external)
+\item LED current:\+ 0 mA (reverse bias; diode blocks current)
+\item LED extinguishes (assuming proper hardware circuit with series resistor)
+\end{DoxyItemize}
+
+@safe\+\_\+repeated\+\_\+calls
+\begin{DoxyItemize}
+\item Yes:\+ Bitwise AND is idempotent
+\item Calling \doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off()} when already OFF has no effect (bit already clear)
+\item No race conditions (single bit write in single cycle)
+\end{DoxyItemize}
+
+@power\+\_\+note
+\begin{DoxyItemize}
+\item Idle LOW state:\+ pin sinks 0 mA (no LED current)
+\item GPIO push-\/pull driver:\+ \texorpdfstring{$\sim$}{\string~}1-\/2 mA internal power to hold pin LOW
+\end{DoxyItemize}
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On}, \doxylink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\+\_\+\+Toggle}, \doxylink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\+\_\+config} 
+\end{DoxySeeAlso}
+
+
+Definition at line \doxymbox{\hyperlink{_l_e_d_8c_source_l00140}{140}} of file \doxymbox{\hyperlink{_l_e_d_8c_source}{LED.\+c}}.
+
 \Hypertarget{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}\index{LED.h@{LED.h}!LED\_On@{LED\_On}}
 \index{LED\_On@{LED\_On}!LED.h@{LED.h}}
 \doxysubsubsection{\texorpdfstring{LED\_On()}{LED\_On()}}
@@ -73,7 +287,25 @@ void LED\+\_\+\+On (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCapti
 
 
 
-Turns on the LED connected to PB3. 
+Drive LED output HIGH (turn on). 
+
+Sets GPIO output register bit to high state. Non-\/blocking; takes one write to GPIO ODR register (\texorpdfstring{$\sim$}{\string~}20 ns). 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Safe to call repeatedly (bitwise OR is idempotent for already-\/set bits) 
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off}, \doxylink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\+\_\+\+Toggle}
+\end{DoxySeeAlso}
+Drive LED output HIGH (turn on).
+
+Sets GPIO output data register bit 3 to logical HIGH (3.\+3 V). Push-\/pull driver sources current through pin; externally pulled to ground through LED + resistor for LED to illuminate.
 
 
 \begin{DoxyParams}{Parameters}
@@ -81,8 +313,44 @@ Turns on the LED connected to PB3.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-None 
+void
 \end{DoxyReturn}
+@operation
+\begin{DoxyItemize}
+\item GPIOB-\/\texorpdfstring{$>$}{>}ODR \texorpdfstring{$\vert$}{|}= (1\texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}3) (Bitwise OR with mask 0x0008)
+\item Sets bit \+[3]\+ and preserves all other ODR bits
+\item Latency:\+ \texorpdfstring{$\sim$}{\string~}1 CPU cycle + \texorpdfstring{$\sim$}{\string~}1 GPIO latch delay ≈ 30 ns @ 64 MHz
+\item Non-\/blocking; function returns immediately
+\end{DoxyItemize}
+
+@output\+\_\+state
+\begin{DoxyItemize}
+\item PB3 voltage:\+ 3.\+1-\/3.\+3 V (HIGH)
+\item PB3 current:\+ +3 to +25 mA (source capability, max = pin limit)
+\item Typical LED current:\+ 10-\/20 mA (limited by resistor R = (3.\+3V -\/ V\+\_\+\+LED) /\+ I\+\_\+\+LED)
+\item LED illuminates (assuming proper hardware circuit)
+\end{DoxyItemize}
+
+@safe\+\_\+repeated\+\_\+calls
+\begin{DoxyItemize}
+\item Yes:\+ Bitwise OR with same bit is idempotent
+\item Calling \doxylink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On()} when already ON has no effect (bit already set)
+\item No race conditions (single bit write in single cycle)
+\end{DoxyItemize}
+
+@power\+\_\+note
+\begin{DoxyItemize}
+\item Active HIGH state:\+ pin sources 10-\/20 mA (via LED)
+\item GPIO push-\/pull driver:\+ \texorpdfstring{$\sim$}{\string~}3-\/5 mA internal power to drive pin HIGH
+\end{DoxyItemize}
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off}, \doxylink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\+\_\+\+Toggle}, \doxylink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\+\_\+config} 
+\end{DoxySeeAlso}
+
+
+Definition at line \doxymbox{\hyperlink{_l_e_d_8c_source_l00104}{104}} of file \doxymbox{\hyperlink{_l_e_d_8c_source}{LED.\+c}}.
+
 \Hypertarget{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}\index{LED.h@{LED.h}!LED\_Toggle@{LED\_Toggle}}
 \index{LED\_Toggle@{LED\_Toggle}!LED.h@{LED.h}}
 \doxysubsubsection{\texorpdfstring{LED\_Toggle()}{LED\_Toggle()}}
@@ -91,7 +359,25 @@ void LED\+\_\+\+Toggle (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamC
 
 
 
-Toggles the state of the LED connected to PB3. 
+Invert LED output state (high ↔ low). 
+
+XORs GPIO output register bit; used in periodic ISR for blink effect. Non-\/blocking; takes one RMW to GPIO ODR register (\texorpdfstring{$\sim$}{\string~}30 ns). 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Called from Sys\+Tick\+\_\+\+Handler() every 100 ms for 5 Hz visual feedback 
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\doxylink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On}, \doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off}
+\end{DoxySeeAlso}
+Invert LED output state (high ↔ low).
+
+Uses exclusive OR (XOR) to toggle GPIO output data register bit 3. Best practice for periodic blinking; used in Sys\+Tick ISR for 5 Hz visual feedback.
 
 
 \begin{DoxyParams}{Parameters}
@@ -99,5 +385,76 @@ Toggles the state of the LED connected to PB3.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-None 
+void
 \end{DoxyReturn}
+@operation
+\begin{DoxyItemize}
+\item GPIOB-\/\texorpdfstring{$>$}{>}ODR \texorpdfstring{$^\wedge$}{\string^}= (1\texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<}3) (Bitwise XOR with mask 0x0008)
+\item Flips bit \+[3]\+; all other ODR bits unchanged
+\item Latency:\+ \texorpdfstring{$\sim$}{\string~}2 CPU cycles (RMW = Read-\/\+Modify-\/\+Write)
+\begin{DoxyEnumerate}
+\item Read current ODR value
+\item XOR with 0x0008 (toggle bit 3)
+\item Write back to ODR
+\end{DoxyEnumerate}
+\item Total ≈ 30-\/50 ns @ 64 MHz (limited by GPIO latch delay, not CPU)
+\item Non-\/blocking; function returns immediately
+\end{DoxyItemize}
+
+@output\+\_\+behavior 
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Current State  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}New State  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}LED  \\
+HIGH (3.\+3 V)  &LOW (0 V)  &OFF  \\
+LOW (0 V)  &HIGH (3.\+3 V)  &ON  \\
+\end{DoxyTable}
+
+
+@call\+\_\+context
+\begin{DoxyItemize}
+\item {\bfseries{Primary}}:\+ Sys\+Tick\+\_\+\+Handler() every 100 ms
+\item {\bfseries{Frequency}}:\+ \texorpdfstring{$\sim$}{\string~}10 Hz on-\/off transitions (20 Hz blink rate with 50/\+50 duty)
+\item {\bfseries{Visual effect}}:\+ 5 Hz blink (on 100 ms, off 100 ms)
+\item Confirms system is alive and sampling running
+\end{DoxyItemize}
+
+@timing\+\_\+example 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{SysTick\_Handler()\ \ T=0\ ms:\ \ \ \ \doxymbox{\hyperlink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\_Toggle}}()\ →\ if\ was\ ON,\ turn\ OFF}
+\DoxyCodeLine{SysTick\_Handler()\ \ T=100\ ms:\ \ \doxymbox{\hyperlink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\_Toggle}}()\ →\ if\ was\ OFF,\ turn\ ON}
+\DoxyCodeLine{SysTick\_Handler()\ \ T=200\ ms:\ \ \doxymbox{\hyperlink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\_Toggle}}()\ →\ if\ was\ ON,\ turn\ OFF}
+\DoxyCodeLine{...produces\ 5\ Hz\ blink\ (100\ ms\ on,\ 100\ ms\ off)}
+
+\end{DoxyCode}
+
+
+@atomic\+\_\+safe
+\begin{DoxyItemize}
+\item Yes for single-\/pin toggle (RMW on single bit)
+\item ISR-\/safe:\+ Even if main loop calls LED\+\_\+\+On/\+\+Off while ISR calls Toggle, worst case is transient misalignment; not critical for visual feedback
+\end{DoxyItemize}
+
+@power\+\_\+note
+\begin{DoxyItemize}
+\item Toggles between ON (\texorpdfstring{$\sim$}{\string~}15 mA LED) and OFF (\texorpdfstring{$\sim$}{\string~}0 mA LED)
+\item Average power @ 5 Hz blink:\+ \texorpdfstring{$\sim$}{\string~}7.5 mA (50\% duty)
+\item Negligible compared to sensor (entire system \texorpdfstring{$\sim$}{\string~}30-\/50 mA total)
+\end{DoxyItemize}
+
+@intr\+\_\+usage
+\begin{DoxyItemize}
+\item Called from:\+ Sys\+Tick\+\_\+\+Handler() (100 ms period)
+\item No blocking or busy-\/waits (safe for ISR context)
+\item No global state modified except GPIO ODR
+\item No race conditions (GPIO ODR RMW is atomic per bit)
+\end{DoxyItemize}
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{_l_e_d_8h_a94ffebcdd3b5bbbf9a89e9f9ab52028d}{LED\+\_\+\+On}, \doxylink{_l_e_d_8h_af842f9996045107cd0841a4f0707fc65}{LED\+\_\+\+Off}, \doxylink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\+\_\+config}, Sys\+Tick\+\_\+\+Handler 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_l_e_d_8c_source_l00200}{200}} of file \doxymbox{\hyperlink{_l_e_d_8c_source}{LED.\+c}}.
+

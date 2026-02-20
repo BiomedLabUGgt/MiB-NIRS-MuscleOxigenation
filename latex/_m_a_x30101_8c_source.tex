@@ -1,0 +1,260 @@
+\doxysection{MAX30101.\+c}
+\hypertarget{_m_a_x30101_8c_source}{}\label{_m_a_x30101_8c_source}\index{Project/MAX30101.c@{Project/MAX30101.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_m_a_x30101_8h}{MAX30101.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_i2_c_8h}{I2C.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00003}00003\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00004}00004\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00005}00005\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00006}00006\ \textcolor{comment}{\ *\ @brief\ Initialize\ MAX30101\ in\ SpO2\ mode\ (dual-\/LED\ configuration)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00007}00007\ \textcolor{comment}{\ *\ @details\ Configures\ sensor\ for\ blood\ oxygen\ (SpO2)\ measurement\ with\ low\ power\ consumption.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00008}00008\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ Mode:\ SpO2\ (Red\ +\ IR\ LEDs)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00009}00009\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ Sample\ Rate:\ 50\ Hz}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00010}00010\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ ADC\ Resolution:\ 16-\/bit}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00011}00011\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ FIFO\ Configuration:\ Averaging\ 8,\ rollover\ enabled}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00012}00012\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ LED\ Power:\ Low\ (minimal\ power\ draw,\ suitable\ for\ wearables)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00013}00013\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ Temperature\ Sensor:\ Enabled}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00014}00014\ \textcolor{comment}{\ *\ @param\ None}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00015}00015\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00016}00016\ \textcolor{comment}{\ *\ @note\ Suitable\ for\ battery-\/powered\ wearable\ applications.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00017}00017\ \textcolor{comment}{\ *\ \ \ \ \ \ \ Call\ this\ once\ during\ initialization\ before\ reading\ samples.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00018}00018\ \textcolor{comment}{\ *\ @see\ MAX30101\_InitMuscleOx}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00019}00019\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00020}00020\ \textcolor{comment}{\ *\ \ \ MAX30101\_InitSPO2Lite();}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00021}00021\ \textcolor{comment}{\ *\ \ \ uint8\_t\ samples\ =\ MAX30101\_GetNumAvailableSamples();}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00022}00022\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00023}00023\ \textcolor{keywordtype}{void}\ MAX30101\_InitSPO2Lite(\textcolor{keywordtype}{void})\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00024}00024\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ FIFO\_CONFIG,\ 0x4F);\ \ \ \ \ \ \textcolor{comment}{//\ FIFO\ avg\ 8,\ FIFO\ rollover\ enabled}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00025}00025\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ MODE\_CONFIG,\ 0x03);\ \ \ \ \ \ \textcolor{comment}{//\ SPO2\ Mode\ (Red\ +\ IR)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00026}00026\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ SPO2\_CONFIG,\ 0x23);\ \ \ \ \ \ \textcolor{comment}{//\ 2048\ range,\ sample\ rate\ 50\ Hz,\ pulse\ width\ 215\ (16\ bits)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00027}00027\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ FIFO\_READPTR,\ 0x0);\ \ \ \ \ \ \textcolor{comment}{//\ Reset\ FIFO\ read\ pointer}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00028}00028\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ FIFO\_WRITPTR,\ 0x0);\ \ \ \ \ \ \textcolor{comment}{//\ Reset\ FIFO\ write\ pointer}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00029}00029\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ LED1\_PAMPLI,\ 0x18);\ \ \ \ \ \ \textcolor{comment}{//\ Red\ LED\ power\ (low)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00030}00030\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ LED2\_PAMPLI,\ 0x18);\ \ \ \ \ \ \textcolor{comment}{//\ IR\ LED\ power\ (low)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00031}00031\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ DIE\_TEMPCFG,\ 0x01);\ \ \ \ \ \ \textcolor{comment}{//\ Enable\ temperature\ sensor}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00032}00032\ \}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00033}00033\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00034}00034\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00035}00035\ \textcolor{comment}{\ *\ @brief\ Initialize\ MAX30101\ for\ NIRS\ muscle\ oxygenation\ measurement}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00036}00036\ \textcolor{comment}{\ *\ @details\ Configures\ sensor\ for\ Near-\/Infrared\ Spectroscopy\ with\ 3\ simultaneous\ LEDs.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00037}00037\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Optimal\ for\ non-\/invasive\ tissue\ oxygenation\ and\ perfusion\ monitoring.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00038}00038\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ Mode:\ Multi-\/LED\ (Red\ +\ IR\ +\ Green)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00039}00039\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ Sample\ Rate:\ 100\ Hz}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00040}00040\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ ADC\ Resolution:\ 16-\/bit}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00041}00041\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ FIFO\ Configuration:\ Averaging\ 8,\ rollover\ enabled}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00042}00042\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ Temperature\ Sensor:\ Enabled}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00043}00043\ \textcolor{comment}{\ *\ @param\ ledPower\ -\/\ LED\ current\ control\ register\ value\ (0x00\ to\ 0xFF)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00044}00044\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Range:\ 4.4\ mA\ to\ 50.6\ mA\ in\ \string~0.2\ mA\ steps}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00045}00045\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Typical:\ 0x4B\ (\string~20\ mA),\ 0x18\ (\string~10\ mA)\ for\ low\ power}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00046}00046\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00047}00047\ \textcolor{comment}{\ *\ @note\ Higher\ sample\ rate\ (100\ Hz)\ vs\ SPO2Lite\ (50\ Hz)\ provides\ better\ temporal\ resolution.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00048}00048\ \textcolor{comment}{\ *\ \ \ \ \ \ \ Three-\/LED\ configuration\ increases\ tissue\ penetration\ depth\ for\ muscle\ assessment.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00049}00049\ \textcolor{comment}{\ *\ @see\ MAX30101\_InitSPO2Lite}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00050}00050\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00051}00051\ \textcolor{comment}{\ *\ \ \ MAX30101\_InitMuscleOx(0x4B);\ \ //\ 20\ mA\ LED\ power}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00052}00052\ \textcolor{comment}{\ *\ \ \ uint8\_t\ available\ =\ MAX30101\_GetNumAvailableSamples();}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00053}00053\ \textcolor{comment}{\ *\ \ \ MAX30101\_ReadFIFO\_Current(current\_buffer,\ available);}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00054}00054\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00055}00055\ \textcolor{keywordtype}{void}\ MAX30101\_InitMuscleOx(uint8\_t\ ledPower)\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00056}00056\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ FIFO\_CONFIG,\ 0x4F);\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FIFO\ avg\ 8,\ FIFO\ rollover\ enabled}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00057}00057\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ MODE\_CONFIG,\ 0x07);\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Multi-\/LED\ mode\ (Red\ +\ IR\ +\ Green)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00058}00058\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ SPO2\_CONFIG,\ 0x26);\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 2048\ range,\ sample\ rate\ 100\ Hz,\ pulse\ width\ 215\ (16\ bits)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00059}00059\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ FIFO\_READPTR,\ 0x0);\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reset\ FIFO\ read\ pointer}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00060}00060\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ FIFO\_WRITPTR,\ 0x0);\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reset\ FIFO\ write\ pointer\ }}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00061}00061\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ LED1\_PAMPLI,\ ledPower);\ \ \ \ \ \textcolor{comment}{//\ Red\ LED\ power\ (medium)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00062}00062\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ LED2\_PAMPLI,\ ledPower);\ \ \ \ \ \textcolor{comment}{//\ IR\ LED\ power\ (medium)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00063}00063\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ LED3\_PAMPLI,\ ledPower);\ \ \ \ \ \textcolor{comment}{//\ Green\ LED\ power\ (medium)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00064}00064\ \ \ \ \ I2C1\_Write(SENSOR\_ADDR,\ DIE\_TEMPCFG,\ 0x01);\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Enable\ temperature\ sensor}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00065}00065\ \}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00066}00066\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00067}00067\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00068}00068\ \textcolor{comment}{\ *\ @brief\ Query\ FIFO\ status\ from\ MAX30101\ sensor}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00069}00069\ \textcolor{comment}{\ *\ @details\ Reads\ FIFO\ write\ and\ read\ pointer\ registers\ to\ determine\ number\ of\ unread\ samples.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00070}00070\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Accounts\ for\ circular\ 32-\/sample\ FIFO\ with\ pointer\ wrap-\/around.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00071}00071\ \textcolor{comment}{\ *\ @param\ None}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00072}00072\ \textcolor{comment}{\ *\ @return\ uint8\_t\ Number\ of\ complete\ samples\ available\ (0\ to\ 32)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00073}00073\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ -\/\ Returns\ 0\ if\ FIFO\ empty\ or\ pointers\ equal}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00074}00074\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ -\/\ Returns\ 1\ to\ 32\ for\ available\ samples}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00075}00075\ \textcolor{comment}{\ *\ @note\ Call\ this\ before\ MAX30101\_ReadFIFO()\ or\ MAX30101\_ReadFIFO\_Current()}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00076}00076\ \textcolor{comment}{\ *\ \ \ \ \ \ \ to\ check\ if\ new\ data\ is\ ready.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00077}00077\ \textcolor{comment}{\ *\ @warning\ Multiple\ fast\ consecutive\ reads\ may\ show\ inconsistent\ results}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00078}00078\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ due\ to\ FIFO\ updates\ during\ pointer\ reads.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00079}00079\ \textcolor{comment}{\ *\ @see\ MAX30101\_ReadFIFO,\ MAX30101\_ReadFIFO\_Current}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00080}00080\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00081}00081\ \textcolor{comment}{\ *\ \ \ uint8\_t\ count\ =\ MAX30101\_GetNumAvailableSamples();}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00082}00082\ \textcolor{comment}{\ *\ \ \ if\ (count\ >\ 0)\ \{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00083}00083\ \textcolor{comment}{\ *\ \ \ \ \ \ \ MAX30101\_ReadFIFO\_Current(samples,\ count);}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00084}00084\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00085}00085\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00086}00086\ uint8\_t\ MAX30101\_GetNumAvailableSamples(\textcolor{keywordtype}{void})\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00087}00087\ \ \ \ \ uint8\_t\ write\_ptr\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00088}00088\ \ \ \ \ uint8\_t\ read\_ptr\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00089}00089\ \ \ \ \ uint8\_t\ num\_samples\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00090}00090\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00091}00091\ \ \ \ \ \textcolor{comment}{//\ Read\ FIFO\ write\ pointer\ and\ read\ pointer\ from\ sensor}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00092}00092\ \ \ \ \ I2C1\_Read(SENSOR\_ADDR,\ FIFO\_WRITPTR,\ \&write\_ptr,\ 1);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00093}00093\ \ \ \ \ I2C1\_Read(SENSOR\_ADDR,\ FIFO\_READPTR,\ \&read\_ptr,\ 1);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00094}00094\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00095}00095\ \ \ \ \ \textcolor{comment}{//\ Mask\ to\ 5\ bits\ since\ FIFO\ pointers\ are\ 5\ bits\ (0-\/31)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00096}00096\ \ \ \ \ write\_ptr\ \&=\ 0x1F;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00097}00097\ \ \ \ \ read\_ptr\ \&=\ 0x1F;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00098}00098\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00099}00099\ \ \ \ \ \textcolor{comment}{//\ Calculate\ available\ samples}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00100}00100\ \ \ \ \ \textcolor{keywordflow}{if}\ (write\_ptr\ >=\ read\_ptr)\ \{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00101}00101\ \ \ \ \ \ \ \ \ num\_samples\ =\ write\_ptr\ -\/\ read\_ptr;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00102}00102\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00103}00103\ \ \ \ \ \ \ \ \ num\_samples\ =\ (32\ -\/\ read\_ptr)\ +\ write\_ptr;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00104}00104\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00105}00105\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00106}00106\ \ \ \ \ \textcolor{keywordflow}{return}\ num\_samples;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00107}00107\ \}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00108}00108\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00109}00109\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00110}00110\ \textcolor{comment}{\ *\ @brief\ Read\ raw\ FIFO\ data\ from\ MAX30101\ (intermediate\ format)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00111}00111\ \textcolor{comment}{\ *\ @details\ Streams\ raw\ 2-\/byte\ ADC\ samples\ sequentially\ from\ each\ channel.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00112}00112\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Data\ is\ organized\ as:\ Red(2B)\ IR(2B)\ Green(2B)\ repeating.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00113}00113\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Each\ complete\ sample\ requires\ 6\ bytes\ from\ FIFO.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00114}00114\ \textcolor{comment}{\ *\ @param\ samples\ -\/\ [out]\ Pointer\ to\ buffer\ of\ MAX30101\_Sample\ structures\ to\ populate}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00115}00115\ \textcolor{comment}{\ *\ @param\ num\_samples\ -\/\ [in]\ Number\ of\ complete\ samples\ to\ read\ (max\ 32)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00116}00116\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00117}00117\ \textcolor{comment}{\ *\ @retval\ N/A}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00118}00118\ \textcolor{comment}{\ *\ @note\ This\ is\ the\ lowest-\/level\ FIFO\ read.\ For\ processed\ data\ in\ nanoamps,}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00119}00119\ \textcolor{comment}{\ *\ \ \ \ \ \ \ use\ MAX30101\_ReadFIFO\_Current()\ instead\ to\ skip\ intermediate\ conversion.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00120}00120\ \textcolor{comment}{\ *\ @warning\ Ensure\ buffer\ has\ capacity\ for\ num\_samples\ structures.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00121}00121\ \textcolor{comment}{\ *\ @see\ MAX30101\_ReadFIFO\_Current,\ MAX30101\_ConvertSampleToUint16}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00122}00122\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00123}00123\ \textcolor{comment}{\ *\ \ \ MAX30101\_Sample\ raw[32];}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00124}00124\ \textcolor{comment}{\ *\ \ \ MAX30101\_ReadFIFO(raw,\ 5);\ \ //\ Read\ 5\ samples}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00125}00125\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00126}00126\ \textcolor{keywordtype}{void}\ MAX30101\_ReadFIFO(\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\_Sample}}\ *samples,\ uint8\_t\ num\_samples)\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00127}00127\ \ \ \ \ uint8\_t\ i\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00128}00128\ \ \ \ \ uint8\_t\ fifo\_data[8];\ \ \textcolor{comment}{//\ 6\ bytes\ per\ complete\ sample\ (3\ channels\ ×\ 2\ bytes)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00129}00129\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00130}00130\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0;\ i\ <\ num\_samples;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00131}00131\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ 6\ consecutive\ bytes\ from\ FIFO\_DATAREG}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00132}00132\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Each\ I2C\ read\ from\ address\ 0x07\ gets\ the\ next\ byte\ in\ the\ FIFO}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00133}00133\ \ \ \ \ \ \ \ \ I2C1\_Read(SENSOR\_ADDR,\ FIFO\_DATAREG,\ fifo\_data,\ 6);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00134}00134\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00135}00135\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Store\ the\ 2-\/byte\ samples\ for\ each\ channel}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00136}00136\ \ \ \ \ \ \ \ \ samples[i].\doxymbox{\hyperlink{struct_m_a_x30101___sample_a4230155679f4357f2a47ca753fb46f0c}{red}}[0]\ =\ fifo\_data[0];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00137}00137\ \ \ \ \ \ \ \ \ samples[i].\doxymbox{\hyperlink{struct_m_a_x30101___sample_a4230155679f4357f2a47ca753fb46f0c}{red}}[1]\ =\ fifo\_data[1];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00138}00138\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00139}00139\ \ \ \ \ \ \ \ \ samples[i].\doxymbox{\hyperlink{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd}{ir}}[0]\ =\ fifo\_data[2];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00140}00140\ \ \ \ \ \ \ \ \ samples[i].\doxymbox{\hyperlink{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd}{ir}}[1]\ =\ fifo\_data[3];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00141}00141\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00142}00142\ \ \ \ \ \ \ \ \ samples[i].\doxymbox{\hyperlink{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864}{green}}[0]\ =\ fifo\_data[4];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00143}00143\ \ \ \ \ \ \ \ \ samples[i].\doxymbox{\hyperlink{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864}{green}}[1]\ =\ fifo\_data[5];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00144}00144\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00145}00145\ \}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00146}00146\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00147}00147\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00148}00148\ \textcolor{comment}{\ *\ @brief\ Convert\ raw\ byte\ pairs\ to\ 16-\/bit\ ADC\ counts}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00149}00149\ \textcolor{comment}{\ *\ @details\ Combines\ 2\ raw\ bytes\ (MSB,\ LSB)\ into\ 16-\/bit\ unsigned\ integers\ per\ channel.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00150}00150\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ No\ scaling\ applied—output\ is\ raw\ ADC\ count\ (0–65535).}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00151}00151\ \textcolor{comment}{\ *\ @param\ sample\_in\ -\/\ [in]\ Pointer\ to\ MAX30101\_Sample\ with\ raw\ 2-\/byte\ data}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00152}00152\ \textcolor{comment}{\ *\ @param\ sample\_out\ -\/\ [out]\ Pointer\ to\ MAX30101\_SampleData\ for\ converted\ counts}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00153}00153\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00154}00154\ \textcolor{comment}{\ *\ @retval\ N/A}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00155}00155\ \textcolor{comment}{\ *\ @note\ This\ is\ typically\ an\ intermediate\ step.\ For\ direct\ nanoamp\ values,}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00156}00156\ \textcolor{comment}{\ *\ \ \ \ \ \ \ use\ MAX30101\_ConvertUint16ToCurrent()\ after\ this\ or\ use}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00157}00157\ \textcolor{comment}{\ *\ \ \ \ \ \ \ MAX30101\_ReadFIFO\_Current()\ to\ bypass\ intermediate\ storage.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00158}00158\ \textcolor{comment}{\ *\ @see\ MAX30101\_ConvertUint16ToCurrent,\ MAX30101\_ReadFIFO\_Current}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00159}00159\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00160}00160\ \textcolor{comment}{\ *\ \ \ MAX30101\_Sample\ raw;}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00161}00161\ \textcolor{comment}{\ *\ \ \ MAX30101\_SampleData\ counts;}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00162}00162\ \textcolor{comment}{\ *\ \ \ MAX30101\_ReadFIFO(\&raw,\ 1);}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00163}00163\ \textcolor{comment}{\ *\ \ \ MAX30101\_ConvertSampleToUint16(\&raw,\ \&counts);\ \ //\ counts.red\ =\ 0-\/65535}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00164}00164\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00165}00165\ \textcolor{keywordtype}{void}\ MAX30101\_ConvertSampleToUint16(\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\_Sample}}\ *sample\_in,\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\_SampleData}}\ *sample\_out)\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00166}00166\ \ \ \ \ \textcolor{comment}{//\ Convert\ Red\ LED:\ combine\ 2\ bytes\ into\ 16-\/bit\ uint16\_t}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00167}00167\ \ \ \ \ sample\_out-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_data_aa6c4a1b80cef822bc20df87c653812e8}{red}}\ =\ ((uint16\_t)sample\_in-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_a4230155679f4357f2a47ca753fb46f0c}{red}}[0]\ <<\ 8)\ |\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00168}00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((uint16\_t)sample\_in-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_a4230155679f4357f2a47ca753fb46f0c}{red}}[1]);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00169}00169\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00170}00170\ \ \ \ \ \textcolor{comment}{//\ Convert\ IR\ LED:\ combine\ 2\ bytes\ into\ 16-\/bit\ uint16\_t}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00171}00171\ \ \ \ \ sample\_out-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_data_a57dfa08dd110be1f466596d1e6080f03}{ir}}\ =\ ((uint16\_t)sample\_in-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd}{ir}}[0]\ <<\ 8)\ |\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00172}00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((uint16\_t)sample\_in-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd}{ir}}[1]);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00173}00173\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00174}00174\ \ \ \ \ \textcolor{comment}{//\ Convert\ Green\ LED:\ combine\ 2\ bytes\ into\ 16-\/bit\ uint16\_t}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00175}00175\ \ \ \ \ sample\_out-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_data_aa88bb61a86ace353f4b5b25d07807f9b}{green}}\ =\ ((uint16\_t)sample\_in-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864}{green}}[0]\ <<\ 8)\ |\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00176}00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((uint16\_t)sample\_in-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864}{green}}[1]);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00177}00177\ \}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00178}00178\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00179}00179\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00180}00180\ \textcolor{comment}{\ *\ @brief\ Scale\ ADC\ counts\ to\ calibrated\ current\ (nanoamps)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00181}00181\ \textcolor{comment}{\ *\ @details\ Converts\ 16-\/bit\ ADC\ values\ to\ current\ using:}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00182}00182\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Current\ (nA)\ =\ ADC\_Count\ ×\ 0.00781\ nA}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00183}00183\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Full\ range:\ 0\ to\ 2048\ nA}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00184}00184\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ LSB\ Resolution:\ 7.81\ pA\ per\ count}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00185}00185\ \textcolor{comment}{\ *\ @param\ sample\_in\ -\/\ [in]\ Pointer\ to\ MAX30101\_SampleData\ with\ ADC\ counts\ (0–65535)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00186}00186\ \textcolor{comment}{\ *\ @param\ sample\_out\ -\/\ [out]\ Pointer\ to\ MAX30101\_SampleCurrent\ for\ current\ in\ nanoamps}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00187}00187\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00188}00188\ \textcolor{comment}{\ *\ @retval\ N/A}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00189}00189\ \textcolor{comment}{\ *\ @note\ Intermediate\ step\ for\ two-\/phase\ conversion\ pipeline.\ For\ single-\/step}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00190}00190\ \textcolor{comment}{\ *\ \ \ \ \ \ \ FIFO\ read\ +\ conversion,\ use\ MAX30101\_ReadFIFO\_Current()\ instead.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00191}00191\ \textcolor{comment}{\ *\ @see\ MAX30101\_ReadFIFO\_Current}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00192}00192\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00193}00193\ \textcolor{comment}{\ *\ \ \ MAX30101\_SampleData\ adc\_counts;}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00194}00194\ \textcolor{comment}{\ *\ \ \ MAX30101\_SampleCurrent\ current;}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00195}00195\ \textcolor{comment}{\ *\ \ \ MAX30101\_ConvertUint16ToCurrent(\&adc\_counts,\ \&current);}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00196}00196\ \textcolor{comment}{\ *\ \ \ printf("{}Red\ LED:\ \%f\ nA\(\backslash\)n"{},\ current.red);\ \ //\ Output\ in\ nanoamps}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00197}00197\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00198}00198\ \textcolor{keywordtype}{void}\ MAX30101\_ConvertUint16ToCurrent(\doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\_SampleData}}\ *sample\_in,\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\_SampleCurrent}}\ *sample\_out)\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00199}00199\ \ \ \ \ \textcolor{comment}{//\ Convert\ Red\ channel\ ADC\ count\ to\ current\ in\ nanoamps}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00200}00200\ \ \ \ \ sample\_out-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a5cea7debb6ebf9bed2ad6bbba501f72f}{red}}\ =\ (float32\_t)sample\_in-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_data_aa6c4a1b80cef822bc20df87c653812e8}{red}}\ *\ \doxymbox{\hyperlink{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd}{MAX30101\_CURRENT\_LSB\_NA}};}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00201}00201\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00202}00202\ \ \ \ \ \textcolor{comment}{//\ Convert\ IR\ channel\ ADC\ count\ to\ current\ in\ nanoamps}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00203}00203\ \ \ \ \ sample\_out-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_data_a57dfa08dd110be1f466596d1e6080f03}{ir}}\ =\ (float32\_t)sample\_in-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd}{ir}}\ *\ \doxymbox{\hyperlink{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd}{MAX30101\_CURRENT\_LSB\_NA}};}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00204}00204\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00205}00205\ \ \ \ \ \textcolor{comment}{//\ Convert\ Green\ channel\ ADC\ count\ to\ current\ in\ nanoamps}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00206}00206\ \ \ \ \ sample\_out-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_data_aa88bb61a86ace353f4b5b25d07807f9b}{green}}\ =\ (float32\_t)sample\_in-\/>\doxymbox{\hyperlink{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864}{green}}\ *\ \doxymbox{\hyperlink{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd}{MAX30101\_CURRENT\_LSB\_NA}};}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00207}00207\ \}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00208}00208\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00209}00209\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00210}00210\ \textcolor{comment}{\ *\ @brief\ Optimized\ single-\/step\ FIFO\ read\ with\ direct\ nanoamp\ conversion}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00211}00211\ \textcolor{comment}{\ *\ @details\ Combines\ all\ processing\ in\ one\ loop:}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00212}00212\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 1.\ Read\ 6\ raw\ bytes\ from\ FIFO\ per\ sample}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00213}00213\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 2.\ Combine\ bytes\ to\ 16-\/bit\ ADC\ counts}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00214}00214\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 3.\ Scale\ to\ current\ (nA)\ using\ LSB=7.81\ pA}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00215}00215\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Output\ directly\ in\ calibrated\ units\ without\ intermediate\ storage.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00216}00216\ \textcolor{comment}{\ *\ @param\ samples\ -\/\ [out]\ Pointer\ to\ buffer\ of\ MAX30101\_SampleCurrent\ to\ populate}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00217}00217\ \textcolor{comment}{\ *\ @param\ num\_samples\ -\/\ [in]\ Number\ of\ complete\ samples\ to\ read\ and\ convert\ (max\ 32)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00218}00218\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00219}00219\ \textcolor{comment}{\ *\ @retval\ N/A}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00220}00220\ \textcolor{comment}{\ *\ @note\ RECOMMENDED\ function\ for\ typical\ usage.\ Minimizes\ memory\ usage\ and\ processing}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00221}00221\ \textcolor{comment}{\ *\ \ \ \ \ \ \ overhead\ compared\ to\ three-\/step\ pipeline\ (Read\ →\ uint16\ →\ nanoamps).}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00222}00222\ \textcolor{comment}{\ *\ @warning\ Ensure\ output\ buffer\ has\ capacity\ for\ num\_samples\ structures.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00223}00223\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Total\ bytes\ read\ from\ FIFO:\ num\_samples\ ×\ 6}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00224}00224\ \textcolor{comment}{\ *\ @performance\ \string~15-\/20\%\ faster\ and\ \string~24\ bytes\ less\ stack\ vs\ separate\ conversions}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00225}00225\ \textcolor{comment}{\ *\ @see\ MAX30101\_GetNumAvailableSamples}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00226}00226\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00227}00227\ \textcolor{comment}{\ *\ \ \ MAX30101\_SampleCurrent\ buf[32];}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00228}00228\ \textcolor{comment}{\ *\ \ \ uint8\_t\ available\ =\ MAX30101\_GetNumAvailableSamples();}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00229}00229\ \textcolor{comment}{\ *\ \ \ if\ (available)\ \{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00230}00230\ \textcolor{comment}{\ *\ \ \ \ \ \ \ MAX30101\_ReadFIFO\_Current(buf,\ available);}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00231}00231\ \textcolor{comment}{\ *\ \ \ \ \ \ \ //\ buf[0].red\ contains\ Red\ LED\ current\ in\ nanoamps}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00232}00232\ \textcolor{comment}{\ *\ \ \ \ \ \ \ //\ buf[0].ir\ contains\ IR\ LED\ current\ in\ nanoamps}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00233}00233\ \textcolor{comment}{\ *\ \ \ \ \ \ \ //\ buf[0].green\ contains\ Green\ LED\ current\ in\ nanoamps}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00234}00234\ \textcolor{comment}{\ *\ \ \ \}}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00235}00235\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00236}00236\ \textcolor{keywordtype}{void}\ MAX30101\_ReadFIFO\_Current(\doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\_SampleCurrent}}\ *samples,\ uint8\_t\ num\_samples)\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00237}00237\ \ \ \ \ uint8\_t\ fifo\_data[6];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00238}00238\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00239}00239\ \ \ \ \ uint16\_t\ temp;}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00240}00240\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00241}00241\ \ \ \ \ \textcolor{keywordflow}{for}(i\ =\ 0;\ i\ <\ num\_samples;\ i++)\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00242}00242\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ read\ 6\ bytes\ from\ FIFO}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00243}00243\ \ \ \ \ \ \ \ \ I2C1\_Read(SENSOR\_ADDR,\ FIFO\_DATAREG,\ fifo\_data,\ 6);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00244}00244\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ combine\ bytes\ and\ convert\ right\ away}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00245}00245\ \ \ \ \ \ \ \ \ temp\ =\ ((uint16\_t)fifo\_data[0]\ <<\ 8)\ |\ fifo\_data[1];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00246}00246\ \ \ \ \ \ \ \ \ samples[i].\doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a5cea7debb6ebf9bed2ad6bbba501f72f}{red}}\ =\ (float32\_t)temp\ *\ \doxymbox{\hyperlink{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd}{MAX30101\_CURRENT\_LSB\_NA}};}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00247}00247\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00248}00248\ \ \ \ \ \ \ \ \ temp\ =\ ((uint16\_t)fifo\_data[2]\ <<\ 8)\ |\ fifo\_data[3];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00249}00249\ \ \ \ \ \ \ \ \ samples[i].\doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a18b81b25ccadd49e2b5ccf3256bbe899}{ir}}\ =\ (float32\_t)temp\ *\ \doxymbox{\hyperlink{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd}{MAX30101\_CURRENT\_LSB\_NA}};}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00250}00250\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00251}00251\ \ \ \ \ \ \ \ \ temp\ =\ ((uint16\_t)fifo\_data[4]\ <<\ 8)\ |\ fifo\_data[5];}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00252}00252\ \ \ \ \ \ \ \ \ samples[i].\doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a436ccdfd169ad2bcf3d3a60893680ced}{green}}\ =\ (float32\_t)temp\ *\ \doxymbox{\hyperlink{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd}{MAX30101\_CURRENT\_LSB\_NA}};}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00253}00253\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8c_source_l00254}00254\ \}}
+
+\end{DoxyCode}

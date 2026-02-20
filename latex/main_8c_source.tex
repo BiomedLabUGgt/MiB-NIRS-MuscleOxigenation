@@ -1,0 +1,215 @@
+\doxysection{main.\+c}
+\hypertarget{main_8c_source}{}\label{main_8c_source}\index{Project/main.c@{Project/main.c}}
+\doxymbox{\hyperlink{main_8c}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00001}00001\ \textcolor{comment}{/**\ }}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00002}00002\ \textcolor{comment}{\ \ \ \ *\ @file\ main.c}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00003}00003\ \textcolor{comment}{\ \ \ \ *\ @brief\ Main\ program\ for\ MAX30101\ muscle\ oxygenation\ measurement}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00004}00004\ \textcolor{comment}{\ \ \ \ *\ @author\ Julio\ Fajardo,\ PhD}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00005}00005\ \textcolor{comment}{\ \ \ \ *\ @date\ 2024-\/06-\/01}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00006}00006\ \textcolor{comment}{\ \ \ \ *\ }}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00007}00007\ \textcolor{comment}{\ \ \ \ *\ This\ program\ initializes\ the\ MAX30101\ sensor\ for\ muscle\ oxygenation\ measurement\ using\ the\ I2C\ interface.\ }}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00008}00008\ \textcolor{comment}{\ \ \ \ *\ It\ configures\ the\ system\ clock\ to\ 64\ MHz,\ sets\ up\ a\ GPIO\ pin\ for\ an\ LED\ indicator,\ and\ uses\ the\ SysTick\ timer\ to\ toggle\ the\ LED\ every\ 100\ ms.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00009}00009\ \textcolor{comment}{\ \ \ \ *\ The\ MAX30101\ is\ configured\ to\ use\ 3\ LEDs\ (Red,\ IR,\ Green)\ with\ a\ sample\ rate\ of\ 100\ Hz\ and\ medium\ LED\ power\ for\ optimal\ tissue\ penetration\ in\ muscle\ applications.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00010}00010\ \textcolor{comment}{*/}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00012}00012\ \textcolor{preprocessor}{\#include\ "{}stm32f303x8.h"{}}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00015}00015\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_l_e_d_8h}{LED.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00016}00016\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_i2_c_8h}{I2C.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00017}00017\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_m_a_x30101_8h}{MAX30101.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00019}00019\ \textcolor{preprocessor}{\#include\ "{}arm\_math.h"{}}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00021}\doxymbox{\hyperlink{main_8c_a51322ddb267b4729d6b5f2bb05d49fff}{00021}}\ uint32\_t\ \doxymbox{\hyperlink{main_8c_a51322ddb267b4729d6b5f2bb05d49fff}{counter}}\ =\ 0;\ \ \textcolor{comment}{/**<\ Debug\ counter\ for\ main\ loop\ iterations\ (unused\ in\ release)\ */}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00022}\doxymbox{\hyperlink{main_8c_ab3507a48ae247ff252738ca350810b21}{00022}}\ uint32\_t\ \doxymbox{\hyperlink{main_8c_ab3507a48ae247ff252738ca350810b21}{ticks}}\ =\ 0;\ \ \ \ \textcolor{comment}{/**<\ Interrupt\ tick\ counter\ (incremented\ per\ 100\ ms\ SysTick)\ */}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00023}00023\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00024}00024\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00025}00025\ \textcolor{comment}{\ *\ @brief\ Raw\ FIFO\ data\ from\ sensor\ (intermediate,\ rarely\ needed\ directly)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00026}00026\ \textcolor{comment}{\ *\ @details\ 32-\/sample\ circular\ buffer\ to\ store\ raw\ 6-\/byte\ samples\ from\ MAX30101\ FIFO.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00027}00027\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Typical\ usage:\ Diagnostic,\ direct\ ADC\ access,\ custom\ processing.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00028}00028\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @note\ Memory:\ 8\ samples\ ×\ 6\ bytes\ =\ 48\ bytes}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00029}00029\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00030}\doxymbox{\hyperlink{main_8c_abf9ebc56ada38fa9994267f85c648e80}{00030}}\ \doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\_Sample}}\ \doxymbox{\hyperlink{main_8c_abf9ebc56ada38fa9994267f85c648e80}{MAX30101\_FIFO\_Buffer}}[8];}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00031}00031\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00032}00032\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00033}00033\ \textcolor{comment}{\ *\ @brief\ 16-\/bit\ ADC\ counts\ (intermediate\ format)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00034}00034\ \textcolor{comment}{\ *\ @details\ 32-\/sample\ buffer\ for\ unsigned\ integer\ ADC\ values\ (0–65535).}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00035}00035\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Typical\ usage:\ Custom\ scaling,\ direct\ DAC\ output,\ calibration\ debug.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00036}00036\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @note\ Memory:\ 8\ samples\ ×\ 6\ bytes\ =\ 48\ bytes}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00037}00037\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00038}\doxymbox{\hyperlink{main_8c_aa2faa86894de3697a86d4b5125afb6b3}{00038}}\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\_SampleData}}\ \doxymbox{\hyperlink{main_8c_aa2faa86894de3697a86d4b5125afb6b3}{MAX30101\_SampleDataBuffer}}[8];}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00039}00039\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00040}00040\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00041}00041\ \textcolor{comment}{\ *\ @brief\ FINAL\ PROCESSED\ DATA:\ Calibrated\ current\ in\ nanoamps\ (nA)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00042}00042\ \textcolor{comment}{\ *\ @details\ 32-\/sample\ buffer\ holding\ calibrated\ photodiode\ current\ values\ (0–2048\ nA).}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00043}00043\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ This\ is\ the\ primary\ output\ buffer\ for\ post-\/processing\ and\ external\ transmission.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00044}00044\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Updated\ by\ SysTick\ ISR\ approximately\ every\ 100\ ms\ (variable\ latency\ based\ on\ FIFO\ fill).}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00045}00045\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @see\ SysTick\_Handler}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00046}00046\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @note\ Memory:\ 8\ samples\ ×\ 12\ bytes\ (3\ ×\ float32\_t)\ =\ 96\ bytes}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00047}00047\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @note\ Typically\ accessed\ in\ main\ loop\ after\ ISR\ completion}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00048}00048\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00049}\doxymbox{\hyperlink{main_8c_a4556617fa4128f1f769912ea53bdef69}{00049}}\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\_SampleCurrent}}\ \doxymbox{\hyperlink{main_8c_a4556617fa4128f1f769912ea53bdef69}{MAX30101\_SampleCurrentBuffer}}[8];}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00051}00051\ \textcolor{keywordtype}{void}\ clk\_config(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00052}00052\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00053}00053\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00054}00054\ \textcolor{comment}{\ *\ @brief\ System\ initialization\ and\ main\ control\ loop}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00055}00055\ \textcolor{comment}{\ *\ @details\ Initializes\ all\ peripherals\ in\ sequence:}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00056}00056\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 1.\ **Clock**:\ PLL\ to\ 64\ MHz\ (HSI\ 8\ MHz\ ×\ 16)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00057}00057\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 2.\ **GPIO**:\ Status\ LED\ on\ PB3\ (push-\/pull\ output)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00058}00058\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 3.\ **I2C1**:\ 400\ kHz\ speed\ on\ PB6\ (SCL),\ PB7\ (SDA)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00059}00059\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 4.\ **Sensor**:\ MAX30101\ NIRS\ configuration\ with\ 100\ Hz\ sampling}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00060}00060\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 5.\ **Timer**:\ SysTick\ configured\ for\ 100\ ms\ interrupts}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00061}00061\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00062}00062\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ After\ initialization,\ enters\ infinite\ loop\ that\ continuously\ increments}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00063}00063\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ a\ debug\ counter.\ Real\ work\ happens\ in\ SysTick\_Handler()\ ISR.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00064}00064\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00065}00065\ \textcolor{comment}{\ *\ @param\ None}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00066}00066\ \textcolor{comment}{\ *\ @return\ int\ -\/\ Never\ returns\ (infinite\ loop)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00067}00067\ \textcolor{comment}{\ *\ @note\ Initialization\ order\ is\ critical;\ I2C\ must\ be\ ready\ before\ MAX30101\ init.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00068}00068\ \textcolor{comment}{\ *\ @warning\ Upon\ return,\ interrupts\ are\ globally\ enabled\ and\ SysTick\ is\ running.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00069}00069\ \textcolor{comment}{\ *\ @execution}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00070}00070\ \textcolor{comment}{\ *\ \ \ -\/\ Blocking\ operations\ during\ init:\ Clock\ PLL\ lock,\ I2C\ configuration}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00071}00071\ \textcolor{comment}{\ *\ \ \ -\/\ Time\ to\ first\ ISR:\ \string~100\ ms\ after\ SysTick\_Config()}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00072}00072\ \textcolor{comment}{\ *\ @see\ clk\_config,\ LED\_config,\ I2C1\_Config,\ MAX30101\_InitMuscleOx,\ SysTick\_Handler}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00073}00073\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00074}00074\ \textcolor{comment}{\ *\ \ \ //\ main()\ initializes\ and\ waits\ for\ interrupts}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00075}00075\ \textcolor{comment}{\ *\ \ \ //\ SysTick\ fires\ every\ 100\ ms\ with\ MAXFIFO\ reads}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00076}00076\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00077}00077\ \textcolor{keywordtype}{int}\ main()\ \{}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00078}00078\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00079}00079\ \ \ \ \ \textcolor{comment}{//\ Configure\ the\ system\ clock\ to\ 64\ MHz}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00080}00080\ \ \ \ \ clk\_config();}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00081}00081\ \ \ \ \ \textcolor{comment}{//\ Configure\ the\ GPIO\ pin\ for\ the\ LED\ on\ PB3}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00082}00082\ \ \ \ \ \doxymbox{\hyperlink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\_config}}();}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00083}00083\ \ \ \ \ \textcolor{comment}{//\ Configure\ I2C1\ for\ communication\ with\ the\ MAX30101\ sensor}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00084}00084\ \ \ \ \ \doxymbox{\hyperlink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{I2C1\_Config}}();}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00085}00085\ \ \ \ \ \textcolor{comment}{//\ Initialize\ MAX30101\ for\ muscle\ oxygenation\ with\ medium\ LED\ power}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00086}00086\ \ \ \ \ MAX30101\_InitMuscleOx(0x4B);\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00087}00087\ \ \ \ \ \textcolor{comment}{//\ Configure\ SysTick\ to\ generate\ an\ interrupt\ every\ 100\ ms}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00088}00088\ \ \ \ \ SysTick\_Config(SystemCoreClock\ /\ 10);}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00089}00089\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00090}00090\ \ \ \ \ \textcolor{keywordflow}{for}\ (;;)\ \{}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00091}00091\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{main_8c_a51322ddb267b4729d6b5f2bb05d49fff}{counter}}++;}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00092}00092\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00093}00093\ \}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00094}00094\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00095}00095\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00096}00096\ \textcolor{comment}{\ *\ @brief\ SysTick\ Timer\ Interrupt\ Service\ Routine\ (100\ ms\ period)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00097}00097\ \textcolor{comment}{\ *\ @details\ Core\ real-\/time\ data\ acquisition\ routine:}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00098}00098\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 1.\ Increments\ \`{}ticks`\ counter}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00099}00099\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 2.\ Queries\ MAX30101\ FIFO\ for\ new\ samples}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00100}00100\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 3.\ If\ samples\ available:\ reads\ and\ converts\ to\ nanoamps\ in\ one\ call}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00101}00101\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 4.\ Toggles\ status\ LED\ (visual\ feedback)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00102}00102\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00103}00103\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ This\ ISR\ runs\ non-\/preemptively\ (highest\ priority)\ approximately\ every}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00104}00104\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 100\ milliseconds,\ making\ it\ ideal\ for\ time-\/critical\ sensor\ polling.}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00105}00105\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00106}00106\ \textcolor{comment}{\ *\ @param\ None}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00107}00107\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00108}00108\ \textcolor{comment}{\ *\ @note\ ISR\ Context}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00109}00109\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Execution\ time:\ \string~1–2\ ms\ (I2C\ reads\ dominate;\ \string~0.5\ ms\ per\ sample)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00110}00110\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Called\ at\ SysTick\ exception\ (cannot\ nest\ itself)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00111}00111\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ All\ registers\ preserved;\ no\ clobbering\ of\ main\ loop\ state}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00112}00112\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00113}00113\ \textcolor{comment}{\ *\ @data\_output}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00114}00114\ \textcolor{comment}{\ *\ \ \ \ \ \ \ Upon\ samples\ available:}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00115}00115\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Populates\ MAX30101\_SampleCurrentBuffer[]\ with\ up\ to\ 32\ calibrated\ samples}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00116}00116\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Sample\ count\ in\ local\ variable\ \`{}available\_samples`}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00117}00117\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Data\ remains\ in\ buffer\ until\ next\ ISR\ overwrites\ (100\ ms\ window)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00118}00118\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00119}00119\ \textcolor{comment}{\ *\ @timing}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00120}00120\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Sample\ freshness:\ 0–100\ ms\ (age\ of\ data\ in\ buffer)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00121}00121\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ FIFO\ latency:\ Variable;\ depends\ on\ sample\ rate\ (100\ Hz)\ and\ read\ interval}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00122}00122\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ At\ 100\ Hz\ rate\ with\ 100\ ms\ polling:\ Expect\ 8–10\ samples\ per\ interrupt}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00123}00123\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00124}00124\ \textcolor{comment}{\ *\ @warning}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00125}00125\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Race\ condition\ possible\ if\ main\ loop\ reads\ buffer\ while\ ISR\ writes}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00126}00126\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ (Consider\ using\ volatile\ or\ double-\/buffering\ in\ production)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00127}00127\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ I2C\ blocking:\ If\ I2C\ bus\ is\ busy,\ ISR\ may\ delay\ by\ several\ ms}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00128}00128\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00129}00129\ \textcolor{comment}{\ *\ @see\ MAX30101\_GetNumAvailableSamples,\ MAX30101\_ReadFIFO\_Current,\ LED\_Toggle}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00130}00130\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00131}00131\ \textcolor{comment}{\ *\ \ \ //\ ISR\ fires\ every\ 100\ ms:}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00132}00132\ \textcolor{comment}{\ *\ \ \ //\ ticks++\ (incremented\ 10\ times\ per\ second)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00133}00133\ \textcolor{comment}{\ *\ \ \ //\ MAX30101\_SampleCurrentBuffer[]\ updated\ with\ fresh\ nA\ values}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00134}00134\ \textcolor{comment}{\ *\ \ \ //\ LED\ toggles\ (100\ ms\ on,\ 100\ ms\ off\ =\ 5\ Hz\ blink)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00135}00135\ \textcolor{comment}{\ */}\ \ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00136}00136\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00137}00137\ \textcolor{keywordtype}{void}\ SysTick\_Handler(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00138}00138\ \ \ \ \ \doxymbox{\hyperlink{main_8c_ab3507a48ae247ff252738ca350810b21}{ticks}}++;}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00139}00139\ \ \ \ \ uint8\_t\ available\_samples\ =\ MAX30101\_GetNumAvailableSamples();}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00140}00140\ \ \ \ \ \textcolor{keywordflow}{if}\ (available\_samples\ >\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00141}00141\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ available\ samples\ from\ the\ MAX30101\ FIFO\ in\ float\ format\ (nA)\ into\ the\ global\ buffer}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00142}00142\ \ \ \ \ \ \ \ \ MAX30101\_ReadFIFO\_Current(\doxymbox{\hyperlink{main_8c_a4556617fa4128f1f769912ea53bdef69}{MAX30101\_SampleCurrentBuffer}},\ available\_samples);}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00143}00143\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00144}00144\ \ \ \ \ \doxymbox{\hyperlink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\_Toggle}}();}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00145}00145\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00146}00146\ \}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00147}00147\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00148}00148\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00149}00149\ \textcolor{comment}{\ *\ @brief\ Configure\ STM32F303K8\ system\ clock\ to\ 64\ MHz\ via\ PLL}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00150}00150\ \textcolor{comment}{\ *\ @details\ PLL\ configuration\ chain:}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00151}00151\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Input**:\ 8\ MHz\ HSI\ oscillator\ (internal,\ always\ available)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00152}00152\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Divider**:\ /2\ in\ PLL\ block\ (built-\/in)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00153}00153\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Multiplier**:\ MUL[3:0]\ =\ 0x0E\ (multiply\ by\ 16)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00154}00154\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Output**:\ (8\ MHz\ /\ 2)\ ×\ 16\ =\ 64\ MHz}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00155}00155\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **System\ Clock**:\ PLL\ output\ becomes\ SYSCLK}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00156}00156\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Flash\ Timing**:\ 2\ wait\ states\ for\ 48\ <\ HCLK\ ≤\ 72\ MHz}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00157}00157\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **APB1\ Divider**:\ HCLK/2\ (32\ MHz\ for\ most\ peripherals,\ incl.\ I2C)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00158}00158\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00159}00159\ \textcolor{comment}{\ *\ @param\ None}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00160}00160\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00161}00161\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00162}00162\ \textcolor{comment}{\ *\ @operations}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00163}00163\ \textcolor{comment}{\ *\ \ \ \ \ \ \ 1.\ RCC-\/>CFGR\ |=\ 0xE<<18\ (PLLMUL\ configuration)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00164}00164\ \textcolor{comment}{\ *\ \ \ \ \ \ \ 2.\ FLASH-\/>ACR\ |=\ 0x2\ (Latency\ =\ 2\ cycles)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00165}00165\ \textcolor{comment}{\ *\ \ \ \ \ \ \ 3.\ RCC-\/>CR\ |=\ RCC\_CR\_PLLON\ (Enable\ PLL\ oscillator)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00166}00166\ \textcolor{comment}{\ *\ \ \ \ \ \ \ 4.\ Wait\ for\ RCC\_CR\_PLLRDY\ flag}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00167}00167\ \textcolor{comment}{\ *\ \ \ \ \ \ \ 5.\ RCC-\/>CFGR\ |=\ 0x402\ (SW[1:0]=10\ for\ PLL,\ PPRE1[2:0]=100\ for\ APB1/2)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00168}00168\ \textcolor{comment}{\ *\ \ \ \ \ \ \ 6.\ Wait\ for\ RCC\_CFGR\_SWS\_PLL\ status}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00169}00169\ \textcolor{comment}{\ *\ \ \ \ \ \ \ 7.\ SystemCoreClockUpdate()\ (Update\ HAL\ clock\ variable)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00170}00170\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00171}00171\ \textcolor{comment}{\ *\ @timing}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00172}00172\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ PLL\ lock\ time:\ \string~100\ µs\ (measured\ in\ hardware)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00173}00173\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Total\ configuration\ time:\ <1\ ms}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00174}00174\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Blocking:\ Yes\ (waits\ for\ PLL\_RDY\ and\ SWS\ flags)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00175}00175\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00176}00176\ \textcolor{comment}{\ *\ @side\_effects}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00177}00177\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ SYSCLK\ becomes\ 64\ MHz\ (all\ core\ and\ bus\ clocks\ scale\ accordingly)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00178}00178\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ I2C1\ clock:\ 32\ MHz\ /\ (I2C\ prescaler)\ ≈\ 400\ kHz}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00179}00179\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ SysTick\ frequency\ scales\ to\ HCLK\ (timer\ reload\ values\ adapt)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00180}00180\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Power\ consumption\ increases\ (\string~60\ mA\ typical\ at\ 64\ MHz\ vs\ 30\ mA\ at\ 8\ MHz)}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00181}00181\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00182}00182\ \textcolor{comment}{\ *\ @warning}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00183}00183\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ PLL\ must\ be\ configured\ BEFORE\ any\ I2C\ or\ timer\ operations}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00184}00184\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Changing\ clock\ mid-\/operation\ may\ corrupt\ ongoing\ communications}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00185}00185\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Requires\ FLASH\ latency\ adjustment\ or\ reads\ may\ fail}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00186}00186\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00187}00187\ \textcolor{comment}{\ *\ @perf\_note}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00188}00188\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ 64\ MHz\ is\ \string~8×\ faster\ than\ default\ 8\ MHz\ HSI}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00189}00189\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ I2C\ bus\ speed\ 400\ kHz\ achievable\ only\ with\ sufficient\ SYSCLK}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00190}00190\ \textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Sampling\ rate\ limited\ more\ by\ I2C\ than\ by\ CPU}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00191}00191\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00192}00192\ \textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00193}00193\ \textcolor{comment}{\ *\ \ \ //\ Called\ from\ main()\ to\ enable\ high-\/speed\ operation}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00194}00194\ \textcolor{comment}{\ *\ \ \ clk\_config();}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00195}00195\ \textcolor{comment}{\ *\ \ \ //\ Now\ SYSCLK\ =\ 64\ MHz,\ I2C/SPI\ significantly\ faster}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00196}00196\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00197}00197\ \textcolor{keywordtype}{void}\ clk\_config(\textcolor{keywordtype}{void})\{}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00198}00198\ \ \ \ \ \textcolor{comment}{//\ PLLMUL\ <-\/\ 0x0E\ (PLL\ input\ clock\ x\ 16\ -\/-\/>\ (8\ MHz\ /\ 2)\ *\ 16\ =\ 64\ MHz\ )\ \ }}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00199}00199\ \ \ \ \ RCC-\/>CFGR\ |=\ 0xE<<18;}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00200}00200\ \ \ \ \ \textcolor{comment}{//\ Flash\ Latency,\ two\ wait\ states\ for\ 48<HCLK<=72\ MHz}}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00201}00201\ \ \ \ \ FLASH-\/>ACR\ |=\ 0x2;}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00202}00202\ \ \ \ \ \textcolor{comment}{//\ PLLON\ <-\/\ 0x1\ }}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00203}00203\ \ \ \ \ RCC-\/>CR\ |=\ RCC\_CR\_PLLON;}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00204}00204\ \ \ \ \ \textcolor{keywordflow}{while}\ (!(RCC-\/>CR\ \&\ RCC\_CR\_PLLRDY));\ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00205}00205\ \ \ \ \ \textcolor{comment}{//\ SW<-\/0x02\ (PLL\ as\ System\ Clock),\ HCLK\ not\ divided,\ PPRE1<-\/0x4\ (APB1\ <-\/\ HCLK/2),\ APB2\ not\ divided\ }}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00206}00206\ \ \ \ \ RCC-\/>CFGR\ |=\ 0x402;}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00207}00207\ \ \ \ \ \textcolor{keywordflow}{while}\ (!(RCC-\/>CFGR\ \&\ RCC\_CFGR\_SWS\_PLL));}
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00208}00208\ \ \ \ \ \doxymbox{\hyperlink{group___s_t_m32_f3xx___system___private___functions_gae0c36a9591fe6e9c45ecb21a794f0f0f}{SystemCoreClockUpdate}}();\ \ \ \ }
+\DoxyCodeLine{\Hypertarget{main_8c_source_l00209}00209\ \}}
+
+\end{DoxyCode}

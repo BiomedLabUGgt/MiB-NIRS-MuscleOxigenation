@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['led_5fconfig_0',['LED_config',['../_l_e_d_8h.html#a1eba03f25b9d10a66d906572d494d731',1,'LED.c']]],
-  ['led_5foff_1',['LED_Off',['../_l_e_d_8h.html#af842f9996045107cd0841a4f0707fc65',1,'LED.c']]],
-  ['led_5fon_2',['LED_On',['../_l_e_d_8h.html#a94ffebcdd3b5bbbf9a89e9f9ab52028d',1,'LED.c']]],
-  ['led_5ftoggle_3',['LED_Toggle',['../_l_e_d_8h.html#a3b0db98f4b9d8da4c54223aa39ebc557',1,'LED.c']]]
+  ['systemcoreclockupdate_0',['SystemCoreClockUpdate',['../group___s_t_m32_f3xx___system___private___functions.html#gae0c36a9591fe6e9c45ecb21a794f0f0f',1,'system_stm32f3xx.c']]],
+  ['systeminit_1',['SystemInit',['../group___s_t_m32_f3xx___system___private___functions.html#ga93f514700ccf00d08dbdcff7f1224eb2',1,'system_stm32f3xx.c']]]
 ];

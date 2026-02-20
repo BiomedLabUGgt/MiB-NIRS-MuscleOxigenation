@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['hclk_20hz_208000000_0',['HCLK(Hz) | 8000000',['../system__stm32f3xx_8c.html#autotoc_md4',1,'']]],
-  ['hse_5fvalue_1',['HSE_VALUE',['../group___s_t_m32_f3xx___system___private___defines.html#gaeafcff4f57440c60e64812dddd13e7cb',1,'system_stm32f3xx.c']]],
-  ['hsi_2',['System Clock source | HSI',['../system__stm32f3xx_8c.html#autotoc_md2',1,'']]],
-  ['hsi_5fvalue_3',['HSI_VALUE',['../group___s_t_m32_f3xx___system___private___defines.html#gaaa8c76e274d0f6dd2cefb5d0b17fbc37',1,'system_stm32f3xx.c']]],
-  ['hz_208000000_4',['Hz 8000000',['../system__stm32f3xx_8c.html#autotoc_md4',1,'HCLK(Hz) | 8000000'],['../system__stm32f3xx_8c.html#autotoc_md3',1,'SYSCLK(Hz) | 8000000']]]
+  ['data_20flow_0',['Data Flow',['../_l_e_d_8h.html#autotoc_md13',1,'Data Flow'],['../todo.html#_todo000002',1,'Data Flow']]],
+  ['device_1',['Supported STM32F3xx device',['../system__stm32f3xx_8c.html#autotoc_md15',1,'']]],
+  ['disable_2',['USB Clock | DISABLE',['../system__stm32f3xx_8c.html#autotoc_md22',1,'']]],
+  ['driver_20characteristics_3',['Driver Characteristics',['../_i2_c_8h.html#autotoc_md6',1,'']]]
 ];

@@ -25,21 +25,32 @@
 var NAVTREE =
 [
   [ "MiB-NIRS-MuscleOxigenation", "index.html", [
+    [ "Todo List", "todo.html", null ],
     [ "Topics", "topics.html", "topics" ],
+    [ "Data Structures", "annotated.html", [
+      [ "Data Structures", "annotated.html", "annotated_dup" ],
+      [ "Data Structure Index", "classes.html", null ],
+      [ "Data Fields", "functions.html", [
+        [ "All", "functions.html", null ],
+        [ "Variables", "functions_vars.html", null ]
+      ] ]
+    ] ],
     [ "Files", "files.html", [
       [ "File List", "files.html", "files_dup" ],
-      [ "File Members", "globals.html", [
+      [ "Globals", "globals.html", [
         [ "All", "globals.html", null ],
         [ "Functions", "globals_func.html", null ],
+        [ "Variables", "globals_vars.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
-    ] ]
+    ] ],
+    [ "Examples", "examples.html", "examples" ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"_i2_c_8h.html"
+"_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

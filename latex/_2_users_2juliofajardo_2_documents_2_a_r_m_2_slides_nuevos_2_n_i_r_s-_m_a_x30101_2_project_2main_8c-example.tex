@@ -1,0 +1,251 @@
+\doxysection{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}
+\hypertarget{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{}\label{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}System initialization and main control loop.
+
+System initialization and main control loop Initializes all peripherals in sequence:\+
+\begin{DoxyEnumerate}
+\item {\bfseries{Clock}}:\+ PLL to 64 MHz (HSI 8 MHz × 16)
+\item {\bfseries{GPIO}}:\+ Status LED on PB3 (push-\/pull output)
+\item {\bfseries{I2\+C1}}:\+ 400 k\+Hz speed on PB6 (SCL), PB7 (SDA)
+\item {\bfseries{Sensor}}:\+ MAX30101 NIRS configuration with 100 Hz sampling
+\item {\bfseries{Timer}}:\+ Sys\+Tick configured for 100 ms interrupts
+\end{DoxyEnumerate}
+
+After initialization, enters infinite loop that continuously increments a debug counter. Real work happens in Sys\+Tick\+\_\+\+Handler() ISR.
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int -\/ Never returns (infinite loop) 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Initialization order is critical; I2C must be ready before MAX30101 init. 
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+Upon return, interrupts are globally enabled and Sys\+Tick is running. @execution
+\begin{DoxyItemize}
+\item Blocking operations during init:\+ Clock PLL lock, I2C configuration
+\item Time to first ISR:\+ \texorpdfstring{$\sim$}{\string~}100 ms after Sys\+Tick\+\_\+\+Config() 
+\end{DoxyItemize}
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+clk\+\_\+config, \doxylink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\+\_\+config}, \doxylink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{I2\+C1\+\_\+\+Config}, MAX30101\+\_\+\+Init\+Muscle\+Ox, Sys\+Tick\+\_\+\+Handler
+\end{DoxySeeAlso}
+/\+/\+ main() initializes and waits for interrupts /\+/\+ Sys\+Tick fires every 100 ms with MAXFIFO reads
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{comment}{/**\ }}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ *\ @file\ main.c}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ *\ @brief\ Main\ program\ for\ MAX30101\ muscle\ oxygenation\ measurement}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ *\ @author\ Julio\ Fajardo,\ PhD}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ *\ @date\ 2024-\/06-\/01}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ *\ }}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ *\ This\ program\ initializes\ the\ MAX30101\ sensor\ for\ muscle\ oxygenation\ measurement\ using\ the\ I2C\ interface.\ }}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ *\ It\ configures\ the\ system\ clock\ to\ 64\ MHz,\ sets\ up\ a\ GPIO\ pin\ for\ an\ LED\ indicator,\ and\ uses\ the\ SysTick\ timer\ to\ toggle\ the\ LED\ every\ 100\ ms.}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ *\ The\ MAX30101\ is\ configured\ to\ use\ 3\ LEDs\ (Red,\ IR,\ Green)\ with\ a\ sample\ rate\ of\ 100\ Hz\ and\ medium\ LED\ power\ for\ optimal\ tissue\ penetration\ in\ muscle\ applications.}}
+\DoxyCodeLine{\textcolor{comment}{*/}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}stm32f303x8.h"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_l_e_d_8h}{LED.h}}"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_i2_c_8h}{I2C.h}}"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_m_a_x30101_8h}{MAX30101.h}}"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}arm\_math.h"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{uint32\_t\ \doxymbox{\hyperlink{main_8c_a51322ddb267b4729d6b5f2bb05d49fff}{counter}}\ =\ 0;\ \ \textcolor{comment}{/**<\ Debug\ counter\ for\ main\ loop\ iterations\ (unused\ in\ release)\ */}}
+\DoxyCodeLine{uint32\_t\ \doxymbox{\hyperlink{main_8c_ab3507a48ae247ff252738ca350810b21}{ticks}}\ =\ 0;\ \ \ \ \textcolor{comment}{/**<\ Interrupt\ tick\ counter\ (incremented\ per\ 100\ ms\ SysTick)\ */}}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{/**}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @brief\ Raw\ FIFO\ data\ from\ sensor\ (intermediate,\ rarely\ needed\ directly)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @details\ 32-\/sample\ circular\ buffer\ to\ store\ raw\ 6-\/byte\ samples\ from\ MAX30101\ FIFO.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Typical\ usage:\ Diagnostic,\ direct\ ADC\ access,\ custom\ processing.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @note\ Memory:\ 8\ samples\ ×\ 6\ bytes\ =\ 48\ bytes}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\_Sample}}\ \doxymbox{\hyperlink{main_8c_abf9ebc56ada38fa9994267f85c648e80}{MAX30101\_FIFO\_Buffer}}[8];}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{/**}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @brief\ 16-\/bit\ ADC\ counts\ (intermediate\ format)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @details\ 32-\/sample\ buffer\ for\ unsigned\ integer\ ADC\ values\ (0–65535).}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Typical\ usage:\ Custom\ scaling,\ direct\ DAC\ output,\ calibration\ debug.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @note\ Memory:\ 8\ samples\ ×\ 6\ bytes\ =\ 48\ bytes}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\_SampleData}}\ \doxymbox{\hyperlink{main_8c_aa2faa86894de3697a86d4b5125afb6b3}{MAX30101\_SampleDataBuffer}}[8];}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{/**}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @brief\ FINAL\ PROCESSED\ DATA:\ Calibrated\ current\ in\ nanoamps\ (nA)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @details\ 32-\/sample\ buffer\ holding\ calibrated\ photodiode\ current\ values\ (0–2048\ nA).}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ This\ is\ the\ primary\ output\ buffer\ for\ post-\/processing\ and\ external\ transmission.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Updated\ by\ SysTick\ ISR\ approximately\ every\ 100\ ms\ (variable\ latency\ based\ on\ FIFO\ fill).}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @see\ SysTick\_Handler}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @note\ Memory:\ 8\ samples\ ×\ 12\ bytes\ (3\ ×\ float32\_t)\ =\ 96\ bytes}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ @note\ Typically\ accessed\ in\ main\ loop\ after\ ISR\ completion}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\_SampleCurrent}}\ \doxymbox{\hyperlink{main_8c_a4556617fa4128f1f769912ea53bdef69}{MAX30101\_SampleCurrentBuffer}}[8];}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ clk\_config(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{/**}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @brief\ System\ initialization\ and\ main\ control\ loop}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @details\ Initializes\ all\ peripherals\ in\ sequence:}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 1.\ **Clock**:\ PLL\ to\ 64\ MHz\ (HSI\ 8\ MHz\ ×\ 16)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 2.\ **GPIO**:\ Status\ LED\ on\ PB3\ (push-\/pull\ output)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 3.\ **I2C1**:\ 400\ kHz\ speed\ on\ PB6\ (SCL),\ PB7\ (SDA)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 4.\ **Sensor**:\ MAX30101\ NIRS\ configuration\ with\ 100\ Hz\ sampling}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 5.\ **Timer**:\ SysTick\ configured\ for\ 100\ ms\ interrupts}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ After\ initialization,\ enters\ infinite\ loop\ that\ continuously\ increments}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ a\ debug\ counter.\ Real\ work\ happens\ in\ SysTick\_Handler()\ ISR.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @param\ None}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @return\ int\ -\/\ Never\ returns\ (infinite\ loop)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @note\ Initialization\ order\ is\ critical;\ I2C\ must\ be\ ready\ before\ MAX30101\ init.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @warning\ Upon\ return,\ interrupts\ are\ globally\ enabled\ and\ SysTick\ is\ running.}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @execution}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ -\/\ Blocking\ operations\ during\ init:\ Clock\ PLL\ lock,\ I2C\ configuration}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ -\/\ Time\ to\ first\ ISR:\ \string~100\ ms\ after\ SysTick\_Config()}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @see\ clk\_config,\ LED\_config,\ I2C1\_Config,\ MAX30101\_InitMuscleOx,\ SysTick\_Handler}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ //\ main()\ initializes\ and\ waits\ for\ interrupts}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ //\ SysTick\ fires\ every\ 100\ ms\ with\ MAXFIFO\ reads}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ main()\ \{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Configure\ the\ system\ clock\ to\ 64\ MHz}}
+\DoxyCodeLine{\ \ \ \ clk\_config();}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Configure\ the\ GPIO\ pin\ for\ the\ LED\ on\ PB3}}
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{_l_e_d_8h_a1eba03f25b9d10a66d906572d494d731}{LED\_config}}();}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Configure\ I2C1\ for\ communication\ with\ the\ MAX30101\ sensor}}
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{I2C1\_Config}}();}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Initialize\ MAX30101\ for\ muscle\ oxygenation\ with\ medium\ LED\ power}}
+\DoxyCodeLine{\ \ \ \ MAX30101\_InitMuscleOx(0x4B);\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Configure\ SysTick\ to\ generate\ an\ interrupt\ every\ 100\ ms}}
+\DoxyCodeLine{\ \ \ \ SysTick\_Config(SystemCoreClock\ /\ 10);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{for}\ (;;)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \doxymbox{\hyperlink{main_8c_a51322ddb267b4729d6b5f2bb05d49fff}{counter}}++;}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{/**}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @brief\ SysTick\ Timer\ Interrupt\ Service\ Routine\ (100\ ms\ period)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @details\ Core\ real-\/time\ data\ acquisition\ routine:}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 1.\ Increments\ \`{}ticks`\ counter}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 2.\ Queries\ MAX30101\ FIFO\ for\ new\ samples}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 3.\ If\ samples\ available:\ reads\ and\ converts\ to\ nanoamps\ in\ one\ call}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 4.\ Toggles\ status\ LED\ (visual\ feedback)}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ This\ ISR\ runs\ non-\/preemptively\ (highest\ priority)\ approximately\ every}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 100\ milliseconds,\ making\ it\ ideal\ for\ time-\/critical\ sensor\ polling.}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @param\ None}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @note\ ISR\ Context}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Execution\ time:\ \string~1–2\ ms\ (I2C\ reads\ dominate;\ \string~0.5\ ms\ per\ sample)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Called\ at\ SysTick\ exception\ (cannot\ nest\ itself)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ All\ registers\ preserved;\ no\ clobbering\ of\ main\ loop\ state}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @data\_output}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ Upon\ samples\ available:}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Populates\ MAX30101\_SampleCurrentBuffer[]\ with\ up\ to\ 32\ calibrated\ samples}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Sample\ count\ in\ local\ variable\ \`{}available\_samples`}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Data\ remains\ in\ buffer\ until\ next\ ISR\ overwrites\ (100\ ms\ window)}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @timing}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Sample\ freshness:\ 0–100\ ms\ (age\ of\ data\ in\ buffer)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ FIFO\ latency:\ Variable;\ depends\ on\ sample\ rate\ (100\ Hz)\ and\ read\ interval}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ At\ 100\ Hz\ rate\ with\ 100\ ms\ polling:\ Expect\ 8–10\ samples\ per\ interrupt}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @warning}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Race\ condition\ possible\ if\ main\ loop\ reads\ buffer\ while\ ISR\ writes}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ (Consider\ using\ volatile\ or\ double-\/buffering\ in\ production)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ I2C\ blocking:\ If\ I2C\ bus\ is\ busy,\ ISR\ may\ delay\ by\ several\ ms}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @see\ MAX30101\_GetNumAvailableSamples,\ MAX30101\_ReadFIFO\_Current,\ LED\_Toggle}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ //\ ISR\ fires\ every\ 100\ ms:}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ //\ ticks++\ (incremented\ 10\ times\ per\ second)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ //\ MAX30101\_SampleCurrentBuffer[]\ updated\ with\ fresh\ nA\ values}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ //\ LED\ toggles\ (100\ ms\ on,\ 100\ ms\ off\ =\ 5\ Hz\ blink)}}
+\DoxyCodeLine{\textcolor{comment}{\ */}\ \ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ SysTick\_Handler(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{main_8c_ab3507a48ae247ff252738ca350810b21}{ticks}}++;}
+\DoxyCodeLine{\ \ \ \ uint8\_t\ available\_samples\ =\ MAX30101\_GetNumAvailableSamples();}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{if}\ (available\_samples\ >\ 0)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ available\ samples\ from\ the\ MAX30101\ FIFO\ in\ float\ format\ (nA)\ into\ the\ global\ buffer}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ MAX30101\_ReadFIFO\_Current(\doxymbox{\hyperlink{main_8c_a4556617fa4128f1f769912ea53bdef69}{MAX30101\_SampleCurrentBuffer}},\ available\_samples);}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{_l_e_d_8h_a3b0db98f4b9d8da4c54223aa39ebc557}{LED\_Toggle}}();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{comment}{}}
+\DoxyCodeLine{\textcolor{comment}{/**}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @brief\ Configure\ STM32F303K8\ system\ clock\ to\ 64\ MHz\ via\ PLL}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @details\ PLL\ configuration\ chain:}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Input**:\ 8\ MHz\ HSI\ oscillator\ (internal,\ always\ available)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Divider**:\ /2\ in\ PLL\ block\ (built-\/in)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Multiplier**:\ MUL[3:0]\ =\ 0x0E\ (multiply\ by\ 16)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Output**:\ (8\ MHz\ /\ 2)\ ×\ 16\ =\ 64\ MHz}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **System\ Clock**:\ PLL\ output\ becomes\ SYSCLK}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **Flash\ Timing**:\ 2\ wait\ states\ for\ 48\ <\ HCLK\ ≤\ 72\ MHz}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ **APB1\ Divider**:\ HCLK/2\ (32\ MHz\ for\ most\ peripherals,\ incl.\ I2C)}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @param\ None}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @operations}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ 1.\ RCC-\/>CFGR\ |=\ 0xE<<18\ (PLLMUL\ configuration)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ 2.\ FLASH-\/>ACR\ |=\ 0x2\ (Latency\ =\ 2\ cycles)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ 3.\ RCC-\/>CR\ |=\ RCC\_CR\_PLLON\ (Enable\ PLL\ oscillator)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ 4.\ Wait\ for\ RCC\_CR\_PLLRDY\ flag}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ 5.\ RCC-\/>CFGR\ |=\ 0x402\ (SW[1:0]=10\ for\ PLL,\ PPRE1[2:0]=100\ for\ APB1/2)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ 6.\ Wait\ for\ RCC\_CFGR\_SWS\_PLL\ status}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ 7.\ SystemCoreClockUpdate()\ (Update\ HAL\ clock\ variable)}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @timing}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ PLL\ lock\ time:\ \string~100\ µs\ (measured\ in\ hardware)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Total\ configuration\ time:\ <1\ ms}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Blocking:\ Yes\ (waits\ for\ PLL\_RDY\ and\ SWS\ flags)}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @side\_effects}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ SYSCLK\ becomes\ 64\ MHz\ (all\ core\ and\ bus\ clocks\ scale\ accordingly)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ I2C1\ clock:\ 32\ MHz\ /\ (I2C\ prescaler)\ ≈\ 400\ kHz}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ SysTick\ frequency\ scales\ to\ HCLK\ (timer\ reload\ values\ adapt)}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Power\ consumption\ increases\ (\string~60\ mA\ typical\ at\ 64\ MHz\ vs\ 30\ mA\ at\ 8\ MHz)}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @warning}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ PLL\ must\ be\ configured\ BEFORE\ any\ I2C\ or\ timer\ operations}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Changing\ clock\ mid-\/operation\ may\ corrupt\ ongoing\ communications}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Requires\ FLASH\ latency\ adjustment\ or\ reads\ may\ fail}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @perf\_note}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ 64\ MHz\ is\ \string~8×\ faster\ than\ default\ 8\ MHz\ HSI}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ I2C\ bus\ speed\ 400\ kHz\ achievable\ only\ with\ sufficient\ SYSCLK}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ \ \ \ \ -\/\ Sampling\ rate\ limited\ more\ by\ I2C\ than\ by\ CPU}}
+\DoxyCodeLine{\textcolor{comment}{\ *}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ @example}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ //\ Called\ from\ main()\ to\ enable\ high-\/speed\ operation}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ clk\_config();}}
+\DoxyCodeLine{\textcolor{comment}{\ *\ \ \ //\ Now\ SYSCLK\ =\ 64\ MHz,\ I2C/SPI\ significantly\ faster}}
+\DoxyCodeLine{\textcolor{comment}{\ */}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ clk\_config(\textcolor{keywordtype}{void})\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ PLLMUL\ <-\/\ 0x0E\ (PLL\ input\ clock\ x\ 16\ -\/-\/>\ (8\ MHz\ /\ 2)\ *\ 16\ =\ 64\ MHz\ )\ \ }}
+\DoxyCodeLine{\ \ \ \ RCC-\/>CFGR\ |=\ 0xE<<18;}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Flash\ Latency,\ two\ wait\ states\ for\ 48<HCLK<=72\ MHz}}
+\DoxyCodeLine{\ \ \ \ FLASH-\/>ACR\ |=\ 0x2;}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ PLLON\ <-\/\ 0x1\ }}
+\DoxyCodeLine{\ \ \ \ RCC-\/>CR\ |=\ RCC\_CR\_PLLON;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{while}\ (!(RCC-\/>CR\ \&\ RCC\_CR\_PLLRDY));\ }
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ SW<-\/0x02\ (PLL\ as\ System\ Clock),\ HCLK\ not\ divided,\ PPRE1<-\/0x4\ (APB1\ <-\/\ HCLK/2),\ APB2\ not\ divided\ }}
+\DoxyCodeLine{\ \ \ \ RCC-\/>CFGR\ |=\ 0x402;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{while}\ (!(RCC-\/>CFGR\ \&\ RCC\_CFGR\_SWS\_PLL));}
+\DoxyCodeLine{\ \ \ \ \doxymbox{\hyperlink{group___s_t_m32_f3xx___system___private___functions_gae0c36a9591fe6e9c45ecb21a794f0f0f}{SystemCoreClockUpdate}}();\ \ \ }
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+ 

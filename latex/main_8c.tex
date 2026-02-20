@@ -10,36 +10,45 @@ Main program for MAX30101 muscle oxygenation measurement.
 {\ttfamily \+\#include "{}LED.\+h"{}}\newline
 {\ttfamily \+\#include "{}I2\+C.\+h"{}}\newline
 {\ttfamily \+\#include "{}MAX30101.\+h"{}}\newline
+{\ttfamily \+\#include "{}arm\+\_\+math.\+h"{}}\newline
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
 void \doxymbox{\hyperlink{main_8c_af2f06cca719d7bf8120401b18b0c792c}{clk\+\_\+config}} (void)
-\begin{DoxyCompactList}\small\item\em Configures the system clock to 64 MHz using PLL with HSI as the source. \end{DoxyCompactList}\item 
+\item 
 int \doxymbox{\hyperlink{main_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
-\begin{DoxyCompactList}\small\item\em Main function, initializes the GPIO and Sys\+Tick timer. \end{DoxyCompactList}\item 
+\item 
 void \doxymbox{\hyperlink{main_8c_ab5e09814056d617c521549e542639b7e}{Sys\+Tick\+\_\+\+Handler}} (void)
-\begin{DoxyCompactList}\small\item\em Sys\+Tick interrupt handler, toggles the LED on PB3 every 100ms. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{DoxyCompactItemize}
 \doxysubsubsection*{Variables}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{main_8c_a51322ddb267b4729d6b5f2bb05d49fff}\label{main_8c_a51322ddb267b4729d6b5f2bb05d49fff} 
-uint32\+\_\+t {\bfseries counter} = 0
+uint32\+\_\+t \doxymbox{\hyperlink{main_8c_a51322ddb267b4729d6b5f2bb05d49fff}{counter}} = 0
 \item 
-\Hypertarget{main_8c_ab3507a48ae247ff252738ca350810b21}\label{main_8c_ab3507a48ae247ff252738ca350810b21} 
-uint32\+\_\+t {\bfseries ticks} = 0
-\end{DoxyCompactItemize}
+uint32\+\_\+t \doxymbox{\hyperlink{main_8c_ab3507a48ae247ff252738ca350810b21}{ticks}} = 0
+\item 
+\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\+\_\+\+Sample}} \doxymbox{\hyperlink{main_8c_abf9ebc56ada38fa9994267f85c648e80}{MAX30101\+\_\+\+FIFO\+\_\+\+Buffer}} \+[8]\+
+\begin{DoxyCompactList}\small\item\em Raw FIFO data from sensor (intermediate, rarely needed directly). \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\+\_\+\+Sample\+Data}} \doxymbox{\hyperlink{main_8c_aa2faa86894de3697a86d4b5125afb6b3}{MAX30101\+\_\+\+Sample\+Data\+Buffer}} \+[8]\+
+\begin{DoxyCompactList}\small\item\em 16-\/bit ADC counts (intermediate format) \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\+\_\+\+Sample\+Current}} \doxymbox{\hyperlink{main_8c_a4556617fa4128f1f769912ea53bdef69}{MAX30101\+\_\+\+Sample\+Current\+Buffer}} \+[8]\+
+\begin{DoxyCompactList}\small\item\em FINAL PROCESSED DATA:\+ Calibrated current in nanoamps (nA). \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 Main program for MAX30101 muscle oxygenation measurement. 
 
 \begin{DoxyAuthor}{Author}
-Julio Fajardo 
+Julio Fajardo, PhD 
 \end{DoxyAuthor}
 \begin{DoxyDate}{Date}
 2024-\/06-\/01
 \end{DoxyDate}
 This program initializes the MAX30101 sensor for muscle oxygenation measurement using the I2C interface. It configures the system clock to 64 MHz, sets up a GPIO pin for an LED indicator, and uses the Sys\+Tick timer to toggle the LED every 100 ms. The MAX30101 is configured to use 3 LEDs (Red, IR, Green) with a sample rate of 100 Hz and medium LED power for optimal tissue penetration in muscle applications. 
+
+Definition in file \doxymbox{\hyperlink{main_8c_source}{main.\+c}}.
+
+
 
 \label{doc-func-members}
 \Hypertarget{main_8c_doc-func-members}
@@ -52,16 +61,8 @@ void clk\+\_\+config (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCap
 
 
 
-Configures the system clock to 64 MHz using PLL with HSI as the source. 
+Definition at line \doxymbox{\hyperlink{main_8c_source_l00197}{197}} of file \doxymbox{\hyperlink{main_8c_source}{main.\+c}}.
 
-
-\begin{DoxyParams}{Parameters}
-{\em None} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-None 
-\end{DoxyReturn}
 \Hypertarget{main_8c_ae66f6b31b5ad750f1fe042a706a4e3d4}\index{main.c@{main.c}!main@{main}}
 \index{main@{main}!main.c@{main.c}}
 \doxysubsubsection{\texorpdfstring{main()}{main()}}
@@ -70,16 +71,8 @@ int main (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 
 
-Main function, initializes the GPIO and Sys\+Tick timer. 
+Definition at line \doxymbox{\hyperlink{main_8c_source_l00077}{77}} of file \doxymbox{\hyperlink{main_8c_source}{main.\+c}}.
 
-
-\begin{DoxyParams}{Parameters}
-{\em None} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-None 
-\end{DoxyReturn}
 \Hypertarget{main_8c_ab5e09814056d617c521549e542639b7e}\index{main.c@{main.c}!SysTick\_Handler@{SysTick\_Handler}}
 \index{SysTick\_Handler@{SysTick\_Handler}!main.c@{main.c}}
 \doxysubsubsection{\texorpdfstring{SysTick\_Handler()}{SysTick\_Handler()}}
@@ -88,13 +81,101 @@ void Sys\+Tick\+\_\+\+Handler (\begin{DoxyParamCaption}\item[{void}]{}{}\end{Dox
 
 
 
-Sys\+Tick interrupt handler, toggles the LED on PB3 every 100ms. 
+Definition at line \doxymbox{\hyperlink{main_8c_source_l00137}{137}} of file \doxymbox{\hyperlink{main_8c_source}{main.\+c}}.
 
 
-\begin{DoxyParams}{Parameters}
-{\em None} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-None 
-\end{DoxyReturn}
+
+\label{doc-var-members}
+\Hypertarget{main_8c_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{main_8c_a51322ddb267b4729d6b5f2bb05d49fff}\index{main.c@{main.c}!counter@{counter}}
+\index{counter@{counter}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{counter}{counter}}
+{\footnotesize\ttfamily \label{main_8c_a51322ddb267b4729d6b5f2bb05d49fff} 
+uint32\+\_\+t counter = 0}
+
+Debug counter for main loop iterations (unused in release) \begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{main_8c_source_l00021}{21}} of file \doxymbox{\hyperlink{main_8c_source}{main.\+c}}.
+
+\Hypertarget{main_8c_abf9ebc56ada38fa9994267f85c648e80}\index{main.c@{main.c}!MAX30101\_FIFO\_Buffer@{MAX30101\_FIFO\_Buffer}}
+\index{MAX30101\_FIFO\_Buffer@{MAX30101\_FIFO\_Buffer}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_FIFO\_Buffer}{MAX30101\_FIFO\_Buffer}}
+{\footnotesize\ttfamily \label{main_8c_abf9ebc56ada38fa9994267f85c648e80} 
+\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\+\_\+\+Sample}} MAX30101\+\_\+\+FIFO\+\_\+\+Buffer\+[8]\+}
+
+
+
+Raw FIFO data from sensor (intermediate, rarely needed directly). 
+
+32-\/sample circular buffer to store raw 6-\/byte samples from MAX30101 FIFO. Typical usage:\+ Diagnostic, direct ADC access, custom processing. \begin{DoxyNote}{Note}
+Memory:\+ 8 samples × 6 bytes = 48 bytes 
+\end{DoxyNote}
+\begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{main_8c_source_l00030}{30}} of file \doxymbox{\hyperlink{main_8c_source}{main.\+c}}.
+
+\Hypertarget{main_8c_a4556617fa4128f1f769912ea53bdef69}\index{main.c@{main.c}!MAX30101\_SampleCurrentBuffer@{MAX30101\_SampleCurrentBuffer}}
+\index{MAX30101\_SampleCurrentBuffer@{MAX30101\_SampleCurrentBuffer}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_SampleCurrentBuffer}{MAX30101\_SampleCurrentBuffer}}
+{\footnotesize\ttfamily \label{main_8c_a4556617fa4128f1f769912ea53bdef69} 
+\doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\+\_\+\+Sample\+Current}} MAX30101\+\_\+\+Sample\+Current\+Buffer\+[8]\+}
+
+
+
+FINAL PROCESSED DATA:\+ Calibrated current in nanoamps (nA). 
+
+32-\/sample buffer holding calibrated photodiode current values (0–2048 nA). This is the primary output buffer for post-\/processing and external transmission. Updated by Sys\+Tick ISR approximately every 100 ms (variable latency based on FIFO fill). \begin{DoxySeeAlso}{See also}
+Sys\+Tick\+\_\+\+Handler 
+\end{DoxySeeAlso}
+\begin{DoxyNote}{Note}
+Memory:\+ 8 samples × 12 bytes (3 × float32\+\_\+t) = 96 bytes 
+
+Typically accessed in main loop after ISR completion 
+\end{DoxyNote}
+\begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{main_8c_source_l00049}{49}} of file \doxymbox{\hyperlink{main_8c_source}{main.\+c}}.
+
+\Hypertarget{main_8c_aa2faa86894de3697a86d4b5125afb6b3}\index{main.c@{main.c}!MAX30101\_SampleDataBuffer@{MAX30101\_SampleDataBuffer}}
+\index{MAX30101\_SampleDataBuffer@{MAX30101\_SampleDataBuffer}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_SampleDataBuffer}{MAX30101\_SampleDataBuffer}}
+{\footnotesize\ttfamily \label{main_8c_aa2faa86894de3697a86d4b5125afb6b3} 
+\doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\+\_\+\+Sample\+Data}} MAX30101\+\_\+\+Sample\+Data\+Buffer\+[8]\+}
+
+
+
+16-\/bit ADC counts (intermediate format) 
+
+32-\/sample buffer for unsigned integer ADC values (0–65535). Typical usage:\+ Custom scaling, direct DAC output, calibration debug. \begin{DoxyNote}{Note}
+Memory:\+ 8 samples × 6 bytes = 48 bytes 
+\end{DoxyNote}
+\begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{main_8c_source_l00038}{38}} of file \doxymbox{\hyperlink{main_8c_source}{main.\+c}}.
+
+\Hypertarget{main_8c_ab3507a48ae247ff252738ca350810b21}\index{main.c@{main.c}!ticks@{ticks}}
+\index{ticks@{ticks}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{ticks}{ticks}}
+{\footnotesize\ttfamily \label{main_8c_ab3507a48ae247ff252738ca350810b21} 
+uint32\+\_\+t ticks = 0}
+
+Interrupt tick counter (incremented per 100 ms Sys\+Tick) \begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{main_8c_source_l00022}{22}} of file \doxymbox{\hyperlink{main_8c_source}{main.\+c}}.
+

@@ -2,127 +2,456 @@
 \hypertarget{_m_a_x30101_8h}{}\label{_m_a_x30101_8h}\index{Project/MAX30101.h@{Project/MAX30101.h}}
 
 
-MAX30101 Pulse Oximetry and NIRS Module.  
+MAX30101 Optical Biosensor Driver for NIRS Muscle Oxygenation.  
 
 
 {\ttfamily \+\#include $<$stdint.\+h$>$}\newline
+{\ttfamily \+\#include "{}arm\+\_\+math.\+h"{}}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\+\_\+\+Sample}}
+\begin{DoxyCompactList}\small\item\em Raw FIFO sample data directly read from sensor (6 bytes) in multi-\/\+LED mode. \end{DoxyCompactList}\item 
+struct \doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\+\_\+\+Sample\+Data}}
+\begin{DoxyCompactList}\small\item\em 16-\/bit unsigned integer representation of ADC counts \end{DoxyCompactList}\item 
+struct \doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\+\_\+\+Sample\+Current}}
+\begin{DoxyCompactList}\small\item\em Calibrated photodiode current in nanoamps (nA). \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{_m_a_x30101_8h_a94825a8eb50fe1bf187ececa255858d5}\label{_m_a_x30101_8h_a94825a8eb50fe1bf187ececa255858d5} 
-\+\#define {\bfseries SENSOR\+\_\+\+ADDR}~0x\+AE
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a94825a8eb50fe1bf187ececa255858d5}{SENSOR\+\_\+\+ADDR}}~0x\+AE
 \item 
-\Hypertarget{_m_a_x30101_8h_a0a03ffc596b07c17f06064c10f721793}\label{_m_a_x30101_8h_a0a03ffc596b07c17f06064c10f721793} 
-\+\#define {\bfseries INTR\+\_\+\+STATUS1}~0x00
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a0a03ffc596b07c17f06064c10f721793}{INTR\+\_\+\+STATUS1}}~0x00
 \item 
-\Hypertarget{_m_a_x30101_8h_a16cf594d55c33820e7839ab13429e17c}\label{_m_a_x30101_8h_a16cf594d55c33820e7839ab13429e17c} 
-\+\#define {\bfseries INTR\+\_\+\+STATUS2}~0x01
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a16cf594d55c33820e7839ab13429e17c}{INTR\+\_\+\+STATUS2}}~0x01
 \item 
-\Hypertarget{_m_a_x30101_8h_a5d42af87c7bb6c38da6e9dad28a6c3f2}\label{_m_a_x30101_8h_a5d42af87c7bb6c38da6e9dad28a6c3f2} 
-\+\#define {\bfseries INTR\+\_\+\+ENABLE1}~0x02
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a5d42af87c7bb6c38da6e9dad28a6c3f2}{INTR\+\_\+\+ENABLE1}}~0x02
 \item 
-\Hypertarget{_m_a_x30101_8h_a3f2ae99d490975325f8a5575c68b6784}\label{_m_a_x30101_8h_a3f2ae99d490975325f8a5575c68b6784} 
-\+\#define {\bfseries INTR\+\_\+\+ENABLE2}~0x03
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a3f2ae99d490975325f8a5575c68b6784}{INTR\+\_\+\+ENABLE2}}~0x03
 \item 
-\Hypertarget{_m_a_x30101_8h_a377561d1d608ea407b60945ab0dd145e}\label{_m_a_x30101_8h_a377561d1d608ea407b60945ab0dd145e} 
-\+\#define {\bfseries FIFO\+\_\+\+WRITPTR}~0x04
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a377561d1d608ea407b60945ab0dd145e}{FIFO\+\_\+\+WRITPTR}}~0x04
 \item 
-\Hypertarget{_m_a_x30101_8h_a4e271f09c452a8c16492978ea5f37400}\label{_m_a_x30101_8h_a4e271f09c452a8c16492978ea5f37400} 
-\+\#define {\bfseries OVRF\+\_\+\+COUNTER}~0x05
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a4e271f09c452a8c16492978ea5f37400}{OVRF\+\_\+\+COUNTER}}~0x05
 \item 
-\Hypertarget{_m_a_x30101_8h_a719a3749ba666436530560b5576ee34b}\label{_m_a_x30101_8h_a719a3749ba666436530560b5576ee34b} 
-\+\#define {\bfseries FIFO\+\_\+\+READPTR}~0x06
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a719a3749ba666436530560b5576ee34b}{FIFO\+\_\+\+READPTR}}~0x06
 \item 
-\Hypertarget{_m_a_x30101_8h_a22233bba45164be1e5309d0650bb2cd8}\label{_m_a_x30101_8h_a22233bba45164be1e5309d0650bb2cd8} 
-\+\#define {\bfseries FIFO\+\_\+\+DATAREG}~0x07
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a22233bba45164be1e5309d0650bb2cd8}{FIFO\+\_\+\+DATAREG}}~0x07
 \item 
-\Hypertarget{_m_a_x30101_8h_a0eca3f0303b4f82b66f10fb06be87178}\label{_m_a_x30101_8h_a0eca3f0303b4f82b66f10fb06be87178} 
-\+\#define {\bfseries FIFO\+\_\+\+CONFIG}~0x08
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a0eca3f0303b4f82b66f10fb06be87178}{FIFO\+\_\+\+CONFIG}}~0x08
 \item 
-\Hypertarget{_m_a_x30101_8h_a5552a5de9b59914458ab99d568bf2763}\label{_m_a_x30101_8h_a5552a5de9b59914458ab99d568bf2763} 
-\+\#define {\bfseries MODE\+\_\+\+CONFIG}~0x09
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a5552a5de9b59914458ab99d568bf2763}{MODE\+\_\+\+CONFIG}}~0x09
 \item 
-\Hypertarget{_m_a_x30101_8h_a088c88c3c5bd0d09efc6f64816c16ba1}\label{_m_a_x30101_8h_a088c88c3c5bd0d09efc6f64816c16ba1} 
-\+\#define {\bfseries SPO2\+\_\+\+CONFIG}~0x0A
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a088c88c3c5bd0d09efc6f64816c16ba1}{SPO2\+\_\+\+CONFIG}}~0x0A
 \item 
-\Hypertarget{_m_a_x30101_8h_aca7c8ca63b805432e5f70a24512d6bbe}\label{_m_a_x30101_8h_aca7c8ca63b805432e5f70a24512d6bbe} 
-\+\#define {\bfseries SPO2\+\_\+\+CONFIG}~0x0A
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_aca7c8ca63b805432e5f70a24512d6bbe}{SPO2\+\_\+\+CONFIG}}~0x0A
 \item 
-\Hypertarget{_m_a_x30101_8h_ada0e10b454c413f804fba6187d920409}\label{_m_a_x30101_8h_ada0e10b454c413f804fba6187d920409} 
-\+\#define {\bfseries LED1\+\_\+\+PAMPLI}~0x0C
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_ada0e10b454c413f804fba6187d920409}{LED1\+\_\+\+PAMPLI}}~0x0C
 \item 
-\Hypertarget{_m_a_x30101_8h_a8012892d3915984ebb27a4c83a1dd018}\label{_m_a_x30101_8h_a8012892d3915984ebb27a4c83a1dd018} 
-\+\#define {\bfseries LED2\+\_\+\+PAMPLI}~0x0D
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a8012892d3915984ebb27a4c83a1dd018}{LED2\+\_\+\+PAMPLI}}~0x0D
 \item 
-\Hypertarget{_m_a_x30101_8h_a18578fb98c9abbd3a0745c4412e4dd44}\label{_m_a_x30101_8h_a18578fb98c9abbd3a0745c4412e4dd44} 
-\+\#define {\bfseries LED3\+\_\+\+PAMPLI}~0x0E
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a18578fb98c9abbd3a0745c4412e4dd44}{LED3\+\_\+\+PAMPLI}}~0x0E
 \item 
-\Hypertarget{_m_a_x30101_8h_aa2ef9161bc1bbe93798706215f5a0bc2}\label{_m_a_x30101_8h_aa2ef9161bc1bbe93798706215f5a0bc2} 
-\+\#define {\bfseries LED4\+\_\+\+PAMPLI}~0x0F
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_aa2ef9161bc1bbe93798706215f5a0bc2}{LED4\+\_\+\+PAMPLI}}~0x0F
 \item 
-\Hypertarget{_m_a_x30101_8h_ac9ddc78ecd455ddc1412f37417530a82}\label{_m_a_x30101_8h_ac9ddc78ecd455ddc1412f37417530a82} 
-\+\#define {\bfseries MLED\+\_\+\+CONFG1}~0x11
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_ac9ddc78ecd455ddc1412f37417530a82}{MLED\+\_\+\+CONFG1}}~0x11
 \item 
-\Hypertarget{_m_a_x30101_8h_a1b918ecf041cc0b9270c926676276c13}\label{_m_a_x30101_8h_a1b918ecf041cc0b9270c926676276c13} 
-\+\#define {\bfseries MLED\+\_\+\+CONFG2}~0x12
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a1b918ecf041cc0b9270c926676276c13}{MLED\+\_\+\+CONFG2}}~0x12
 \item 
-\Hypertarget{_m_a_x30101_8h_af1a51145ec099d5b0009b11db3846494}\label{_m_a_x30101_8h_af1a51145ec099d5b0009b11db3846494} 
-\+\#define {\bfseries DIE\+\_\+\+TEMPINT}~0x1F
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_af1a51145ec099d5b0009b11db3846494}{DIE\+\_\+\+TEMPINT}}~0x1F
 \item 
-\Hypertarget{_m_a_x30101_8h_a47c0a4ad6722094f81a5ac1d1a760550}\label{_m_a_x30101_8h_a47c0a4ad6722094f81a5ac1d1a760550} 
-\+\#define {\bfseries DIE\+\_\+\+TEMPFRC}~0x20
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a47c0a4ad6722094f81a5ac1d1a760550}{DIE\+\_\+\+TEMPFRC}}~0x20
 \item 
-\Hypertarget{_m_a_x30101_8h_ad3aed79a12f1254a191bc633e943a399}\label{_m_a_x30101_8h_ad3aed79a12f1254a191bc633e943a399} 
-\+\#define {\bfseries DIE\+\_\+\+TEMPCFG}~0x21
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_ad3aed79a12f1254a191bc633e943a399}{DIE\+\_\+\+TEMPCFG}}~0x21
 \item 
-\Hypertarget{_m_a_x30101_8h_ad30db9cf28b11700d58caa3a417a596c}\label{_m_a_x30101_8h_ad30db9cf28b11700d58caa3a417a596c} 
-\+\#define {\bfseries BUFFERBLOCKSIZE}~0x8
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_ad30db9cf28b11700d58caa3a417a596c}{BUFFERBLOCKSIZE}}~0x8
+\item 
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_ad23c173774e20090f654a509c5b19773}{MAX30101\+\_\+\+ADC\+\_\+\+VREF}}~3.\+3f
+\item 
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_af69b3a3b8412dc5a37845e36f863ae76}{MAX30101\+\_\+\+ADC\+\_\+\+BITS}}~16
+\item 
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a82d9250f2be0921620dbbfce49e8d570}{MAX30101\+\_\+\+ADC\+\_\+\+MAX}}~((1 $<$$<$ \doxymbox{\hyperlink{_m_a_x30101_8h_af69b3a3b8412dc5a37845e36f863ae76}{MAX30101\+\_\+\+ADC\+\_\+\+BITS}}) -\/ 1)
+\item 
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_ada4a12677bb863852ec1718c77eeef0d}{MAX30101\+\_\+\+CURRENT\+\_\+\+LSB\+\_\+\+PA}}~7.\+81f
+\item 
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd}{MAX30101\+\_\+\+CURRENT\+\_\+\+LSB\+\_\+\+NA}}~(\doxymbox{\hyperlink{_m_a_x30101_8h_ada4a12677bb863852ec1718c77eeef0d}{MAX30101\+\_\+\+CURRENT\+\_\+\+LSB\+\_\+\+PA}} /\+ 1000.\+0f)
+\item 
+\+\#define \doxymbox{\hyperlink{_m_a_x30101_8h_a911395e645196908a78fde416b986b85}{MAX30101\+\_\+\+CURRENT\+\_\+\+FULLSCALE}}~2048.\+0f
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \doxymbox{\hyperlink{_m_a_x30101_8h_a87df0a0c89e55c84dfce7ddc5ddd93af}{MAX30101\+\_\+\+Init}} (void)
-\begin{DoxyCompactList}\small\item\em Initializes MAX30101 for Sp\+O2 (blood oxygen) measurement -\/ Standard mode. \end{DoxyCompactList}\item 
 void \doxymbox{\hyperlink{_m_a_x30101_8h_a6353bf923aa1e5f944ed74e65799b0c4}{MAX30101\+\_\+\+Init\+SPO2\+Lite}} (void)
-\begin{DoxyCompactList}\small\item\em Initializes MAX30101 for Sp\+O2 measurement -\/ Low power mode. \end{DoxyCompactList}\item 
+\item 
 void \doxymbox{\hyperlink{_m_a_x30101_8h_afed94d9d5ac9210cd437c79f6a7376eb}{MAX30101\+\_\+\+Init\+Muscle\+Ox}} (uint8\+\_\+t led\+Power)
-\begin{DoxyCompactList}\small\item\em Initializes MAX30101 for muscle oxygenation (NIRS) measurement. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \doxymbox{\hyperlink{_m_a_x30101_8h_a8a7cab2225b858a2316022bfd3185c90}{MAX30101\+\_\+\+Get\+Num\+Available\+Samples}} (void)
+\item 
+void \doxymbox{\hyperlink{_m_a_x30101_8h_a1703394f82b418ad4b72597cbe551b89}{MAX30101\+\_\+\+Read\+FIFO}} (\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\+\_\+\+Sample}} \texorpdfstring{$\ast$}{*}samples, uint8\+\_\+t num\+\_\+samples)
+\item 
+void \doxymbox{\hyperlink{_m_a_x30101_8h_a6381c7dfcfc51a5f420e4676cdf3bfa0}{MAX30101\+\_\+\+Read\+FIFO\+\_\+\+Current}} (\doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\+\_\+\+Sample\+Current}} \texorpdfstring{$\ast$}{*}samples, uint8\+\_\+t num\+\_\+samples)
+\item 
+void \doxymbox{\hyperlink{_m_a_x30101_8h_af3961815f2082ad8db546c068ff1ce33}{MAX30101\+\_\+\+Convert\+Sample\+To\+Uint16}} (\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\+\_\+\+Sample}} \texorpdfstring{$\ast$}{*}sample\+\_\+in, \doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\+\_\+\+Sample\+Data}} \texorpdfstring{$\ast$}{*}sample\+\_\+out)
+\item 
+void \doxymbox{\hyperlink{_m_a_x30101_8h_a083ca48a8652b600591d581058224c1d}{MAX30101\+\_\+\+Convert\+Uint16\+To\+Current}} (\doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\+\_\+\+Sample\+Data}} \texorpdfstring{$\ast$}{*}sample\+\_\+in, \doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\+\_\+\+Sample\+Current}} \texorpdfstring{$\ast$}{*}sample\+\_\+out)
+\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-MAX30101 Pulse Oximetry and NIRS Module. 
+MAX30101 Optical Biosensor Driver for NIRS Muscle Oxygenation. 
 
-This module provides functions to configure and control the AD MAX30101 optical sensor for pulse oximetry (Sp\+O2), heart rate monitoring, and NIRS (Near-\/\+Infrared Spectroscopy) measurements for muscle oxygenation analysis. \begin{DoxyAuthor}{Author}
-Julio Fajardo 
+Complete driver for Maxim Integrated MAX30101 optical sensor supporting:\+
+\begin{DoxyItemize}
+\item Multi-\/\+LED mode (Red, IR, Green) for NIRS measurements
+\item Dual-\/\+LED mode (Red, IR) for Sp\+O2 measurements
+\item Direct current readout in nanoamps (nA) with 7.\+81 pA resolution
+\item 16-\/bit ADC with 2048 nA full-\/scale range
+\item 32-\/sample FIFO with wrap-\/around support \begin{DoxyAuthor}{Author}
+Julio Fajardo, PhD 
 \end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2024-\/06-\/01 
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+2.\+0 
+\end{DoxyVersion}
+
+\end{DoxyItemize}
+
+Definition in file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{_m_a_x30101_8h_doc-define-members}
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{_m_a_x30101_8h_ad30db9cf28b11700d58caa3a417a596c}\index{MAX30101.h@{MAX30101.h}!BUFFERBLOCKSIZE@{BUFFERBLOCKSIZE}}
+\index{BUFFERBLOCKSIZE@{BUFFERBLOCKSIZE}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{BUFFERBLOCKSIZE}{BUFFERBLOCKSIZE}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_ad30db9cf28b11700d58caa3a417a596c} 
+\+\#define BUFFERBLOCKSIZE~0x8}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00045}{45}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_ad3aed79a12f1254a191bc633e943a399}\index{MAX30101.h@{MAX30101.h}!DIE\_TEMPCFG@{DIE\_TEMPCFG}}
+\index{DIE\_TEMPCFG@{DIE\_TEMPCFG}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{DIE\_TEMPCFG}{DIE\_TEMPCFG}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_ad3aed79a12f1254a191bc633e943a399} 
+\+\#define DIE\+\_\+\+TEMPCFG~0x21}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00043}{43}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a47c0a4ad6722094f81a5ac1d1a760550}\index{MAX30101.h@{MAX30101.h}!DIE\_TEMPFRC@{DIE\_TEMPFRC}}
+\index{DIE\_TEMPFRC@{DIE\_TEMPFRC}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{DIE\_TEMPFRC}{DIE\_TEMPFRC}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a47c0a4ad6722094f81a5ac1d1a760550} 
+\+\#define DIE\+\_\+\+TEMPFRC~0x20}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00042}{42}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_af1a51145ec099d5b0009b11db3846494}\index{MAX30101.h@{MAX30101.h}!DIE\_TEMPINT@{DIE\_TEMPINT}}
+\index{DIE\_TEMPINT@{DIE\_TEMPINT}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{DIE\_TEMPINT}{DIE\_TEMPINT}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_af1a51145ec099d5b0009b11db3846494} 
+\+\#define DIE\+\_\+\+TEMPINT~0x1F}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00041}{41}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a0eca3f0303b4f82b66f10fb06be87178}\index{MAX30101.h@{MAX30101.h}!FIFO\_CONFIG@{FIFO\_CONFIG}}
+\index{FIFO\_CONFIG@{FIFO\_CONFIG}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{FIFO\_CONFIG}{FIFO\_CONFIG}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a0eca3f0303b4f82b66f10fb06be87178} 
+\+\#define FIFO\+\_\+\+CONFIG~0x08}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00031}{31}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a22233bba45164be1e5309d0650bb2cd8}\index{MAX30101.h@{MAX30101.h}!FIFO\_DATAREG@{FIFO\_DATAREG}}
+\index{FIFO\_DATAREG@{FIFO\_DATAREG}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{FIFO\_DATAREG}{FIFO\_DATAREG}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a22233bba45164be1e5309d0650bb2cd8} 
+\+\#define FIFO\+\_\+\+DATAREG~0x07}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00030}{30}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a719a3749ba666436530560b5576ee34b}\index{MAX30101.h@{MAX30101.h}!FIFO\_READPTR@{FIFO\_READPTR}}
+\index{FIFO\_READPTR@{FIFO\_READPTR}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{FIFO\_READPTR}{FIFO\_READPTR}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a719a3749ba666436530560b5576ee34b} 
+\+\#define FIFO\+\_\+\+READPTR~0x06}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00029}{29}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a377561d1d608ea407b60945ab0dd145e}\index{MAX30101.h@{MAX30101.h}!FIFO\_WRITPTR@{FIFO\_WRITPTR}}
+\index{FIFO\_WRITPTR@{FIFO\_WRITPTR}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{FIFO\_WRITPTR}{FIFO\_WRITPTR}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a377561d1d608ea407b60945ab0dd145e} 
+\+\#define FIFO\+\_\+\+WRITPTR~0x04}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00027}{27}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a5d42af87c7bb6c38da6e9dad28a6c3f2}\index{MAX30101.h@{MAX30101.h}!INTR\_ENABLE1@{INTR\_ENABLE1}}
+\index{INTR\_ENABLE1@{INTR\_ENABLE1}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{INTR\_ENABLE1}{INTR\_ENABLE1}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a5d42af87c7bb6c38da6e9dad28a6c3f2} 
+\+\#define INTR\+\_\+\+ENABLE1~0x02}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00025}{25}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a3f2ae99d490975325f8a5575c68b6784}\index{MAX30101.h@{MAX30101.h}!INTR\_ENABLE2@{INTR\_ENABLE2}}
+\index{INTR\_ENABLE2@{INTR\_ENABLE2}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{INTR\_ENABLE2}{INTR\_ENABLE2}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a3f2ae99d490975325f8a5575c68b6784} 
+\+\#define INTR\+\_\+\+ENABLE2~0x03}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00026}{26}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a0a03ffc596b07c17f06064c10f721793}\index{MAX30101.h@{MAX30101.h}!INTR\_STATUS1@{INTR\_STATUS1}}
+\index{INTR\_STATUS1@{INTR\_STATUS1}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{INTR\_STATUS1}{INTR\_STATUS1}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a0a03ffc596b07c17f06064c10f721793} 
+\+\#define INTR\+\_\+\+STATUS1~0x00}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00023}{23}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a16cf594d55c33820e7839ab13429e17c}\index{MAX30101.h@{MAX30101.h}!INTR\_STATUS2@{INTR\_STATUS2}}
+\index{INTR\_STATUS2@{INTR\_STATUS2}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{INTR\_STATUS2}{INTR\_STATUS2}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a16cf594d55c33820e7839ab13429e17c} 
+\+\#define INTR\+\_\+\+STATUS2~0x01}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00024}{24}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_ada0e10b454c413f804fba6187d920409}\index{MAX30101.h@{MAX30101.h}!LED1\_PAMPLI@{LED1\_PAMPLI}}
+\index{LED1\_PAMPLI@{LED1\_PAMPLI}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{LED1\_PAMPLI}{LED1\_PAMPLI}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_ada0e10b454c413f804fba6187d920409} 
+\+\#define LED1\+\_\+\+PAMPLI~0x0C}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00035}{35}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a8012892d3915984ebb27a4c83a1dd018}\index{MAX30101.h@{MAX30101.h}!LED2\_PAMPLI@{LED2\_PAMPLI}}
+\index{LED2\_PAMPLI@{LED2\_PAMPLI}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{LED2\_PAMPLI}{LED2\_PAMPLI}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a8012892d3915984ebb27a4c83a1dd018} 
+\+\#define LED2\+\_\+\+PAMPLI~0x0D}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00036}{36}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a18578fb98c9abbd3a0745c4412e4dd44}\index{MAX30101.h@{MAX30101.h}!LED3\_PAMPLI@{LED3\_PAMPLI}}
+\index{LED3\_PAMPLI@{LED3\_PAMPLI}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{LED3\_PAMPLI}{LED3\_PAMPLI}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a18578fb98c9abbd3a0745c4412e4dd44} 
+\+\#define LED3\+\_\+\+PAMPLI~0x0E}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00037}{37}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_aa2ef9161bc1bbe93798706215f5a0bc2}\index{MAX30101.h@{MAX30101.h}!LED4\_PAMPLI@{LED4\_PAMPLI}}
+\index{LED4\_PAMPLI@{LED4\_PAMPLI}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{LED4\_PAMPLI}{LED4\_PAMPLI}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_aa2ef9161bc1bbe93798706215f5a0bc2} 
+\+\#define LED4\+\_\+\+PAMPLI~0x0F}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00038}{38}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_af69b3a3b8412dc5a37845e36f863ae76}\index{MAX30101.h@{MAX30101.h}!MAX30101\_ADC\_BITS@{MAX30101\_ADC\_BITS}}
+\index{MAX30101\_ADC\_BITS@{MAX30101\_ADC\_BITS}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_ADC\_BITS}{MAX30101\_ADC\_BITS}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_af69b3a3b8412dc5a37845e36f863ae76} 
+\+\#define MAX30101\+\_\+\+ADC\+\_\+\+BITS~16}
+
+ADC resolution in bits 
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00047}{47}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a82d9250f2be0921620dbbfce49e8d570}\index{MAX30101.h@{MAX30101.h}!MAX30101\_ADC\_MAX@{MAX30101\_ADC\_MAX}}
+\index{MAX30101\_ADC\_MAX@{MAX30101\_ADC\_MAX}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_ADC\_MAX}{MAX30101\_ADC\_MAX}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a82d9250f2be0921620dbbfce49e8d570} 
+\+\#define MAX30101\+\_\+\+ADC\+\_\+\+MAX~((1 $<$$<$ \doxymbox{\hyperlink{_m_a_x30101_8h_af69b3a3b8412dc5a37845e36f863ae76}{MAX30101\+\_\+\+ADC\+\_\+\+BITS}}) -\/ 1)}
+
+Max ADC count (65535 for 16-\/bit) 
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00048}{48}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_ad23c173774e20090f654a509c5b19773}\index{MAX30101.h@{MAX30101.h}!MAX30101\_ADC\_VREF@{MAX30101\_ADC\_VREF}}
+\index{MAX30101\_ADC\_VREF@{MAX30101\_ADC\_VREF}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_ADC\_VREF}{MAX30101\_ADC\_VREF}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_ad23c173774e20090f654a509c5b19773} 
+\+\#define MAX30101\+\_\+\+ADC\+\_\+\+VREF~3.\+3f}
+
+ADC reference voltage in volts 
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00046}{46}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a911395e645196908a78fde416b986b85}\index{MAX30101.h@{MAX30101.h}!MAX30101\_CURRENT\_FULLSCALE@{MAX30101\_CURRENT\_FULLSCALE}}
+\index{MAX30101\_CURRENT\_FULLSCALE@{MAX30101\_CURRENT\_FULLSCALE}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_CURRENT\_FULLSCALE}{MAX30101\_CURRENT\_FULLSCALE}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a911395e645196908a78fde416b986b85} 
+\+\#define MAX30101\+\_\+\+CURRENT\+\_\+\+FULLSCALE~2048.\+0f}
+
+Full scale current range in nanoamps (nA) 
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00051}{51}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd}\index{MAX30101.h@{MAX30101.h}!MAX30101\_CURRENT\_LSB\_NA@{MAX30101\_CURRENT\_LSB\_NA}}
+\index{MAX30101\_CURRENT\_LSB\_NA@{MAX30101\_CURRENT\_LSB\_NA}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_CURRENT\_LSB\_NA}{MAX30101\_CURRENT\_LSB\_NA}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd} 
+\+\#define MAX30101\+\_\+\+CURRENT\+\_\+\+LSB\+\_\+\+NA~(\doxymbox{\hyperlink{_m_a_x30101_8h_ada4a12677bb863852ec1718c77eeef0d}{MAX30101\+\_\+\+CURRENT\+\_\+\+LSB\+\_\+\+PA}} /\+ 1000.\+0f)}
+
+LSB size in nanoamps (nA) \begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+\+MAX30101.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00050}{50}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_ada4a12677bb863852ec1718c77eeef0d}\index{MAX30101.h@{MAX30101.h}!MAX30101\_CURRENT\_LSB\_PA@{MAX30101\_CURRENT\_LSB\_PA}}
+\index{MAX30101\_CURRENT\_LSB\_PA@{MAX30101\_CURRENT\_LSB\_PA}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_CURRENT\_LSB\_PA}{MAX30101\_CURRENT\_LSB\_PA}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_ada4a12677bb863852ec1718c77eeef0d} 
+\+\#define MAX30101\+\_\+\+CURRENT\+\_\+\+LSB\+\_\+\+PA~7.\+81f}
+
+LSB size in picoamps (pA) 
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00049}{49}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_ac9ddc78ecd455ddc1412f37417530a82}\index{MAX30101.h@{MAX30101.h}!MLED\_CONFG1@{MLED\_CONFG1}}
+\index{MLED\_CONFG1@{MLED\_CONFG1}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MLED\_CONFG1}{MLED\_CONFG1}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_ac9ddc78ecd455ddc1412f37417530a82} 
+\+\#define MLED\+\_\+\+CONFG1~0x11}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00039}{39}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a1b918ecf041cc0b9270c926676276c13}\index{MAX30101.h@{MAX30101.h}!MLED\_CONFG2@{MLED\_CONFG2}}
+\index{MLED\_CONFG2@{MLED\_CONFG2}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MLED\_CONFG2}{MLED\_CONFG2}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a1b918ecf041cc0b9270c926676276c13} 
+\+\#define MLED\+\_\+\+CONFG2~0x12}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00040}{40}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a5552a5de9b59914458ab99d568bf2763}\index{MAX30101.h@{MAX30101.h}!MODE\_CONFIG@{MODE\_CONFIG}}
+\index{MODE\_CONFIG@{MODE\_CONFIG}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MODE\_CONFIG}{MODE\_CONFIG}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a5552a5de9b59914458ab99d568bf2763} 
+\+\#define MODE\+\_\+\+CONFIG~0x09}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00032}{32}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a4e271f09c452a8c16492978ea5f37400}\index{MAX30101.h@{MAX30101.h}!OVRF\_COUNTER@{OVRF\_COUNTER}}
+\index{OVRF\_COUNTER@{OVRF\_COUNTER}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{OVRF\_COUNTER}{OVRF\_COUNTER}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a4e271f09c452a8c16492978ea5f37400} 
+\+\#define OVRF\+\_\+\+COUNTER~0x05}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00028}{28}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a94825a8eb50fe1bf187ececa255858d5}\index{MAX30101.h@{MAX30101.h}!SENSOR\_ADDR@{SENSOR\_ADDR}}
+\index{SENSOR\_ADDR@{SENSOR\_ADDR}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{SENSOR\_ADDR}{SENSOR\_ADDR}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a94825a8eb50fe1bf187ececa255858d5} 
+\+\#define SENSOR\+\_\+\+ADDR~0x\+AE}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00021}{21}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_aca7c8ca63b805432e5f70a24512d6bbe}\index{MAX30101.h@{MAX30101.h}!SPO2\_CONFIG@{SPO2\_CONFIG}}
+\index{SPO2\_CONFIG@{SPO2\_CONFIG}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{SPO2\_CONFIG}{SPO2\_CONFIG}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_aca7c8ca63b805432e5f70a24512d6bbe} 
+\+\#define SPO2\+\_\+\+CONFIG~0x0A}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00033}{33}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{_m_a_x30101_8h_a088c88c3c5bd0d09efc6f64816c16ba1}\index{MAX30101.h@{MAX30101.h}!SPO2\_CONFIG@{SPO2\_CONFIG}}
+\index{SPO2\_CONFIG@{SPO2\_CONFIG}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{SPO2\_CONFIG}{SPO2\_CONFIG}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a088c88c3c5bd0d09efc6f64816c16ba1} 
+\+\#define SPO2\+\_\+\+CONFIG~0x0A}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00033}{33}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
 
 
 \label{doc-func-members}
 \Hypertarget{_m_a_x30101_8h_doc-func-members}
 \doxysubsection{Function Documentation}
-\Hypertarget{_m_a_x30101_8h_a87df0a0c89e55c84dfce7ddc5ddd93af}\index{MAX30101.h@{MAX30101.h}!MAX30101\_Init@{MAX30101\_Init}}
-\index{MAX30101\_Init@{MAX30101\_Init}!MAX30101.h@{MAX30101.h}}
-\doxysubsubsection{\texorpdfstring{MAX30101\_Init()}{MAX30101\_Init()}}
-{\footnotesize\ttfamily \label{_m_a_x30101_8h_a87df0a0c89e55c84dfce7ddc5ddd93af} 
-void MAX30101\+\_\+\+Init (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+\Hypertarget{_m_a_x30101_8h_af3961815f2082ad8db546c068ff1ce33}\index{MAX30101.h@{MAX30101.h}!MAX30101\_ConvertSampleToUint16@{MAX30101\_ConvertSampleToUint16}}
+\index{MAX30101\_ConvertSampleToUint16@{MAX30101\_ConvertSampleToUint16}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_ConvertSampleToUint16()}{MAX30101\_ConvertSampleToUint16()}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_af3961815f2082ad8db546c068ff1ce33} 
+void MAX30101\+\_\+\+Convert\+Sample\+To\+Uint16 (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\+\_\+\+Sample}} \texorpdfstring{$\ast$}{*}}]{sample\+\_\+in}{, }\item[{\doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\+\_\+\+Sample\+Data}} \texorpdfstring{$\ast$}{*}}]{sample\+\_\+out}{}\end{DoxyParamCaption})}
 
 
 
-Initializes MAX30101 for Sp\+O2 (blood oxygen) measurement -\/ Standard mode. 
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8c_source_l00165}{165}} of file \doxymbox{\hyperlink{_m_a_x30101_8c_source}{MAX30101.\+c}}.
+
+\Hypertarget{_m_a_x30101_8h_a083ca48a8652b600591d581058224c1d}\index{MAX30101.h@{MAX30101.h}!MAX30101\_ConvertUint16ToCurrent@{MAX30101\_ConvertUint16ToCurrent}}
+\index{MAX30101\_ConvertUint16ToCurrent@{MAX30101\_ConvertUint16ToCurrent}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_ConvertUint16ToCurrent()}{MAX30101\_ConvertUint16ToCurrent()}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a083ca48a8652b600591d581058224c1d} 
+void MAX30101\+\_\+\+Convert\+Uint16\+To\+Current (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\+\_\+\+Sample\+Data}} \texorpdfstring{$\ast$}{*}}]{sample\+\_\+in}{, }\item[{\doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\+\_\+\+Sample\+Current}} \texorpdfstring{$\ast$}{*}}]{sample\+\_\+out}{}\end{DoxyParamCaption})}
 
 
-\begin{DoxyParams}{Parameters}
-{\em None} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-None 
-\end{DoxyReturn}
-\begin{DoxyNote}{Note}
-Uses 2 LEDs (Red + IR), 400 Hz sample rate, 18-\/bit resolution 
 
-High accuracy, higher power consumption 
-\end{DoxyNote}
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8c_source_l00198}{198}} of file \doxymbox{\hyperlink{_m_a_x30101_8c_source}{MAX30101.\+c}}.
+
+\Hypertarget{_m_a_x30101_8h_a8a7cab2225b858a2316022bfd3185c90}\index{MAX30101.h@{MAX30101.h}!MAX30101\_GetNumAvailableSamples@{MAX30101\_GetNumAvailableSamples}}
+\index{MAX30101\_GetNumAvailableSamples@{MAX30101\_GetNumAvailableSamples}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_GetNumAvailableSamples()}{MAX30101\_GetNumAvailableSamples()}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a8a7cab2225b858a2316022bfd3185c90} 
+uint8\+\_\+t MAX30101\+\_\+\+Get\+Num\+Available\+Samples (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8c_source_l00086}{86}} of file \doxymbox{\hyperlink{_m_a_x30101_8c_source}{MAX30101.\+c}}.
+
 \Hypertarget{_m_a_x30101_8h_afed94d9d5ac9210cd437c79f6a7376eb}\index{MAX30101.h@{MAX30101.h}!MAX30101\_InitMuscleOx@{MAX30101\_InitMuscleOx}}
 \index{MAX30101\_InitMuscleOx@{MAX30101\_InitMuscleOx}!MAX30101.h@{MAX30101.h}}
 \doxysubsubsection{\texorpdfstring{MAX30101\_InitMuscleOx()}{MAX30101\_InitMuscleOx()}}
@@ -131,21 +460,8 @@ void MAX30101\+\_\+\+Init\+Muscle\+Ox (\begin{DoxyParamCaption}\item[{uint8\+\_\
 
 
 
-Initializes MAX30101 for muscle oxygenation (NIRS) measurement. 
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8c_source_l00055}{55}} of file \doxymbox{\hyperlink{_m_a_x30101_8c_source}{MAX30101.\+c}}.
 
-
-\begin{DoxyParams}{Parameters}
-{\em None} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-None 
-\end{DoxyReturn}
-\begin{DoxyNote}{Note}
-Uses 3 LEDs (Red + IR + Green), 100 Hz sample rate, lower power consumption 
-
-Better for tissue penetration in muscle applications 
-\end{DoxyNote}
 \Hypertarget{_m_a_x30101_8h_a6353bf923aa1e5f944ed74e65799b0c4}\index{MAX30101.h@{MAX30101.h}!MAX30101\_InitSPO2Lite@{MAX30101\_InitSPO2Lite}}
 \index{MAX30101\_InitSPO2Lite@{MAX30101\_InitSPO2Lite}!MAX30101.h@{MAX30101.h}}
 \doxysubsubsection{\texorpdfstring{MAX30101\_InitSPO2Lite()}{MAX30101\_InitSPO2Lite()}}
@@ -154,18 +470,25 @@ void MAX30101\+\_\+\+Init\+SPO2\+Lite (\begin{DoxyParamCaption}\item[{void}]{}{}
 
 
 
-Initializes MAX30101 for Sp\+O2 measurement -\/ Low power mode. 
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8c_source_l00023}{23}} of file \doxymbox{\hyperlink{_m_a_x30101_8c_source}{MAX30101.\+c}}.
+
+\Hypertarget{_m_a_x30101_8h_a1703394f82b418ad4b72597cbe551b89}\index{MAX30101.h@{MAX30101.h}!MAX30101\_ReadFIFO@{MAX30101\_ReadFIFO}}
+\index{MAX30101\_ReadFIFO@{MAX30101\_ReadFIFO}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_ReadFIFO()}{MAX30101\_ReadFIFO()}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a1703394f82b418ad4b72597cbe551b89} 
+void MAX30101\+\_\+\+Read\+FIFO (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\+\_\+\+Sample}} \texorpdfstring{$\ast$}{*}}]{samples}{, }\item[{uint8\+\_\+t}]{num\+\_\+samples}{}\end{DoxyParamCaption})}
 
 
-\begin{DoxyParams}{Parameters}
-{\em None} & \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-None 
-\end{DoxyReturn}
-\begin{DoxyNote}{Note}
-Uses 2 LEDs (Red + IR), 50 Hz sample rate, 16-\/bit resolution 
 
-Lower power consumption, suitable for wearables and battery-\/powered devices 
-\end{DoxyNote}
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8c_source_l00126}{126}} of file \doxymbox{\hyperlink{_m_a_x30101_8c_source}{MAX30101.\+c}}.
+
+\Hypertarget{_m_a_x30101_8h_a6381c7dfcfc51a5f420e4676cdf3bfa0}\index{MAX30101.h@{MAX30101.h}!MAX30101\_ReadFIFO\_Current@{MAX30101\_ReadFIFO\_Current}}
+\index{MAX30101\_ReadFIFO\_Current@{MAX30101\_ReadFIFO\_Current}!MAX30101.h@{MAX30101.h}}
+\doxysubsubsection{\texorpdfstring{MAX30101\_ReadFIFO\_Current()}{MAX30101\_ReadFIFO\_Current()}}
+{\footnotesize\ttfamily \label{_m_a_x30101_8h_a6381c7dfcfc51a5f420e4676cdf3bfa0} 
+void MAX30101\+\_\+\+Read\+FIFO\+\_\+\+Current (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\+\_\+\+Sample\+Current}} \texorpdfstring{$\ast$}{*}}]{samples}{, }\item[{uint8\+\_\+t}]{num\+\_\+samples}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8c_source_l00236}{236}} of file \doxymbox{\hyperlink{_m_a_x30101_8c_source}{MAX30101.\+c}}.
+

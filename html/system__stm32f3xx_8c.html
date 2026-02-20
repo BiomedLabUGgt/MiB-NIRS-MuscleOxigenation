@@ -96,7 +96,9 @@ $(function(){initNavTree('system__stm32f3xx_8c.html','',''); });
 <p>CMSIS Cortex-M4 Device Peripheral Access Layer System Source File.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;stm32f3xx.h&quot;</code><br />
-</div><table class="memberdecls">
+</div>
+<p><a href="system__stm32f3xx_8c_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:gaeafcff4f57440c60e64812dddd13e7cb" id="r_gaeafcff4f57440c60e64812dddd13e7cb"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group___s_t_m32_f3xx___system___private___defines.html#gaeafcff4f57440c60e64812dddd13e7cb">HSE_VALUE</a>&#160;&#160;&#160;((uint32_t)8000000)</td></tr>
@@ -111,12 +113,9 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:gaa3cd3e43291e81e795d642b79b6088e6" id="r_gaa3cd3e43291e81e795d642b79b6088e6"><td class="memItemLeft">
-uint32_t&#160;</td><td class="memItemRight"><b>SystemCoreClock</b> = 8000000</td></tr>
-<tr class="memitem:ga6e1d9cd666f0eacbfde31e9932a93466" id="r_ga6e1d9cd666f0eacbfde31e9932a93466"><td class="memItemLeft">
-const uint8_t&#160;</td><td class="memItemRight"><b>AHBPrescTable</b> [16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9}</td></tr>
-<tr class="memitem:ga5b4f8b768465842cf854a8f993b375e9" id="r_ga5b4f8b768465842cf854a8f993b375e9"><td class="memItemLeft">
-const uint8_t&#160;</td><td class="memItemRight"><b>APBPrescTable</b> [8] = {0, 0, 0, 0, 1, 2, 3, 4}</td></tr>
+<tr class="memitem:gaa3cd3e43291e81e795d642b79b6088e6" id="r_gaa3cd3e43291e81e795d642b79b6088e6"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="group___s_t_m32_f3xx___system___private___variables.html#gaa3cd3e43291e81e795d642b79b6088e6">SystemCoreClock</a> = 8000000</td></tr>
+<tr class="memitem:ga6e1d9cd666f0eacbfde31e9932a93466" id="r_ga6e1d9cd666f0eacbfde31e9932a93466"><td class="memItemLeft">const uint8_t&#160;</td><td class="memItemRight"><a class="el" href="group___s_t_m32_f3xx___system___private___variables.html#ga6e1d9cd666f0eacbfde31e9932a93466">AHBPrescTable</a> [16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9}</td></tr>
+<tr class="memitem:ga5b4f8b768465842cf854a8f993b375e9" id="r_ga5b4f8b768465842cf854a8f993b375e9"><td class="memItemLeft">const uint8_t&#160;</td><td class="memItemRight"><a class="el" href="group___s_t_m32_f3xx___system___private___variables.html#ga5b4f8b768465842cf854a8f993b375e9">APBPrescTable</a> [8] = {0, 0, 0, 0, 1, 2, 3, 4}</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>CMSIS Cortex-M4 Device Peripheral Access Layer System Source File. </p>
@@ -130,28 +129,30 @@ const uint8_t&#160;</td><td class="memItemRight"><b>APBPrescTable</b> [8] = {0, 
 </li>
 <li>After each device reset the HSI (8 MHz) is used as system clock source. Then <a class="el" href="group___s_t_m32_f3xx___system___private___functions.html#ga93f514700ccf00d08dbdcff7f1224eb2" title="Setup the microcontroller system.">SystemInit()</a> function is called, in "startup_stm32f3xx.s" file, to configure the system clock before to branch to main program.</li>
 </ol>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md0"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md14"></a>
 3. This file configures the system clock as follows:</h1>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md15"></a>
 Supported STM32F3xx device</h2>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md16"></a>
 System Clock source | HSI</h2>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md17"></a>
 SYSCLK(Hz) | 8000000</h2>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
 HCLK(Hz) | 8000000</h2>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md19"></a>
 AHB Prescaler | 1</h2>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md20"></a>
 APB2 Prescaler | 1</h2>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md21"></a>
 APB1 Prescaler | 1</h2>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md22"></a>
 USB Clock | DISABLE</h2>
 <p>=============================================================================</p>
 <dl class="section attention"><dt>Attention</dt><dd></dd></dl>
 <h2><center>&copy; Copyright (c) 2016 STMicroelectronics. All rights reserved.</center></h2>
 <p>This software component is licensed by ST under BSD 3-Clause license, the "License"; You may not use this file except in compliance with the License. You may obtain a copy of the License at: opensource.org/licenses/BSD-3-Clause </p>
+
+<p class="definition">Definition in file <a class="el" href="system__stm32f3xx_8c_source.html">system_stm32f3xx.c</a>.</p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

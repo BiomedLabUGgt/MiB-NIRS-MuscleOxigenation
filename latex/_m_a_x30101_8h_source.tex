@@ -2,44 +2,112 @@
 \hypertarget{_m_a_x30101_8h_source}{}\label{_m_a_x30101_8h_source}\index{Project/MAX30101.h@{Project/MAX30101.h}}
 \doxymbox{\hyperlink{_m_a_x30101_8h}{Go to the documentation of this file.}}
 \begin{DoxyCode}{0}
-\DoxyCodeLine{00001\ }
-\DoxyCodeLine{00009\ }
-\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#ifndef\ MAX30101\_H\_}}
-\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ MAX30101\_H\_}}
-\DoxyCodeLine{00012\ }
-\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
-\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ \ \ \ \ SENSOR\_ADDR\ \ \ \ \ \ \ \ \ 0xAE}}
-\DoxyCodeLine{00015\ }
-\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_STATUS1\ \ \ \ \ \ \ \ 0x00}}
-\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_STATUS2\ \ \ \ \ \ \ \ 0x01}}
-\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_ENABLE1\ \ \ \ \ \ \ \ 0x02}}
-\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_ENABLE2\ \ \ \ \ \ \ \ 0x03}}
-\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_WRITPTR\ \ \ \ \ \ \ \ 0x04}}
-\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ \ \ \ \ OVRF\_COUNTER\ \ \ \ \ \ \ \ 0x05}}
-\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_READPTR\ \ \ \ \ \ \ \ 0x06}}
-\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_DATAREG\ \ \ \ \ \ \ \ 0x07}}
-\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_CONFIG\ \ \ \ \ \ \ \ \ 0x08}}
-\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ \ \ \ \ MODE\_CONFIG\ \ \ \ \ \ \ \ \ 0x09}}
-\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ \ \ \ \ SPO2\_CONFIG\ \ \ \ \ \ \ \ \ 0x0A}}
-\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ \ \ \ \ SPO2\_CONFIG\ \ \ \ \ \ \ \ \ 0x0A}}
-\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED1\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0C}}
-\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED2\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0D}}
-\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED3\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0E}}
-\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED4\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0F}}
-\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ \ \ \ \ MLED\_CONFG1\ \ \ \ \ \ \ \ \ 0x11}}
-\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ \ \ \ \ MLED\_CONFG2\ \ \ \ \ \ \ \ \ 0x12}}
-\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ \ \ \ \ DIE\_TEMPINT\ \ \ \ \ \ \ \ \ 0x1F}}
-\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ \ \ \ \ DIE\_TEMPFRC\ \ \ \ \ \ \ \ \ 0x20}}
-\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ \ \ \ \ DIE\_TEMPCFG\ \ \ \ \ \ \ \ \ 0x21}}
-\DoxyCodeLine{00037\ }
-\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ \ \ \ \ BUFFERBLOCKSIZE\ \ \ \ \ 0x8}}
-\DoxyCodeLine{00039\ }
-\DoxyCodeLine{00040\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{_m_a_x30101_8h_a87df0a0c89e55c84dfce7ddc5ddd93af}{MAX30101\_Init}}(\textcolor{keywordtype}{void});}
-\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{_m_a_x30101_8h_a6353bf923aa1e5f944ed74e65799b0c4}{MAX30101\_InitSPO2Lite}}(\textcolor{keywordtype}{void});}
-\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{_m_a_x30101_8h_afed94d9d5ac9210cd437c79f6a7376eb}{MAX30101\_InitMuscleOx}}(uint8\_t\ ledPower);}
-\DoxyCodeLine{00043\ \textcolor{comment}{//void\ MAX30101\_ReadFIFO(uint8\_t\ *buffer,\ uint8\_t\ size);}}
-\DoxyCodeLine{00044\ \textcolor{comment}{//void\ MAX30101\_ReadTemp(float\ *temp);}}
-\DoxyCodeLine{00045\ }
-\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MAX30101\_H\_\ */}\textcolor{preprocessor}{\ \ }}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00001}00001\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00002}00002\ \textcolor{comment}{\ *\ @file\ MAX30101.h}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00003}00003\ \textcolor{comment}{\ *\ @brief\ MAX30101\ Optical\ Biosensor\ Driver\ for\ NIRS\ Muscle\ Oxygenation}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00004}00004\ \textcolor{comment}{\ *\ @details\ Complete\ driver\ for\ Maxim\ Integrated\ MAX30101\ optical\ sensor\ supporting:}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00005}00005\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ Multi-\/LED\ mode\ (Red,\ IR,\ Green)\ for\ NIRS\ measurements}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00006}00006\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ Dual-\/LED\ mode\ (Red,\ IR)\ for\ SpO2\ measurements}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00007}00007\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ Direct\ current\ readout\ in\ nanoamps\ (nA)\ with\ 7.81\ pA\ resolution}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00008}00008\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ 16-\/bit\ ADC\ with\ 2048\ nA\ full-\/scale\ range}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00009}00009\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ -\/\ 32-\/sample\ FIFO\ with\ wrap-\/around\ support}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00010}00010\ \textcolor{comment}{\ *\ @author\ Julio\ Fajardo,\ PhD}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00011}00011\ \textcolor{comment}{\ *\ @date\ 2024-\/06-\/01}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00012}00012\ \textcolor{comment}{\ *\ @version\ 2.0}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00013}00013\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00015}00015\ \textcolor{preprocessor}{\#ifndef\ MAX30101\_H\_}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00016}00016\ \textcolor{preprocessor}{\#define\ MAX30101\_H\_}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00018}00018\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00019}00019\ \textcolor{preprocessor}{\#include\ "{}arm\_math.h"{}}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00021}00021\ \textcolor{preprocessor}{\#define\ \ \ \ \ SENSOR\_ADDR\ \ \ \ \ \ \ \ \ 0xAE}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00023}00023\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_STATUS1\ \ \ \ \ \ \ \ 0x00}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00024}00024\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_STATUS2\ \ \ \ \ \ \ \ 0x01}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00025}00025\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_ENABLE1\ \ \ \ \ \ \ \ 0x02}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00026}00026\ \textcolor{preprocessor}{\#define\ \ \ \ \ INTR\_ENABLE2\ \ \ \ \ \ \ \ 0x03}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00027}00027\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_WRITPTR\ \ \ \ \ \ \ \ 0x04}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00028}00028\ \textcolor{preprocessor}{\#define\ \ \ \ \ OVRF\_COUNTER\ \ \ \ \ \ \ \ 0x05}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00029}00029\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_READPTR\ \ \ \ \ \ \ \ 0x06}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00030}00030\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_DATAREG\ \ \ \ \ \ \ \ 0x07}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00031}00031\ \textcolor{preprocessor}{\#define\ \ \ \ \ FIFO\_CONFIG\ \ \ \ \ \ \ \ \ 0x08}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00032}00032\ \textcolor{preprocessor}{\#define\ \ \ \ \ MODE\_CONFIG\ \ \ \ \ \ \ \ \ 0x09}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00033}00033\ \textcolor{preprocessor}{\#define\ \ \ \ \ SPO2\_CONFIG\ \ \ \ \ \ \ \ \ 0x0A}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00034}00034\ \textcolor{preprocessor}{\#define\ \ \ \ \ SPO2\_CONFIG\ \ \ \ \ \ \ \ \ 0x0A}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00035}00035\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED1\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0C}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00036}00036\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED2\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0D}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00037}00037\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED3\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0E}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00038}00038\ \textcolor{preprocessor}{\#define\ \ \ \ \ LED4\_PAMPLI\ \ \ \ \ \ \ \ \ 0x0F}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00039}00039\ \textcolor{preprocessor}{\#define\ \ \ \ \ MLED\_CONFG1\ \ \ \ \ \ \ \ \ 0x11}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00040}00040\ \textcolor{preprocessor}{\#define\ \ \ \ \ MLED\_CONFG2\ \ \ \ \ \ \ \ \ 0x12}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00041}00041\ \textcolor{preprocessor}{\#define\ \ \ \ \ DIE\_TEMPINT\ \ \ \ \ \ \ \ \ 0x1F}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00042}00042\ \textcolor{preprocessor}{\#define\ \ \ \ \ DIE\_TEMPFRC\ \ \ \ \ \ \ \ \ 0x20}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00043}00043\ \textcolor{preprocessor}{\#define\ \ \ \ \ DIE\_TEMPCFG\ \ \ \ \ \ \ \ \ 0x21}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00045}00045\ \textcolor{preprocessor}{\#define\ \ \ \ \ BUFFERBLOCKSIZE\ \ \ \ \ 0x8}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00046}\doxymbox{\hyperlink{_m_a_x30101_8h_ad23c173774e20090f654a509c5b19773}{00046}}\ \textcolor{preprocessor}{\#define\ \ \ \ \ MAX30101\_ADC\_VREF\ \ \ 3.3f\ \ \ \ \ \ \ \ }\textcolor{comment}{/**<\ ADC\ reference\ voltage\ in\ volts\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00047}\doxymbox{\hyperlink{_m_a_x30101_8h_af69b3a3b8412dc5a37845e36f863ae76}{00047}}\ \textcolor{preprocessor}{\#define\ \ \ \ \ MAX30101\_ADC\_BITS\ \ \ 16\ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{/**<\ ADC\ resolution\ in\ bits\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00048}\doxymbox{\hyperlink{_m_a_x30101_8h_a82d9250f2be0921620dbbfce49e8d570}{00048}}\ \textcolor{preprocessor}{\#define\ \ \ \ \ MAX30101\_ADC\_MAX\ \ \ \ ((1\ <<\ MAX30101\_ADC\_BITS)\ -\/\ 1)\ \ }\textcolor{comment}{/**<\ Max\ ADC\ count\ (65535\ for\ 16-\/bit)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00049}\doxymbox{\hyperlink{_m_a_x30101_8h_ada4a12677bb863852ec1718c77eeef0d}{00049}}\ \textcolor{preprocessor}{\#define\ \ \ \ \ MAX30101\_CURRENT\_LSB\_PA\ \ 7.81f\ \ }\textcolor{comment}{/**<\ LSB\ size\ in\ picoamps\ (pA)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00050}\doxymbox{\hyperlink{_m_a_x30101_8h_ab646e31650ff0cfc41f9bc2368b9ccdd}{00050}}\ \textcolor{preprocessor}{\#define\ \ \ \ \ MAX30101\_CURRENT\_LSB\_NA\ \ (MAX30101\_CURRENT\_LSB\_PA\ /\ 1000.0f)\ \ }\textcolor{comment}{/**<\ LSB\ size\ in\ nanoamps\ (nA)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00051}\doxymbox{\hyperlink{_m_a_x30101_8h_a911395e645196908a78fde416b986b85}{00051}}\ \textcolor{preprocessor}{\#define\ \ \ \ \ MAX30101\_CURRENT\_FULLSCALE\ \ 2048.0f\ \ }\textcolor{comment}{/**<\ Full\ scale\ current\ range\ in\ nanoamps\ (nA)\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00052}00052\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00053}00053\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00054}00054\ \textcolor{comment}{\ *\ @struct\ MAX30101\_Sample}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00055}00055\ \textcolor{comment}{\ *\ @brief\ Raw\ FIFO\ sample\ data\ directly\ read\ from\ sensor\ (6\ bytes)\ in\ multi-\/LED\ mode}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00056}00056\ \textcolor{comment}{\ *\ @details\ Intermediate\ storage\ for\ raw\ 2-\/byte\ ADC\ values\ from\ each\ LED\ channel.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00057}00057\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Format:\ 3\ channels\ ×\ 2\ bytes\ (MSB,\ LSB)\ per\ sample}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00058}00058\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Total:\ 6\ bytes\ per\ complete\ sample\ in\ multi-\/LED\ mode}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00059}00059\ \textcolor{comment}{\ *\ @note\ Use\ MAX30101\_ReadFIFO()\ to\ populate\ this\ structure}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00060}00060\ \textcolor{comment}{\ *\ @see\ MAX30101\_ReadFIFO,\ MAX30101\_ConvertSampleToUint16}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00061}00061\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00062}\doxymbox{\hyperlink{struct_m_a_x30101___sample}{00062}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00063}\doxymbox{\hyperlink{struct_m_a_x30101___sample_a4230155679f4357f2a47ca753fb46f0c}{00063}}\ \ \ \ \ uint8\_t\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_a4230155679f4357f2a47ca753fb46f0c}{red}}[2];\ \ \ \ \ \ \textcolor{comment}{/**<\ Red\ LED\ ADC\ raw\ bytes\ (MSB,\ LSB)\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00064}\doxymbox{\hyperlink{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd}{00064}}\ \ \ \ \ uint8\_t\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd}{ir}}[2];\ \ \ \ \ \ \ \textcolor{comment}{/**<\ IR\ LED\ ADC\ raw\ bytes\ (MSB,\ LSB)\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00065}\doxymbox{\hyperlink{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864}{00065}}\ \ \ \ \ uint8\_t\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864}{green}}[2];\ \ \ \ \textcolor{comment}{/**<\ Green\ LED\ ADC\ raw\ bytes\ (MSB,\ LSB)\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00066}00066\ \}\ \doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\_Sample}};}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00067}00067\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00068}00068\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00069}00069\ \textcolor{comment}{\ *\ @struct\ MAX30101\_SampleData}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00070}00070\ \textcolor{comment}{\ *\ @brief\ 16-\/bit\ unsigned\ integer\ representation\ of\ ADC\ counts}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00071}00071\ \textcolor{comment}{\ *\ @details\ Intermediate\ format\ after\ combining\ 2\ raw\ bytes\ per\ channel.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00072}00072\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Range:\ 0\ to\ 65535\ (16-\/bit\ ADC\ counts)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00073}00073\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Represents:\ Photodiode\ current\ as\ raw\ ADC\ values}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00074}00074\ \textcolor{comment}{\ *\ @note\ Use\ MAX30101\_ConvertSampleToUint16()\ to\ convert\ from\ raw\ samples}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00075}00075\ \textcolor{comment}{\ *\ @see\ MAX30101\_ConvertSampleToUint16,\ MAX30101\_ReadFIFO\_Current}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00076}00076\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00077}\doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{00077}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00078}\doxymbox{\hyperlink{struct_m_a_x30101___sample_data_aa6c4a1b80cef822bc20df87c653812e8}{00078}}\ \ \ \ \ uint16\_t\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_data_aa6c4a1b80cef822bc20df87c653812e8}{red}};\ \ \ \ \ \ \ \ \textcolor{comment}{/**<\ Red\ LED\ 16-\/bit\ value\ as\ uint16\_t\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00079}\doxymbox{\hyperlink{struct_m_a_x30101___sample_data_a57dfa08dd110be1f466596d1e6080f03}{00079}}\ \ \ \ \ uint16\_t\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_data_a57dfa08dd110be1f466596d1e6080f03}{ir}};\ \ \ \ \ \ \ \ \ \textcolor{comment}{/**<\ IR\ LED\ 16-\/bit\ value\ as\ uint16\_t\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00080}\doxymbox{\hyperlink{struct_m_a_x30101___sample_data_aa88bb61a86ace353f4b5b25d07807f9b}{00080}}\ \ \ \ \ uint16\_t\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_data_aa88bb61a86ace353f4b5b25d07807f9b}{green}};\ \ \ \ \ \ \textcolor{comment}{/**<\ Green\ LED\ 16-\/bit\ value\ as\ uint16\_t\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00081}00081\ \}\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\_SampleData}};}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00082}00082\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00083}00083\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00084}00084\ \textcolor{comment}{\ *\ @struct\ MAX30101\_SampleCurrent}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00085}00085\ \textcolor{comment}{\ *\ @brief\ Calibrated\ photodiode\ current\ in\ nanoamps\ (nA)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00086}00086\ \textcolor{comment}{\ *\ @details\ Final\ processed\ format:\ ADC\ values\ scaled\ to\ current\ using\ 7.81\ pA\ LSB.}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00087}00087\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Range:\ 0\ to\ 2048\ nA\ (full-\/scale\ current)}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00088}00088\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ Resolution:\ 0.00781\ nA\ per\ LSB}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00089}00089\ \textcolor{comment}{\ *\ @note\ Use\ MAX30101\_ReadFIFO\_Current()\ or\ MAX30101\_ConvertUint16ToCurrent()\ to\ generate}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00090}00090\ \textcolor{comment}{\ *\ @see\ MAX30101\_ReadFIFO\_Current,\ MAX30101\_ConvertUint16ToCurrent}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00091}00091\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00092}\doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{00092}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00093}\doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a5cea7debb6ebf9bed2ad6bbba501f72f}{00093}}\ \ \ \ \ float32\_t\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a5cea7debb6ebf9bed2ad6bbba501f72f}{red}};\ \ \ \ \ \ \ \textcolor{comment}{/**<\ Red\ LED\ current\ (0–2048\ nA)\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00094}\doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a18b81b25ccadd49e2b5ccf3256bbe899}{00094}}\ \ \ \ \ float32\_t\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a18b81b25ccadd49e2b5ccf3256bbe899}{ir}};\ \ \ \ \ \ \ \ \textcolor{comment}{/**<\ IR\ LED\ current\ (0–2048\ nA)\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00095}\doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a436ccdfd169ad2bcf3d3a60893680ced}{00095}}\ \ \ \ \ float32\_t\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a436ccdfd169ad2bcf3d3a60893680ced}{green}};\ \ \ \ \ \textcolor{comment}{/**<\ Green\ LED\ current\ (0–2048\ nA)\ */}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00096}00096\ \}\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\_SampleCurrent}};}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00097}00097\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00098}00098\ \textcolor{keywordtype}{void}\ MAX30101\_InitSPO2Lite(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00099}00099\ \textcolor{keywordtype}{void}\ MAX30101\_InitMuscleOx(uint8\_t\ ledPower);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00100}00100\ uint8\_t\ MAX30101\_GetNumAvailableSamples(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00101}00101\ \textcolor{keywordtype}{void}\ MAX30101\_ReadFIFO(\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\_Sample}}\ *samples,\ uint8\_t\ num\_samples);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00102}00102\ \textcolor{keywordtype}{void}\ MAX30101\_ReadFIFO\_Current(\doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\_SampleCurrent}}\ *samples,\ uint8\_t\ num\_samples);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00103}00103\ \textcolor{keywordtype}{void}\ MAX30101\_ConvertSampleToUint16(\doxymbox{\hyperlink{struct_m_a_x30101___sample}{MAX30101\_Sample}}\ *sample\_in,\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\_SampleData}}\ *sample\_out);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00104}00104\ \textcolor{keywordtype}{void}\ MAX30101\_ConvertUint16ToCurrent(\doxymbox{\hyperlink{struct_m_a_x30101___sample_data}{MAX30101\_SampleData}}\ *sample\_in,\ \doxymbox{\hyperlink{struct_m_a_x30101___sample_current}{MAX30101\_SampleCurrent}}\ *sample\_out);}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00105}00105\ \textcolor{comment}{//void\ MAX30101\_ReadTemp(float\ *temp);}}
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00106}00106\ }
+\DoxyCodeLine{\Hypertarget{_m_a_x30101_8h_source_l00107}00107\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MAX30101\_H\_\ */}\textcolor{preprocessor}{\ \ }}
 
 \end{DoxyCode}

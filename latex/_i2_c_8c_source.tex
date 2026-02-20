@@ -1,0 +1,243 @@
+\doxysection{I2\+C.\+c}
+\hypertarget{_i2_c_8c_source}{}\label{_i2_c_8c_source}\index{Project/I2C.c@{Project/I2C.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\doxymbox{\hyperlink{_i2_c_8h}{I2C.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}stm32f303x8.h"{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00003}00003\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00004}00004\ \textcolor{comment}{/**}\textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00005}00005\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00006}00006\ \textcolor{comment}{\ *\ @brief\ Initialize\ I2C1\ peripheral\ and\ GPIO\ pins\ for\ 400\ kHz\ master-\/mode\ operation}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00007}00007\ \textcolor{comment}{\ *\ @details\ Complete\ I2C1\ setup\ sequence:}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00008}00008\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 1.\ Clock\ enables\ (I2C1,\ GPIOB)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00009}00009\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 2.\ GPIO\ configuration\ (open-\/drain,\ alternate\ function\ AF4)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00010}00010\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 3.\ I2C\ peripheral\ reset}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00011}00011\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 4.\ Timing\ register\ configuration\ for\ 400\ kHz}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00012}00012\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 5.\ Enable\ I2C1}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00013}00013\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00014}00014\ \textcolor{comment}{\ *\ \#\#\#\ GPIO\ Configuration\ (PB6\ =\ SCL,\ PB7\ =\ SDA)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00015}00015\ \textcolor{comment}{\ *\ \ -\/\ MODER:\ [14:12]=10\ (Alternate\ Function),\ [14:12]=10}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00016}00016\ \textcolor{comment}{\ *\ \ -\/\ OTYPER:\ [7]=1\ (Open-\/drain),\ [6]=1}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00017}00017\ \textcolor{comment}{\ *\ \ -\/\ AFR[0]:\ [31:28]=0100\ (AF4),\ [27:24]=0100\ (AF4)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00018}00018\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00019}00019\ \textcolor{comment}{\ *\ \#\#\#\ I2C\ TIMINGR\ =\ 0x00C50F26\ (for\ APB1\ =\ 32\ MHz,\ target\ 400\ kHz)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00020}00020\ \textcolor{comment}{\ *\ \ -\/\ PRESC[3:0]\ =\ 0\ (Prescaler\ =\ 1)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00021}00021\ \textcolor{comment}{\ *\ \ -\/\ SCLDEL[3:0]\ =\ 1010\ (Setup\ delay\ ≈\ 640\ ns)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00022}00022\ \textcolor{comment}{\ *\ \ -\/\ SDADEL[3:0]\ =\ 0101\ (Hold\ delay\ ≈\ 320\ ns)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00023}00023\ \textcolor{comment}{\ *\ \ -\/\ SCLH[7:0]\ =\ 00001111\ (SCL\ high\ ≈\ 1.5\ µs)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00024}00024\ \textcolor{comment}{\ *\ \ -\/\ SCLL[7:0]\ =\ 00100110\ (SCL\ low\ ≈\ 1.0\ µs)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00025}00025\ \textcolor{comment}{\ *\ \ -\/\ Calculated\ frequency:\ \string~400\ kHz\ (I2C\ Fast-\/mode)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00026}00026\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00027}00027\ \textcolor{comment}{\ *\ @param\ None}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00028}00028\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00029}00029\ \textcolor{comment}{\ *\ @retval\ N/A}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00030}00030\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00031}00031\ \textcolor{comment}{\ *\ @timing}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00032}00032\ \textcolor{comment}{\ *\ \ -\/\ Total\ init\ time:\ <1\ ms}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00033}00033\ \textcolor{comment}{\ *\ \ -\/\ I2C1\ ready\ after:\ function\ completes}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00034}00034\ \textcolor{comment}{\ *\ \ -\/\ First\ I2C\ transaction:\ can\ follow\ immediately}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00035}00035\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00036}00036\ \textcolor{comment}{\ *\ @critical\_sequence}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00037}00037\ \textcolor{comment}{\ *\ \ -\/\ I2C\ clock\ MUST\ be\ enabled\ before\ TIMINGR\ modification}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00038}00038\ \textcolor{comment}{\ *\ \ -\/\ GPIO\ pins\ must\ be\ configured\ as\ open-\/drain\ (not\ push-\/pull)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00039}00039\ \textcolor{comment}{\ *\ \ -\/\ Reset\ sequence\ (RSTR\ flag)\ clears\ any\ prior\ error\ states}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00040}00040\ \textcolor{comment}{\ *\ \ -\/\ TIMINGR\ is\ APB1-\/frequency-\/sensitive;\ changing\ APB1\ requires\ recalculation}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00041}00041\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00042}00042\ \textcolor{comment}{\ *\ @side\_effects}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00043}00043\ \textcolor{comment}{\ *\ \ -\/\ PB6\ and\ PB7\ become\ I2C1\ pins\ (unavailable\ for\ GPIO)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00044}00044\ \textcolor{comment}{\ *\ \ -\/\ I2C1\ clock\ enabled\ in\ RCC-\/>APB1ENR}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00045}00045\ \textcolor{comment}{\ *\ \ -\/\ I2C1\ will\ hold\ SCL/SDA\ low\ if\ bus\ is\ busy}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00046}00046\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00047}00047\ \textcolor{comment}{\ *\ @warning}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00048}00048\ \textcolor{comment}{\ *\ \ -\/\ Call\ once\ at\ system\ startup,\ BEFORE\ any\ I2C\_Write/Read\ operations}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00049}00049\ \textcolor{comment}{\ *\ \ -\/\ Do\ not\ change\ TIMINGR\ if\ APB1\ frequency\ changes\ dynamically}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00050}00050\ \textcolor{comment}{\ *\ \ -\/\ External\ pull-\/up\ resistors\ (\string~4.7\ kΩ)\ required\ on\ SCL/SDA\ lines}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00051}00051\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00052}00052\ \textcolor{comment}{\ *\ @see\ I2C1\_Write,\ I2C1\_Read}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00053}00053\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00055}\doxymbox{\hyperlink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{00055}}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{_i2_c_8h_aeb07abc3e8d8d8ad6b7e69cb4992dec8}{I2C1\_Config}}(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00056}00056\ \ \ \ \ \textcolor{comment}{//\ Enable\ I2C1\ clock}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00057}00057\ \ \ \ \ RCC-\/>APB1ENR\ |=\ RCC\_APB1ENR\_I2C1EN;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00058}00058\ \ \ \ \ \textcolor{comment}{//\ Enable\ GPIOB\ clock}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00059}00059\ \ \ \ \ RCC-\/>AHBENR\ |=\ RCC\_AHBENR\_GPIOBEN;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00060}00060\ \ \ \ \ \textcolor{comment}{//\ Configure\ PB6\ (SCL)\ and\ PB7\ (SDA)\ as\ open-\/drain\ alternate\ function}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00061}00061\ \ \ \ \ \textcolor{comment}{//\ Clear\ mode\ bits\ for\ PB6\ and\ PB7}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00062}00062\ \ \ \ \ GPIOB-\/>MODER\ \&=\ \string~((3\ <<\ 12)\ |\ (3\ <<\ 14));}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00063}00063\ \ \ \ \ \textcolor{comment}{//\ Set\ to\ alternate\ function\ (10)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00064}00064\ \ \ \ \ GPIOB-\/>MODER\ |=\ (2\ <<\ 12)\ |\ (2\ <<\ 14);}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00065}00065\ \ \ \ \ \textcolor{comment}{//\ Set\ open-\/drain\ output\ type}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00066}00066\ \ \ \ \ GPIOB-\/>OTYPER\ |=\ (1\ <<\ 6)\ |\ (1\ <<\ 7);}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00067}00067\ \ \ \ \ \textcolor{comment}{//\ Set\ alternate\ function\ to\ I2C1\ (AF4\ for\ PB6\ and\ PB7)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00068}00068\ \ \ \ \ GPIOB-\/>AFR[0]\ \&=\ \string~((0xF\ <<\ 24)\ |\ (0xF\ <<\ 28));}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00069}00069\ \ \ \ \ GPIOB-\/>AFR[0]\ |=\ (4\ <<\ 24)\ |\ (4\ <<\ 28);}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00070}00070\ \ \ \ \ \textcolor{comment}{//\ Reset\ I2C1}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00071}00071\ \ \ \ \ RCC-\/>APB1RSTR\ |=\ RCC\_APB1RSTR\_I2C1RST;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00072}00072\ \ \ \ \ RCC-\/>APB1RSTR\ \&=\ \string~RCC\_APB1RSTR\_I2C1RST;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00073}00073\ \ \ \ \ \textcolor{comment}{//\ Disable\ I2C1\ to\ configure\ it}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00074}00074\ \ \ \ \ I2C1-\/>CR1\ \&=\ \string~I2C\_CR1\_PE;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00075}00075\ \ \ \ \ \textcolor{comment}{//\ TIMINGR\ register\ for\ 400\ kHz\ with\ APB1\ =\ 32\ MHz}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00076}00076\ \ \ \ \ \textcolor{comment}{//\ (PRESC=0,\ SCLDEL=12,\ SDADEL=5,\ SCLH=15,\ SCLL=38)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00077}00077\ \ \ \ \ I2C1-\/>TIMINGR\ =\ 0x00C50F26;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00078}00078\ \ \ \ \ \textcolor{comment}{//\ Enable\ I2C1}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00079}00079\ \ \ \ \ I2C1-\/>CR1\ |=\ I2C\_CR1\_PE;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00080}00080\ \}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00081}00081\ }
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00082}00082\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00083}00083\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00084}00084\ \textcolor{comment}{\ *\ @brief\ Master\ write\ single\ 8-\/bit\ register\ +\ data\ byte\ to\ I2C\ slave}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00085}00085\ \textcolor{comment}{\ *\ @details\ Performs\ standard\ I2C\ write\ transaction\ with\ automatic\ STOP\ condition:}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00086}00086\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 1.\ Wait\ for\ bus\ available\ (ISR.BUSY\ clear)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00087}00087\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 2.\ Configure\ CR2:\ 2\ bytes,\ AUTOEND,\ START\ condition}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00088}00088\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 3.\ Send\ register\ address\ (TXDR)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00089}00089\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 4.\ Send\ data\ byte\ (TXDR)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00090}00090\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ 5.\ Wait\ for\ TXE\ (transmitter\ empty);\ AUTOEND\ triggers\ STOP}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00091}00091\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00092}00092\ \textcolor{comment}{\ *\ \#\#\#\ Transaction\ Sequence}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00093}00093\ \textcolor{comment}{\ *\ \ \`{}\`{}\`{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00094}00094\ \textcolor{comment}{\ *\ \ START\ [slave\_addr(W)]\ ACK\ [register\_addr]\ ACK\ [data\_byte]\ ACK\ STOP}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00095}00095\ \textcolor{comment}{\ *\ \ \`{}\`{}\`{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00096}00096\ \textcolor{comment}{\ *\ \ -\/\ START:\ Generated\ by\ CR2.START}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00097}00097\ \textcolor{comment}{\ *\ \ -\/\ slave\_addr:\ Shifted\ left\ 1\ bit\ by\ hardware;\ (slave<<1)\ or\ slave|0}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00098}00098\ \textcolor{comment}{\ *\ \ -\/\ AUTOEND:\ Automatically\ generates\ STOP\ after\ NBYTES\ bytes\ sent}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00099}00099\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00100}00100\ \textcolor{comment}{\ *\ @param\ slave\ -\/\ 7-\/bit\ I2C\ slave\ address\ (e.g.,\ 0x5D\ for\ MAX30101)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00101}00101\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Format:\ [D6:D0]\ (do\ NOT\ pre-\/shift)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00102}00102\ \textcolor{comment}{\ *\ @param\ addr\ -\/\ Register\ address\ (0x00-\/0xFF)\ in\ slave\ device}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00103}00103\ \textcolor{comment}{\ *\ @param\ data\ -\/\ Single\ data\ byte\ to\ write\ (0x00-\/0xFF)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00104}00104\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00105}00105\ \textcolor{comment}{\ *\ @retval\ N/A\ (blocking\ until\ complete\ or\ bus\ error)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00106}00106\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00107}00107\ \textcolor{comment}{\ *\ @timing}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00108}00108\ \textcolor{comment}{\ *\ \ -\/\ Bus\ arbitration:\ 1-\/2\ µs}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00109}00109\ \textcolor{comment}{\ *\ \ -\/\ Byte\ transmission\ (2×):\ \string~10\ µs\ each\ =\ 20\ µs}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00110}00110\ \textcolor{comment}{\ *\ \ -\/\ ACK/STOP\ wait:\ \string~10\ µs}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00111}00111\ \textcolor{comment}{\ *\ \ -\/\ **Total\ latency**:\ \string~30-\/50\ µs\ (typical)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00112}00112\ \textcolor{comment}{\ *\ \ -\/\ Maximum\ timeout\ (bus\ error):\ \string~1\ sec\ (hardware\ dependent)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00113}00113\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00114}00114\ \textcolor{comment}{\ *\ @flags\_monitored}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00115}00115\ \textcolor{comment}{\ *\ \ -\/\ BUSY:\ Wait\ until\ clear\ (bus\ available)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00116}00116\ \textcolor{comment}{\ *\ \ -\/\ TXIS:\ Transmit\ interrupt\ status,\ fires\ per\ byte\ ready\ to\ send}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00117}00117\ \textcolor{comment}{\ *\ \ -\/\ TXE:\ Transmitter\ empty,\ fires\ after\ last\ byte\ enqueued}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00118}00118\ \textcolor{comment}{\ *\ \ -\/\ AUTOEND:\ Firmware-\/set\ flag;\ hardware\ auto-\/clears\ and\ generates\ STOP}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00119}00119\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00120}00120\ \textcolor{comment}{\ *\ @error\_conditions}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00121}00121\ \textcolor{comment}{\ *\ \ -\/\ **NAK\ received**:\ Bus\ hangs\ in\ BUSY\ state;\ requires\ I2C\ reset\ (see\ datasheet)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00122}00122\ \textcolor{comment}{\ *\ \ -\/\ **Slave\ not\ present**:\ Timeout;\ TXE\ may\ never\ set}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00123}00123\ \textcolor{comment}{\ *\ \ -\/\ **SDA\ stuck\ low**:\ Requires\ manual\ GPIO\ toggle\ to\ recover}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00124}00124\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00125}00125\ \textcolor{comment}{\ *\ @usage\_example}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00126}00126\ \textcolor{comment}{\ *\ \ \`{}\`{}\`{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00127}00127\ \textcolor{comment}{\ *\ \ //\ Write\ LED\ power\ control\ register\ to\ MAX30101}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00128}00128\ \textcolor{comment}{\ *\ \ I2C1\_Write(0x5D,\ LED1\_PAMPLI,\ 0x3F);\ \ //\ slave=0x5D,\ addr=0x0C,\ data=0x3F}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00129}00129\ \textcolor{comment}{\ *\ \ \`{}\`{}\`{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00130}00130\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00131}00131\ \textcolor{comment}{\ *\ @see\ I2C1\_Read,\ I2C\ specification\ (NXP\ UM10204)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00132}00132\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00133}\doxymbox{\hyperlink{_i2_c_8h_abf6214e9f9eff0fed955ca315a309efa}{00133}}\ \textcolor{keywordtype}{void}\ I2C1\_Write(uint8\_t\ slave,\ uint8\_t\ addr,\ uint8\_t\ data)\{}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00134}00134\ \ \ \ \ \textcolor{comment}{//\ Wait\ for\ bus\ to\ be\ available}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00135}00135\ \ \ \ \ \textcolor{keywordflow}{while}(I2C1-\/>ISR\ \&\ I2C\_ISR\_BUSY);}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00136}00136\ \ \ \ \ \textcolor{comment}{//\ Set\ up\ transfer:\ slave\ address,\ 2\ bytes,\ AUTOEND,\ START}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00137}00137\ \ \ \ \ I2C1-\/>CR2\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00138}00138\ \ \ \ \ I2C1-\/>CR2\ =\ I2C\_CR2\_AUTOEND\ |\ (2<<16)\ |\ (slave<<1)\ |\ I2C\_CR2\_START;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00139}00139\ \ \ \ \ \textcolor{comment}{//\ Send\ register\ address}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00140}00140\ \ \ \ \ \textcolor{keywordflow}{while}(!(I2C1-\/>ISR\ \&\ I2C\_ISR\_TXIS));}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00141}00141\ \ \ \ \ I2C1-\/>TXDR\ =\ addr;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00142}00142\ \ \ \ \ \textcolor{comment}{//\ Send\ data\ byte}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00143}00143\ \ \ \ \ \textcolor{keywordflow}{while}(!(I2C1-\/>ISR\ \&\ I2C\_ISR\_TXIS));}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00144}00144\ \ \ \ \ I2C1-\/>TXDR\ =\ data;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00145}00145\ \ \ \ \ \textcolor{comment}{//\ Wait\ for\ transmission\ complete}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00146}00146\ \ \ \ \ \textcolor{keywordflow}{while}(!(I2C1-\/>ISR\ \&\ I2C\_ISR\_TXE));}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00147}00147\ \}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00148}00148\ \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00149}00149\ \textcolor{comment}{/**}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00150}00150\ \textcolor{comment}{\ *\ @brief\ Master\ read\ multiple\ bytes\ from\ I2C\ slave\ register\ (repeated\ START)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00151}00151\ \textcolor{comment}{\ *\ @details\ Performs\ combined\ write-\/read\ transaction\ without\ bus\ release:}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00152}00152\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ **Phase\ 1\ (Write)**:}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00153}00153\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ 1.\ Configure\ CR2:\ 1\ byte,\ NO\ AUTOEND,\ START\ condition}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00154}00154\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ 2.\ Send\ register\ address}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00155}00155\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ 3.\ Wait\ for\ TC\ (transfer\ complete,\ not\ TXE)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00156}00156\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ **Phase\ 2\ (Repeated\ START\ +\ Read)**:}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00157}00157\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ 1.\ Configure\ CR2:\ RD\_WRN=1,\ size\ bytes,\ AUTOEND,\ START\ condition}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00158}00158\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ 2.\ Read\ each\ byte\ from\ RXDR\ (data\ available\ via\ RXNE\ flag)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00159}00159\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ 3.\ Wait\ for\ STOPF\ (AUTOEND\ triggers\ STOP)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00160}00160\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00161}00161\ \textcolor{comment}{\ *\ \#\#\#\ Transaction\ Sequence}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00162}00162\ \textcolor{comment}{\ *\ \ \`{}\`{}\`{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00163}00163\ \textcolor{comment}{\ *\ \ START\ [slave\_addr(W)]\ ACK\ [register\_addr]\ ACK}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00164}00164\ \textcolor{comment}{\ *\ \ RESTART\ [slave\_addr(R)]\ ACK\ [data\_0]\ ACK\ [data\_1]\ ACK\ ...\ STOP}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00165}00165\ \textcolor{comment}{\ *\ \ \`{}\`{}\`{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00166}00166\ \textcolor{comment}{\ *\ \ -\/\ Repeated\ START:\ Avoids\ releasing\ bus;\ allows\ atomic\ address+read}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00167}00167\ \textcolor{comment}{\ *\ \ -\/\ RD\_WRN:\ Set\ for\ read\ phase;\ hardware\ handles\ address\ bit\ automatically}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00168}00168\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00169}00169\ \textcolor{comment}{\ *\ @param\ slave\ -\/\ 7-\/bit\ I2C\ slave\ address\ (e.g.,\ 0x5D\ for\ MAX30101)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00170}00170\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Format:\ [D6:D0]\ (do\ NOT\ pre-\/shift)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00171}00171\ \textcolor{comment}{\ *\ @param\ addr\ -\/\ Register\ address\ in\ slave\ device\ to\ read\ from\ (e.g.,\ 0x07\ for\ MAX30101\ FIFO)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00172}00172\ \textcolor{comment}{\ *\ @param\ data\ -\/\ [out]\ Pointer\ to\ buffer\ for\ received\ bytes}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00173}00173\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Must\ be\ allocated\ by\ caller\ with\ capacity\ ≥\ size\ bytes}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00174}00174\ \textcolor{comment}{\ *\ @param\ size\ -\/\ [in]\ Number\ of\ bytes\ to\ read\ from\ slave\ (1-\/255)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00175}00175\ \textcolor{comment}{\ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Typical\ values:\ 1\ (single\ register),\ 6\ (MAX30101\ FIFO\ sample)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00176}00176\ \textcolor{comment}{\ *\ @return\ void}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00177}00177\ \textcolor{comment}{\ *\ @retval\ N/A\ (blocking\ until\ complete\ or\ error)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00178}00178\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00179}00179\ \textcolor{comment}{\ *\ @timing}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00180}00180\ \textcolor{comment}{\ *\ \ -\/\ Write\ address\ phase:\ \string~15-\/20\ µs}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00181}00181\ \textcolor{comment}{\ *\ \ -\/\ Repeated\ START\ latency:\ \string~10-\/15\ µs}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00182}00182\ \textcolor{comment}{\ *\ \ -\/\ Read\ phase\ (per\ byte):\ \string~10-\/15\ µs}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00183}00183\ \textcolor{comment}{\ *\ \ -\/\ **Total\ latency**:\ 100+\ 30×size\ µs\ (typical)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00184}00184\ \textcolor{comment}{\ *\ \ -\/\ Example:\ Read\ 6\ bytes\ ≈\ 180-\/200\ µs}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00185}00185\ \textcolor{comment}{\ *\ \ -\/\ Dominates\ any\ sensor\ timing;\ I2C\ is\ bottleneck\ at\ 100\ Hz\ sampling}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00186}00186\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00187}00187\ \textcolor{comment}{\ *\ @flags\_monitored}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00188}00188\ \textcolor{comment}{\ *\ \ -\/\ BUSY:\ Wait\ until\ clear\ before\ write\ phase}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00189}00189\ \textcolor{comment}{\ *\ \ -\/\ TXIS:\ Ready\ for\ register\ address\ byte}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00190}00190\ \textcolor{comment}{\ *\ \ -\/\ TC\ (not\ TXE!):\ Critical;\ signals\ address\ byte\ sent,\ allowing\ repeated\ START}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00191}00191\ \textcolor{comment}{\ *\ \ -\/\ RXNE:\ Data\ byte\ available\ in\ RXDR}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00192}00192\ \textcolor{comment}{\ *\ \ -\/\ STOPF:\ AUTOEND\ triggered;\ read\ phase\ complete}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00193}00193\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00194}00194\ \textcolor{comment}{\ *\ @error\_conditions}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00195}00195\ \textcolor{comment}{\ *\ \ -\/\ **Register\ address\ invalid**:\ Slave\ NAKs;\ BUSY\ remains\ set}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00196}00196\ \textcolor{comment}{\ *\ \ -\/\ **No\ slave\ at\ address**:\ BUSY\ hangs\ indefinitely\ (no\ timeout)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00197}00197\ \textcolor{comment}{\ *\ \ -\/\ **Buffer\ overflow**:\ Caller\ must\ ensure\ data[]\ size\ ≥\ size\ parameter}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00198}00198\ \textcolor{comment}{\ *\ \ -\/\ **Timeout\ on\ RXNE**:\ Slave\ not\ responding;\ function\ blocks\ forever}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00199}00199\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00200}00200\ \textcolor{comment}{\ *\ @performance\_note}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00201}00201\ \textcolor{comment}{\ *\ \ -\/\ Read\ 32\ FIFO\ samples\ (192\ bytes):\ \string~6\ milliseconds}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00202}00202\ \textcolor{comment}{\ *\ \ -\/\ Pure\ I2C\ time\ at\ 100\ Hz\ ÷\ 32\ samples\ =\ dominant\ ISR\ latency}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00203}00203\ \textcolor{comment}{\ *\ \ -\/\ Consider\ DMA\ or\ firmware\ optimization\ for\ high-\/speed\ sampling}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00204}00204\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00205}00205\ \textcolor{comment}{\ *\ @usage\_example}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00206}00206\ \textcolor{comment}{\ *\ \ \`{}\`{}\`{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00207}00207\ \textcolor{comment}{\ *\ \ //\ Read\ 6\ bytes\ from\ MAX30101\ FIFO\ (one\ sample,\ 3\ channels\ ×\ 2\ bytes)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00208}00208\ \textcolor{comment}{\ *\ \ uint8\_t\ fifo\_data[6];}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00209}00209\ \textcolor{comment}{\ *\ \ I2C1\_Read(0x5D,\ 0x07,\ fifo\_data,\ 6);}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00210}00210\ \textcolor{comment}{\ *\ \ //\ fifo\_data[0]\ =\ red[MSB],\ fifo\_data[1]\ =\ red[LSB],\ ...}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00211}00211\ \textcolor{comment}{\ *\ \ \`{}\`{}\`{}}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00212}00212\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00213}00213\ \textcolor{comment}{\ *\ @see\ I2C1\_Write,\ I2C\ specification\ (repeated\ START\ section)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00214}00214\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00215}\doxymbox{\hyperlink{_i2_c_8h_a60d96d215561adbe3410d7fcfbf0a818}{00215}}\ \textcolor{keywordtype}{void}\ I2C1\_Read(uint8\_t\ slave,\ uint8\_t\ addr,\ uint8\_t\ *data,\ uint8\_t\ size)\{}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00216}00216\ \ \ \ \ \textcolor{comment}{//\ Wait\ for\ bus\ to\ be\ available}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00217}00217\ \ \ \ \ \textcolor{keywordflow}{while}(I2C1-\/>ISR\ \&\ I2C\_ISR\_BUSY);}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00218}00218\ \ \ \ \ \textcolor{comment}{//\ Send\ register\ address\ (write\ 1\ byte,\ no\ AUTOEND\ for\ repeated\ START)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00219}00219\ \ \ \ \ I2C1-\/>CR2\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00220}00220\ \ \ \ \ I2C1-\/>CR2\ =\ (1<<16)\ |\ (slave<<1)\ |\ I2C\_CR2\_START;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00221}00221\ \ \ \ \ \textcolor{comment}{//\ Send\ register\ address}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00222}00222\ \ \ \ \ \textcolor{keywordflow}{while}(!(I2C1-\/>ISR\ \&\ I2C\_ISR\_TXIS));}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00223}00223\ \ \ \ \ I2C1-\/>TXDR\ =\ addr;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00224}00224\ \ \ \ \ \textcolor{comment}{//\ Wait\ for\ transfer\ complete\ (TC\ flag)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00225}00225\ \ \ \ \ \textcolor{keywordflow}{while}(!(I2C1-\/>ISR\ \&\ I2C\_ISR\_TC));}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00226}00226\ \ \ \ \ \textcolor{comment}{//\ Read\ data\ (multiple\ bytes,\ AUTOEND,\ RD\_WRN=1)}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00227}00227\ \ \ \ \ I2C1-\/>CR2\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00228}00228\ \ \ \ \ I2C1-\/>CR2\ =\ I2C\_CR2\_AUTOEND\ |\ I2C\_CR2\_RD\_WRN\ |\ (size<<16)\ |\ (slave<<1)\ |\ I2C\_CR2\_START;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00229}00229\ \ \ \ \ \textcolor{comment}{//\ Read\ each\ byte}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00230}00230\ \ \ \ \ \textcolor{keywordflow}{for}(uint8\_t\ i\ =\ 0;\ i\ <\ size;\ i++)\{}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00231}00231\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Wait\ for\ data\ ready}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00232}00232\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}(!(I2C1-\/>ISR\ \&\ I2C\_ISR\_RXNE));}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00233}00233\ \ \ \ \ \ \ \ \ data[i]\ =\ I2C1-\/>RXDR;}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00234}00234\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00235}00235\ \ \ \ \ \textcolor{comment}{//\ Wait\ for\ stop\ condition}}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00236}00236\ \ \ \ \ \textcolor{keywordflow}{while}(!(I2C1-\/>ISR\ \&\ I2C\_ISR\_STOPF));}
+\DoxyCodeLine{\Hypertarget{_i2_c_8c_source_l00237}00237\ \}}
+
+\end{DoxyCode}

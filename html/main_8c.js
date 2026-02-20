@@ -1,6 +1,8 @@
 var main_8c =
 [
-    [ "clk_config", "main_8c.html#af2f06cca719d7bf8120401b18b0c792c", null ],
-    [ "main", "main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4", null ],
-    [ "SysTick_Handler", "main_8c.html#ab5e09814056d617c521549e542639b7e", null ]
+    [ "counter", "main_8c.html#a51322ddb267b4729d6b5f2bb05d49fff", null ],
+    [ "MAX30101_FIFO_Buffer", "main_8c.html#abf9ebc56ada38fa9994267f85c648e80", null ],
+    [ "MAX30101_SampleCurrentBuffer", "main_8c.html#a4556617fa4128f1f769912ea53bdef69", null ],
+    [ "MAX30101_SampleDataBuffer", "main_8c.html#aa2faa86894de3697a86d4b5125afb6b3", null ],
+    [ "ticks", "main_8c.html#ab3507a48ae247ff252738ca350810b21", null ]
 ];

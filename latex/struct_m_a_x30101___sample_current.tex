@@ -1,0 +1,87 @@
+\doxysection{MAX30101\+\_\+\+Sample\+Current Struct Reference}
+\hypertarget{struct_m_a_x30101___sample_current}{}\label{struct_m_a_x30101___sample_current}\index{MAX30101\_SampleCurrent@{MAX30101\_SampleCurrent}}
+
+
+Calibrated photodiode current in nanoamps (nA).  
+
+
+
+
+{\ttfamily \+\#include $<$MAX30101.\+h$>$}
+
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+float32\+\_\+t \doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a5cea7debb6ebf9bed2ad6bbba501f72f}{red}}
+\item 
+float32\+\_\+t \doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a18b81b25ccadd49e2b5ccf3256bbe899}{ir}}
+\item 
+float32\+\_\+t \doxymbox{\hyperlink{struct_m_a_x30101___sample_current_a436ccdfd169ad2bcf3d3a60893680ced}{green}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Calibrated photodiode current in nanoamps (nA). 
+
+Final processed format:\+ ADC values scaled to current using 7.\+81 pA LSB. Range:\+ 0 to 2048 nA (full-\/scale current) Resolution:\+ 0.\+00781 nA per LSB \begin{DoxyNote}{Note}
+Use MAX30101\+\_\+\+Read\+FIFO\+\_\+\+Current() or MAX30101\+\_\+\+Convert\+Uint16\+To\+Current() to generate 
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+MAX30101\+\_\+\+Read\+FIFO\+\_\+\+Current, MAX30101\+\_\+\+Convert\+Uint16\+To\+Current 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+\+MAX30101.\+c}}, and \doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00092}{92}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_m_a_x30101___sample_current_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{struct_m_a_x30101___sample_current_a436ccdfd169ad2bcf3d3a60893680ced}\index{MAX30101\_SampleCurrent@{MAX30101\_SampleCurrent}!green@{green}}
+\index{green@{green}!MAX30101\_SampleCurrent@{MAX30101\_SampleCurrent}}
+\doxysubsubsection{\texorpdfstring{green}{green}}
+{\footnotesize\ttfamily \label{struct_m_a_x30101___sample_current_a436ccdfd169ad2bcf3d3a60893680ced} 
+float32\+\_\+t MAX30101\+\_\+\+Sample\+Current::\+green}
+
+Green LED current (0–2048 nA) \begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+\+MAX30101.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00095}{95}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{struct_m_a_x30101___sample_current_a18b81b25ccadd49e2b5ccf3256bbe899}\index{MAX30101\_SampleCurrent@{MAX30101\_SampleCurrent}!ir@{ir}}
+\index{ir@{ir}!MAX30101\_SampleCurrent@{MAX30101\_SampleCurrent}}
+\doxysubsubsection{\texorpdfstring{ir}{ir}}
+{\footnotesize\ttfamily \label{struct_m_a_x30101___sample_current_a18b81b25ccadd49e2b5ccf3256bbe899} 
+float32\+\_\+t MAX30101\+\_\+\+Sample\+Current::\+ir}
+
+IR LED current (0–2048 nA) \begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+\+MAX30101.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00094}{94}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{struct_m_a_x30101___sample_current_a5cea7debb6ebf9bed2ad6bbba501f72f}\index{MAX30101\_SampleCurrent@{MAX30101\_SampleCurrent}!red@{red}}
+\index{red@{red}!MAX30101\_SampleCurrent@{MAX30101\_SampleCurrent}}
+\doxysubsubsection{\texorpdfstring{red}{red}}
+{\footnotesize\ttfamily \label{struct_m_a_x30101___sample_current_a5cea7debb6ebf9bed2ad6bbba501f72f} 
+float32\+\_\+t MAX30101\+\_\+\+Sample\+Current::\+red}
+
+Red LED current (0–2048 nA) \begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+\+MAX30101.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00093}{93}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+
+
+The documentation for this struct was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+Project/\+\doxymbox{\hyperlink{_m_a_x30101_8h}{MAX30101.\+h}}\end{DoxyCompactItemize}

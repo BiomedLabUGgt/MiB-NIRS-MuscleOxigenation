@@ -1,0 +1,87 @@
+\doxysection{MAX30101\+\_\+\+Sample Struct Reference}
+\hypertarget{struct_m_a_x30101___sample}{}\label{struct_m_a_x30101___sample}\index{MAX30101\_Sample@{MAX30101\_Sample}}
+
+
+Raw FIFO sample data directly read from sensor (6 bytes) in multi-\/\+LED mode.  
+
+
+
+
+{\ttfamily \+\#include $<$MAX30101.\+h$>$}
+
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \doxymbox{\hyperlink{struct_m_a_x30101___sample_a4230155679f4357f2a47ca753fb46f0c}{red}} \+[2]\+
+\item 
+uint8\+\_\+t \doxymbox{\hyperlink{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd}{ir}} \+[2]\+
+\item 
+uint8\+\_\+t \doxymbox{\hyperlink{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864}{green}} \+[2]\+
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Raw FIFO sample data directly read from sensor (6 bytes) in multi-\/\+LED mode. 
+
+Intermediate storage for raw 2-\/byte ADC values from each LED channel. Format:\+ 3 channels × 2 bytes (MSB, LSB) per sample Total:\+ 6 bytes per complete sample in multi-\/\+LED mode \begin{DoxyNote}{Note}
+Use MAX30101\+\_\+\+Read\+FIFO() to populate this structure 
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+MAX30101\+\_\+\+Read\+FIFO, MAX30101\+\_\+\+Convert\+Sample\+To\+Uint16 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+\+MAX30101.\+c}}, and \doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2main_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+main.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00062}{62}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_m_a_x30101___sample_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864}\index{MAX30101\_Sample@{MAX30101\_Sample}!green@{green}}
+\index{green@{green}!MAX30101\_Sample@{MAX30101\_Sample}}
+\doxysubsubsection{\texorpdfstring{green}{green}}
+{\footnotesize\ttfamily \label{struct_m_a_x30101___sample_aa5668b987f1862331ffb4868ab9d0864} 
+uint8\+\_\+t MAX30101\+\_\+\+Sample::\+green\+[2]\+}
+
+Green LED ADC raw bytes (MSB, LSB) \begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+\+MAX30101.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00065}{65}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd}\index{MAX30101\_Sample@{MAX30101\_Sample}!ir@{ir}}
+\index{ir@{ir}!MAX30101\_Sample@{MAX30101\_Sample}}
+\doxysubsubsection{\texorpdfstring{ir}{ir}}
+{\footnotesize\ttfamily \label{struct_m_a_x30101___sample_a6eaf385c919852b0eda0d281580943cd} 
+uint8\+\_\+t MAX30101\+\_\+\+Sample::\+ir\+[2]\+}
+
+IR LED ADC raw bytes (MSB, LSB) \begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+\+MAX30101.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00064}{64}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+\Hypertarget{struct_m_a_x30101___sample_a4230155679f4357f2a47ca753fb46f0c}\index{MAX30101\_Sample@{MAX30101\_Sample}!red@{red}}
+\index{red@{red}!MAX30101\_Sample@{MAX30101\_Sample}}
+\doxysubsubsection{\texorpdfstring{red}{red}}
+{\footnotesize\ttfamily \label{struct_m_a_x30101___sample_a4230155679f4357f2a47ca753fb46f0c} 
+uint8\+\_\+t MAX30101\+\_\+\+Sample::\+red\+[2]\+}
+
+Red LED ADC raw bytes (MSB, LSB) \begin{Desc}
+\item[Examples]\par
+\doxymbox{\hyperlink{_2_users_2juliofajardo_2_documents_2_a_r_m_2_slides_nuevos_2_n_i_r_s-_m_a_x30101_2_project_2_m_a_x30101_8c-example}{/\+\+Users/\+juliofajardo/\+\+Documents/\+\+ARM/\+\+Slides\+Nuevos/\+\+NIRS-\/\+MAX30101/\+\+Project/\+\+MAX30101.\+c}}.\end{Desc}
+
+
+Definition at line \doxymbox{\hyperlink{_m_a_x30101_8h_source_l00063}{63}} of file \doxymbox{\hyperlink{_m_a_x30101_8h_source}{MAX30101.\+h}}.
+
+
+
+The documentation for this struct was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+Project/\+\doxymbox{\hyperlink{_m_a_x30101_8h}{MAX30101.\+h}}\end{DoxyCompactItemize}
