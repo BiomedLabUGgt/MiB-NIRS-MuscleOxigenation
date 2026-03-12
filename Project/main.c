@@ -142,5 +142,4 @@ void SysTick_Handler(void) {
         }
     }
     LED_Toggle();
-
 }
