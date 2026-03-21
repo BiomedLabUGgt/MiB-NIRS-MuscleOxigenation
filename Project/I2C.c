@@ -135,7 +135,7 @@ void I2C1_Write(uint8_t slave, uint8_t addr, uint8_t data){
     while(I2C1->ISR & I2C_ISR_BUSY);
     // Set up transfer: slave address, 2 bytes, AUTOEND, START
     I2C1->CR2 = 0x00;
-    I2C1->CR2 = I2C_CR2_AUTOEND | (2<<16) | (slave<<1) | I2C_CR2_START;
+    I2C1->CR2 = I2C_CR2_AUTOEND | (2<<16) | (slave) | I2C_CR2_START;
     // Send register address
     while(!(I2C1->ISR & I2C_ISR_TXIS));
     I2C1->TXDR = addr;
@@ -215,23 +215,34 @@ void I2C1_Write(uint8_t slave, uint8_t addr, uint8_t data){
 void I2C1_Read(uint8_t slave, uint8_t addr, uint8_t *data, uint8_t size){
     // Wait for bus to be available
     while(I2C1->ISR & I2C_ISR_BUSY);
-    // Send register address (write 1 byte, no AUTOEND for repeated START)
-    I2C1->CR2 = 0x00;
-    I2C1->CR2 = (1<<16) | (slave<<1) | I2C_CR2_START;
-    // Send register address
+    
+    // Clear any pending STOPF flag
+    I2C1->ICR = I2C_ICR_STOPCF;
+    
+    // Phase 1: Send register address (write, no AUTOEND for repeated START)
+    I2C1->CR2 = (1<<16) | (slave) | I2C_CR2_START;
+    
+    // Send register address byte
     while(!(I2C1->ISR & I2C_ISR_TXIS));
     I2C1->TXDR = addr;
-    // Wait for transfer complete (TC flag)
+    
+    // Wait for transfer complete (TC flag - this allows repeated START)
     while(!(I2C1->ISR & I2C_ISR_TC));
-    // Read data (multiple bytes, AUTOEND, RD_WRN=1)
-    I2C1->CR2 = 0x00;
-    I2C1->CR2 = I2C_CR2_AUTOEND | I2C_CR2_RD_WRN | (size<<16) | (slave<<1) | I2C_CR2_START;
+    
+    // Phase 2: Repeated START with read phase (AUTOEND, RD_WRN=1)
+    // Generate repeated START and read with automatic STOP
+    I2C1->CR2 = I2C_CR2_AUTOEND | I2C_CR2_RD_WRN | (size<<16) | (slave) | I2C_CR2_START;
+    
     // Read each byte
     for(uint8_t i = 0; i < size; i++){
-        // Wait for data ready
+        // Wait for data ready (RXNE flag)
         while(!(I2C1->ISR & I2C_ISR_RXNE));
         data[i] = I2C1->RXDR;
     }
-    // Wait for stop condition
+    
+    // Wait for stop condition (AUTOEND generates this)
     while(!(I2C1->ISR & I2C_ISR_STOPF));
+    
+    // Clear STOPF flag
+    I2C1->ICR = I2C_ICR_STOPCF;
 }

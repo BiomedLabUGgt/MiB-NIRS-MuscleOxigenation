@@ -21,9 +21,9 @@
  *   uint8_t samples = MAX30101_GetNumAvailableSamples();
  */
 void MAX30101_InitSPO2Lite(uint8_t ledPower){
-    I2C1_Write(SENSOR_ADDR, FIFO_CONFIG, 0x4F);      // FIFO avg 8, FIFO rollover enabled
+    I2C1_Write(SENSOR_ADDR, FIFO_CONFIG, 0x10);      // no FIFO avg, FIFO rollover enabled
     I2C1_Write(SENSOR_ADDR, MODE_CONFIG, 0x03);      // SPO2 Mode (Red + IR)
-    I2C1_Write(SENSOR_ADDR, SPO2_CONFIG, 0x23);      // 2048 range, sample rate 50 Hz, pulse width 215 (16 bits)
+    I2C1_Write(SENSOR_ADDR, SPO2_CONFIG, 0x01);      // 2048 range, sample rate 50 Hz, pulse width 118 us (16 bits)
     I2C1_Write(SENSOR_ADDR, FIFO_READPTR, 0x0);      // Reset FIFO read pointer
     I2C1_Write(SENSOR_ADDR, FIFO_WRITPTR, 0x0);      // Reset FIFO write pointer
     I2C1_Write(SENSOR_ADDR, LED1_PAMPLI, ledPower);  // Red LED power
@@ -53,9 +53,9 @@ void MAX30101_InitSPO2Lite(uint8_t ledPower){
  *   MAX30101_ReadFIFO_Current(current_buffer, available);
  */
 void MAX30101_InitMuscleOx(uint8_t ledPower){
-    I2C1_Write(SENSOR_ADDR, FIFO_CONFIG, 0x4F);         // FIFO avg 8, FIFO rollover enabled
+    I2C1_Write(SENSOR_ADDR, FIFO_CONFIG, 0x10);         // no FIFO avg, FIFO rollover enabled
     I2C1_Write(SENSOR_ADDR, MODE_CONFIG, 0x07);         // Multi-LED mode (Red + IR + Green)
-    I2C1_Write(SENSOR_ADDR, SPO2_CONFIG, 0x26);         // 2048 range, sample rate 100 Hz, pulse width 215 (16 bits)
+    I2C1_Write(SENSOR_ADDR, SPO2_CONFIG, 0x01);         // 2048 range, sample rate 50 Hz, pulse width 118 us (16 bits)
     I2C1_Write(SENSOR_ADDR, FIFO_READPTR, 0x0);         // Reset FIFO read pointer
     I2C1_Write(SENSOR_ADDR, FIFO_WRITPTR, 0x0);         // Reset FIFO write pointer 
     I2C1_Write(SENSOR_ADDR, LED1_PAMPLI, ledPower);     // Red LED power (medium)

@@ -13,6 +13,8 @@ project:
         - file: MAX30101.c
         - file: PLL.c
         - file: PLL.h
+        - file: UART.c
+        - file: UART.h
 
   # List components to use for your application.
   # A software component is a re-usable unit that may be configurable.

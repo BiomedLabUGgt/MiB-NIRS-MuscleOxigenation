@@ -11,6 +11,7 @@
 		"arm:tools/kitware/cmake": "3.31.5",
 		"arm:tools/ninja-build/ninja": "1.13.2",
 		"arm:tools/arm/mdk-toolbox": "1.1.0",
-		"arm:compilers/arm/armclang": "6.24.0"
+		"arm:compilers/arm/armclang": "6.24.0",
+		"arm:debuggers/arm/armdbg": "*"
 	}
 }

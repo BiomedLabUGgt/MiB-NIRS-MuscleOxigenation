@@ -32,9 +32,9 @@ solution:
           images:
             - project-context: Project.Debug
           debugger:
-            name: J-Link Server
-            clock: 4000000
-            protocol: swd
+            name: ST-Link@Arm-Debugger
+            clock-armdbg: auto
+            protocol-armdbg: auto
 
   # List of different build configurations.
   build-types:
