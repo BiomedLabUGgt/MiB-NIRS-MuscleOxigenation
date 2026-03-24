@@ -30,7 +30,7 @@ uint32_t counter = 0;  /**< Debug counter for main loop iterations (unused in re
 uint32_t ticks = 0;    /**< Interrupt tick counter (incremented per 20 ms SysTick at 50 Hz) */
 uint8_t available_samples; /**< Number of samples currently available in MAX30101 FIFO (updated in SysTick_Handler) */
 
-char buffer[100];  /**< General-purpose buffer for UART transmission (not used in current code) */
+char tx_buffer[100];  /**< General-purpose buffer for UART transmission */
 
 /**
  * @brief FINAL PROCESSED DATA: Calibrated current in nanoamps (nA)
@@ -41,8 +41,6 @@ char buffer[100];  /**< General-purpose buffer for UART transmission (not used i
  *          @note SpO2 mode memory: 8 samples × 8 bytes (2 × float32_t) = 64 bytes
  *          @note Typically accessed in main loop after ISR completion
  */
-MAX30101_SampleCurrentSpO2 MAX30101_SampleCurrentSpO2Buffer[BUFFER_SIZE];
-MAX30101_SampleDataSpO2 MAX30101_SingleSampleDataSpO2; 
 MAX30101_SampleCurrentSpO2 MAX30101_SingleSampleCurrentSpO2; 
 
 /**
@@ -77,7 +75,7 @@ int main(void) {
     // Configure I2C1 (400 kHz) for MAX30101 communication
     I2C1_Config();
     // Initialize MAX30101 for SpO2 measurement with medium LED power
-    MAX30101_InitSPO2Lite(0x18);  // 0x18 = ~10 mA LED current for low power operation
+    MAX30101_InitSPO2Lite(40.0f,3.2f);  // 3.2 mA LED current for low power operation (up to 51 mA max)
     // Configure USART2 (PA2=TX, PA15=RX) at 230400 baud for data transmission
     UART_Config(230400);
     // Configure SysTick for 20 ms interrupts (SYSTICK_FREQ_HZ = 50 Hz)
@@ -142,6 +140,6 @@ void SysTick_Handler(void) {
         }
     }
     MAX30101_UpdateReadPointer(available_samples);
-    sprintf(buffer, "%.6f,%.6f\r\n", MAX30101_SingleSampleCurrentSpO2.red, MAX30101_SingleSampleCurrentSpO2.ir);
-    USART2_putString(buffer);
+    sprintf(tx_buffer, "%.6f,%.6f\r\n", MAX30101_SingleSampleCurrentSpO2.red, MAX30101_SingleSampleCurrentSpO2.ir);
+    USART2_putString(tx_buffer);
 }

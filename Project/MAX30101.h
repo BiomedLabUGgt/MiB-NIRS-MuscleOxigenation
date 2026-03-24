@@ -17,6 +17,7 @@
 
 #include <stdint.h>
 #include "arm_math.h"
+#include "arm_math_types.h"
 
 #define		SENSOR_ADDR 		0xAE
 
@@ -46,7 +47,7 @@
 #define     MAX30101_ADC_VREF   3.3f        /**< ADC reference voltage in volts */
 #define     MAX30101_ADC_BITS   16          /**< ADC resolution in bits */
 #define     MAX30101_ADC_MAX    ((1 << MAX30101_ADC_BITS) - 1)  /**< Max ADC count (65535 for 16-bit) */
-#define     MAX30101_CURRENT_LSB_PA  7.81f  /**< LSB size in picoamps (pA) */
+#define     MAX30101_CURRENT_LSB_PA  31.25f  /**< LSB size in picoamps (pA) */
 #define     MAX30101_CURRENT_LSB_NA  (MAX30101_CURRENT_LSB_PA / 1000.0f)  /**< LSB size in nanoamps (nA) */
 #define     MAX30101_CURRENT_FULLSCALE  2048.0f  /**< Full scale current range in nanoamps (nA) */
 
@@ -133,21 +134,24 @@ typedef struct {
  * @brief Initialize MAX30101 in SpO2 mode (dual-LED: Red + IR)
  * @details Configures sensor for blood oxygen measurement with low power consumption.
  *          Sample rate: 50 Hz, FIFO rollover enabled, configurable LED power.
- * @param ledPower - LED current value (0x00-0xFF, typically 0x18 for low power)
+ * @param ledPower_red - Red LED current value (0.0 to 51 mA range)
+ * @param ledPower_ir - IR LED current value (0.0 to 51 mA range)
  * @note Call once at startup before MAX30101_ReadFIFO_CurrentSpO2()
  * @see MAX30101_InitMuscleOx
  */
-void MAX30101_InitSPO2Lite(uint8_t ledPower);
+void MAX30101_InitSPO2Lite(float32_t ledPower_red, float32_t ledPower_ir);
 
 /**
  * @brief Initialize MAX30101 for NIRS muscle oxygenation (multi-LED: Red + IR + Green)
  * @details Configures sensor for tissue oxygenation measurement with 3 LEDs.
- *          Sample rate: 100 Hz, FIFO rollover enabled, configurable LED power.
- * @param ledPower - LED current value (0x00-0xFF, typically 0x4B for 20mA)
+ *          Sample rate: 50 Hz, FIFO rollover enabled, configurable LED power.
+ * @param ledPower_red - Red LED current value (0.0 to 51 mA range)
+ * @param ledPower_ir - IR LED current value (0.0 to 51 mA range)
+ * @param ledPower_green - Green LED current value (0.0 to 51 mA range)
  * @note Call once at startup before MAX30101_ReadFIFO_Current()
  * @see MAX30101_InitSPO2Lite
  */
-void MAX30101_InitMuscleOx(uint8_t ledPower);
+void MAX30101_InitMuscleOx(float32_t ledPower_red, float32_t ledPower_ir, float32_t ledPower_green);
 
 uint8_t MAX30101_GetNumAvailableSamples(void);
 /**< Query number of unread samples in FIFO (0-32) */

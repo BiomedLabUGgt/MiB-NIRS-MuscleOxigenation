@@ -10,18 +10,19 @@
 
 #include "MAX30101.h"
 #include "I2C.h"
+#include "arm_math_types.h"
 #include <stdint.h>
 
 /**
  * @brief Initialize MAX30101 in SpO2 mode (dual-LED configuration)
  * @details Configures sensor for blood oxygen (SpO2) measurement with low power consumption.
  *          - Mode: SpO2 (Red + IR LEDs)
- *          - Sample Rate: 50 Hz
+ *          - Sample Rate: 50 Hz (via SPO2_CONFIG = 0x01)
  *          - ADC Resolution: 16-bit
- *          - FIFO Configuration: Averaging 8, rollover enabled
- *          - LED Power: Low (minimal power draw, suitable for wearables)
- *          - Temperature Sensor: Enabled
+ *          - FIFO Configuration: No averaging, rollover enabled
  * @param ledPower - LED current control register value (0x00 to 0xFF)
+ *                  Range: 0.0 mA to 51.0 mA in ~0.2 mA steps
+ *                  Typical: 0x4B (~15 mA), 0x32 (~10 mA) for low power
  * @return void
  * @note Suitable for battery-powered wearable applications.
  *       Call this once during initialization before reading samples.
@@ -30,7 +31,7 @@
  *   MAX30101_InitSPO2Lite(0x18);
  *   uint8_t samples = MAX30101_GetNumAvailableSamples();
  */
-void MAX30101_InitSPO2Lite(uint8_t ledPower) {
+void MAX30101_InitSPO2Lite(float32_t ledPower_red, float32_t ledPower_ir) {
     // Configure FIFO: no averaging, rollover enabled
     I2C1_Write(SENSOR_ADDR, FIFO_CONFIG, 0x10);
     // Select SpO2 mode (Red + IR)
@@ -42,11 +43,9 @@ void MAX30101_InitSPO2Lite(uint8_t ledPower) {
     // Reset FIFO write pointer
     I2C1_Write(SENSOR_ADDR, FIFO_WRITPTR, 0x0);
     // Set Red LED power
-    I2C1_Write(SENSOR_ADDR, LED1_PAMPLI, ledPower);
+    I2C1_Write(SENSOR_ADDR, LED1_PAMPLI, (uint8_t)(ledPower_red / 0.2f));  // Convert mA to register value (0.2 mA steps)
     // Set IR LED power
-    I2C1_Write(SENSOR_ADDR, LED2_PAMPLI, ledPower);
-    // Temperature sensor can be enabled if needed
-    // I2C1_Write(SENSOR_ADDR, DIE_TEMPCFG, 0x01);
+    I2C1_Write(SENSOR_ADDR, LED2_PAMPLI, (uint8_t)(ledPower_ir / 0.2f));  // Same LED power for IR
 }
 
 /**
@@ -57,10 +56,9 @@ void MAX30101_InitSPO2Lite(uint8_t ledPower) {
  *          - Sample Rate: 50 Hz (via SPO2_CONFIG = 0x01)
  *          - ADC Resolution: 16-bit
  *          - FIFO Configuration: No averaging, rollover enabled
- *          - Temperature Sensor: Available (disabled by default)
  * @param ledPower - LED current control register value (0x00 to 0xFF)
- *                  Range: 4.4 mA to 50.6 mA in ~0.2 mA steps
- *                  Typical: 0x4B (~20 mA), 0x18 (~10 mA) for low power
+ *                  Range: 0.0 mA to 51.0 mA in ~0.2 mA steps
+ *                  Typical: 0x4B (~15 mA), 0x32 (~10 mA) for low power
  * @return void
  * @note Three-LED configuration increases tissue penetration depth for muscle assessment.
  *       Same 50 Hz sample rate as SPO2Lite but with additional Green LED for enhanced NIRS analysis.
@@ -70,7 +68,7 @@ void MAX30101_InitSPO2Lite(uint8_t ledPower) {
  *   uint8_t available = MAX30101_GetNumAvailableSamples();
  *   MAX30101_ReadFIFO_Current(current_buffer, available);
  */
-void MAX30101_InitMuscleOx(uint8_t ledPower) {
+void MAX30101_InitMuscleOx(float32_t ledPower_red, float32_t ledPower_ir, float32_t ledPower_green) {
     // Configure FIFO: no averaging, rollover enabled
     I2C1_Write(SENSOR_ADDR, FIFO_CONFIG, 0x10);
     // Select multi-LED mode (Red + IR + Green)
@@ -82,13 +80,11 @@ void MAX30101_InitMuscleOx(uint8_t ledPower) {
     // Reset FIFO write pointer
     I2C1_Write(SENSOR_ADDR, FIFO_WRITPTR, 0x0);
     // Set Red LED power
-    I2C1_Write(SENSOR_ADDR, LED1_PAMPLI, ledPower);
+    I2C1_Write(SENSOR_ADDR, LED1_PAMPLI, (uint8_t)(ledPower_red / 0.2f));
     // Set IR LED power
-    I2C1_Write(SENSOR_ADDR, LED2_PAMPLI, ledPower);
+    I2C1_Write(SENSOR_ADDR, LED2_PAMPLI, (uint8_t)(ledPower_ir / 0.2f));
     // Set Green LED power
-    I2C1_Write(SENSOR_ADDR, LED3_PAMPLI, ledPower);
-    // Temperature sensor can be enabled if needed
-    // I2C1_Write(SENSOR_ADDR, DIE_TEMPCFG, 0x01);
+    I2C1_Write(SENSOR_ADDR, LED3_PAMPLI, (uint8_t)(ledPower_green / 0.2f));
 }
 
 /**
