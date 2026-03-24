@@ -38,7 +38,8 @@ char tx_buffer[100];  /**< General-purpose buffer for UART transmission */
  *          @note SpO2 mode memory: 8 samples × 8 bytes (2 × float32_t) = 64 bytes
  *          @note Typically accessed in main loop after ISR completion
  */
-MAX30101_CurrentSample MAX30101_NIRS_SingleCurrentSample; 
+MAX30101_CurrentSample MAX30101_NIRS_SingleCurrentSample;
+MAX30101_CurrentSample MAX30101_NIRS_FilteredSingleCurrentSample; 
 
 /**
  * @brief System initialization and main control loop
@@ -85,6 +86,7 @@ int main(void) {
     // Main loop: real work happens in SysTick_Handler ISR
     for (;;) {
         if(data_ready) {
+            // put the CMSIS-DSP IIR filter here if desired, using MAX30101_NIRS_SingleCurrentSample as input
             sprintf(tx_buffer, "%.4f,%.4f\r\n", MAX30101_NIRS_SingleCurrentSample.red, MAX30101_NIRS_SingleCurrentSample.ir);
             USART2_putString(tx_buffer);
             data_ready = 0; // Reset flag after transmission
