@@ -5,22 +5,22 @@ GraphedExpression="(MAX30101_NIRS_SingleCurrentSample).ir", Color=#35792b, Show=
 GraphedExpression="(MAX30101_NIRS_FilteredSingleCurrentSample).red", Color=#769dda
 GraphedExpression="(MAX30101_NIRS_FilteredSingleCurrentSample).ir", Color=#b14f0d
 OpenDocument="I2C.c", FilePath="/Users/juliofajardo/Documents/ARM/SlidesNuevos/NIRS-MAX30101/Project/I2C.c", Line=187
-OpenDocument="main.c", FilePath="/Users/juliofajardo/Documents/ARM/SlidesNuevos/NIRS-MAX30101/Project/main.c", Line=25
+OpenDocument="main.c", FilePath="/Users/juliofajardo/Documents/ARM/SlidesNuevos/NIRS-MAX30101/Project/main.c", Line=100
 OpenToolbar="File", Floating=0, x=0, y=0
 OpenToolbar="View", Floating=0, x=1, y=0
 OpenToolbar="Debug", Floating=0, x=2, y=0
 OpenToolbar="Breakpoints", Floating=0, x=3, y=0
 OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=0, w=300, h=333, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, FilteredItems=[], RefreshRate=1
 OpenWindow="Memory 1", DockArea=BOTTOM, x=2, y=0, w=357, h=527, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, EditorAddress=0x480003F0
-OpenWindow="Watched Data 1", DockArea=LEFT, x=0, y=1, w=300, h=147, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
-OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=300, h=185, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Watched Data 1", DockArea=LEFT, x=0, y=1, w=300, h=150, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=300, h=182, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
 OpenWindow="Data Sampling", DockArea=BOTTOM, x=1, y=0, w=465, h=527, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, VisibleTab=0, UniformSampleSpacing=0
 OpenWindow="Timeline", DockArea=BOTTOM, x=0, y=0, w=1096, h=527, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=1, DataPaneShown=1, PowerPaneShown=0, CodePaneShown=0, PinCursor="Cursor Movable", TimePerDiv="2 s / Div", TimeStampFormat="Time", DataGraphDrawAsPoints=0, DataGraphLegendShown=1, DataGraphUniformSampleSpacing=0, DataGraphLegendPosition="625;0", DataGraphShowNamesAtCursor=0, PowerGraphDrawAsPoints=0, PowerGraphLegendShown=0, PowerGraphAvgFilterTime=Off, PowerGraphAvgFilterLen=Off, PowerGraphUniformSampleSpacing=0, PowerGraphLegendPosition="896;0", CodeGraphLegendShown=0, CodeGraphLegendPosition="916;0"
 OpenWindow="Console", DockArea=BOTTOM, x=0, y=1, w=1920, h=113, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
 SmartViewPlugin="", Page="", Toolbar="Hidden", Window="SmartView 1"
 TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[302;100;100;100;242]
 TableHeader="Data Sampling Table", SortCol="None", SortOrder="ASCENDING", VisibleCols=["Index";"Time";" (MAX30101_NIRS_SingleCurrentSample).red";" (MAX30101_NIRS_SingleCurrentSample).ir";" (MAX30101_NIRS_FilteredSingleCurrentSample).red";" (MAX30101_NIRS_FilteredSingleCurrentSample).ir"], ColWidths=[100;100;100;100;100;100]
-TableHeader="Data Sampling Setup", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Type";"Value";"Min";"Max";"Average";"# Changes";"Min. Change";"Max. Change"], ColWidths=[248;100;100;100;100;100;100;100;100]
+TableHeader="Data Sampling Setup", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Type";"Value";"Min";"Max";"Average";"# Changes";"Min. Change";"Max. Change"], ColWidths=[258;100;100;100;100;100;100;100;100]
 TableHeader="Power Sampling", SortCol="None", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Ch 0"], ColWidths=[100;100;100]
 TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Description"], ColWidths=[140;105;224]
 TableHeader="Watched Data 1", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[100;100;100;100]

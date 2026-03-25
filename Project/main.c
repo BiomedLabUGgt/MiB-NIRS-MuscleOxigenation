@@ -101,7 +101,7 @@ int main(void) {
     // Configure I2C1 (400 kHz) for MAX30101 communication
     I2C1_Config();
     // Initialize MAX30101 for NIRS measurement with medium LED power
-    MAX30101_InitNIRSLite(32.0f,16.0f);  // 10.0 mA LED current for low power operation (up to 51 mA max)
+    MAX30101_InitNIRSLite(10.0f,10.0f);  // 10.0 mA LED current for low power operation (up to 51 mA max)
     // Configure USART2 (PA2=TX, PA15=RX) at 460800 baud for data transmission
     UART_Config(460800);
     // Configure SysTick for 20 ms interrupts (SYSTICK_FREQ_HZ = 50 Hz)
