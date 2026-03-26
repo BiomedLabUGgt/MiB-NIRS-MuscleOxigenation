@@ -26,7 +26,7 @@
 
 #define SYSTICK_FREQ_HZ     50 /**< SysTick interrupt frequency (Hz) */
 #define IIR_NUM_SECTIONS    2  /**< Number of biquad sections in the IIR filter */
-#define FILTER_TYPE         0  /**< Filter type identifier (1 for high-pass Butterworth, 0 for First-Order IIR High-Pass (DC-Blocker): H(z) = (1 - z^-1) / (1 - alpha*z^-1) */
+#define FILTER_TYPE         1  /**< Filter type identifier (1 for high-pass Chebyshev type II, 0 for First-Order IIR High-Pass (DC-Blocker): H(z) = (1 - z^-1) / (1 - alpha*z^-1) */
 #define ALPHA               0.95f /**< Alpha coefficient for first-order IIR DC-Blocker (0.95 corresponds to fc ~0.4 Hz at 50 Hz sampling, 0.995 corresponds to fc ~0.04 Hz at 50 Hz sampling) */
 
 volatile uint8_t data_ready = 0; /**< Flag set by SysTick_Handler when new data is available for processing in main loop */
@@ -47,8 +47,8 @@ char tx_buffer[128];  /**< General-purpose buffer for UART transmission */
 volatile MAX30101_CurrentSample MAX30101_NIRS_SingleCurrentSample;
 volatile MAX30101_CurrentSample MAX30101_NIRS_FilteredSingleCurrentSample;
 
-/** Butterworth High-pass (dc-blocker) IIR Filter Coefficients 
-    * @details 4th-order Butterworth high-pass filter with 0.04 Hz cutoff frequency, designed using MATLAB's fdesign.highpass and implemented as a cascade of biquads.
+/** Chebyshev High-pass (dc-blocker) IIR Filter Coefficients 
+    * @details 4th-order Chebyshev type II high-pass filter with 0.04 Hz cutoff frequency, designed using MATLAB's fdesign.highpass and implemented as a cascade of biquads.
     *          Coefficients are in the form [b0, b1, b2, a1, a2] for each biquad section, with feedback coefficients negated for CMSIS-DSP compatibility.
     *          The filter is applied to the raw current samples to remove DC offset and low-frequency drift before further processing.
     *          @see iir_init, iir
@@ -87,7 +87,7 @@ float32_t w_ir  = 0.0f; /**< First-order DC-Blocker intermediate state for IR ch
  *          Two DC-removal filters are available, selected at compile time via FILTER_TYPE:
  *          - **FILTER_TYPE 0** (default): First-order IIR DC-Blocker H(z) = (1 - z^-1) / (1 - alpha*z^-1),
  *            alpha = 0.95, fc ~= 0.4 Hz, alpha = 0.995, fc ~= 0.04 Hz. Minimal CPU cost, suitable for resource-constrained operation.
- *          - **FILTER_TYPE 1**: 4th-order Butterworth high-pass filter, fc = 0.04 Hz, implemented as a
+ *          - **FILTER_TYPE 1**: 4th-order Chebyshev type II high-pass filter, fc = 0.04 Hz, implemented as a
  *            cascade of 2 biquad sections via CMSIS-DSP. Maximally flat passband; preferred for
  *            clean PPG signal extraction in NIRS applications.
  *
@@ -111,7 +111,7 @@ int main(void) {
     // Configure system clock to 64 MHz via PLL
     clk_config();
      #if FILTER_TYPE == 1
-        // Coefficients already defined for high-pass Butterworth
+        // Coefficients already defined for high-pass Chebyshev type II
         arm_biquad_cascade_df2T_init_f32(&IIR_Red, IIR_NUM_SECTIONS, iirCoeffs, iirStatesRed);
         arm_biquad_cascade_df2T_init_f32(&IIR_IR, IIR_NUM_SECTIONS, iirCoeffs, iirStatesIR);
     #endif
