@@ -1,10 +1,10 @@
 /**
  * @file main.c
- * @brief Main program for MAX30101 muscle oxygenation measurement
- * @details Initializes MAX30101 sensor for NIRS muscle oxygenation using I2C interface.
+ * @brief Main program for MAX30101 muscle hemodynamic changes measurement
+ * @details Initializes MAX30101 sensor for NIRS muscle hemodynamic changes using I2C interface.
  *          Configures system clock to 64 MHz, GPIO LED on PB3, and SysTick timer for 20 ms interrupts.
  *          MAX30101 configured with dual LEDs (Red, IR) at 50 Hz sample rate and medium LED power
- *          for optimal tissue penetration in muscle oxygenation applications.
+ *          for optimal tissue penetration in muscle hemodynamic changes applications.
  * @author Julio Fajardo, PhD
  * @date 2026-03-26
  * @version 2.0
