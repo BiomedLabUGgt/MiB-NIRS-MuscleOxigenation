@@ -19,12 +19,14 @@
 #include "PLL.h"
 #include "LED.h"
 #include "I2C.h"
+#include "PCA9548.h"
 #include "MAX30101.h"
 #include "UART.h"
 
 #include "arm_math.h"
 
 #define SYSTICK_FREQ_HZ     50 /**< SysTick interrupt frequency (Hz) */
+#define NUM_SENSORS         1  /**< Active MAX30101 sensors (1–4, routed via PCA9548 CH0–CH3) */
 #define IIR_NUM_SECTIONS    2  /**< Number of biquad sections in the IIR filter */
 #define FILTER_TYPE         1  /**< Filter type identifier (1 for high-pass Chebyshev type II, 0 for First-Order IIR High-Pass (DC-Blocker): H(z) = (1 - z^-1) / (1 - alpha*z^-1) */
 #define ALPHA               0.995f /**< Alpha coefficient for first-order IIR DC-Blocker (0.95 corresponds to fc ~0.4 Hz at 50 Hz sampling, 0.995 corresponds to fc ~0.04 Hz at 50 Hz sampling) */
@@ -124,6 +126,9 @@ int main(void) {
     LED_config();
     // Configure I2C1 (400 kHz) for MAX30101 communication
     I2C1_Config();
+    // Initialize PCA9548 I2C switch (disable all channels) and select the active channel
+    PCA9548_Init();
+    PCA9548_SelectChannel(0); // Select channel 0 (first sensor)
     // Initialize MAX30101 for NIRS measurement with medium LED power
     MAX30101_InitNIRSLite(10.0f,10.0f);  // 10.0 mA LED current for low power operation (up to 51 mA max)
     // Configure USART2 (PA2=TX, PA15=RX) at 460800 baud for data transmission
@@ -204,6 +209,7 @@ int main(void) {
  */
 
 void SysTick_Handler(void) {
+    PCA9548_SelectChannel(0);
     uint8_t available_samples = MAX30101_GetNumAvailableSamples();
     if (available_samples > 0) {
         MAX30101_ReadSingleCurrentData((MAX30101_CurrentSample *)&MAX30101_NIRS_SingleCurrentSample);

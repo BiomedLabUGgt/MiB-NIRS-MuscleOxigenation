@@ -155,6 +155,26 @@ void I2C1_Write(uint8_t slave, uint8_t addr, uint8_t data){
 }
 
 /**
+ * @brief Master write single byte to I2C slave (no register address)
+ * @details Performs a 1-byte I2C write transaction:
+ *          START [slave_addr(W)] ACK [data_byte] ACK STOP
+ *          Used for devices that interpret the first byte after the address as
+ *          a command/control byte, not a register index (e.g., PCA9548 mux).
+ * @param slave - 7-bit I2C slave address (pre-shifted for CR2 SADD field)
+ * @param data - Control/command byte to write
+ * @return void
+ * @note Blocking; typical latency 20-30 µs
+ */
+void I2C1_WriteByte(uint8_t slave, uint8_t data) {
+    while (I2C1->ISR & I2C_ISR_BUSY);
+    I2C1->CR2 = 0x00;
+    I2C1->CR2 = I2C_CR2_AUTOEND | (1U << 16) | (slave) | I2C_CR2_START;
+    while (!(I2C1->ISR & I2C_ISR_TXIS));
+    I2C1->TXDR = data;
+    while (!(I2C1->ISR & I2C_ISR_TXE));
+}
+
+/**
  * @brief Master read multiple bytes from I2C slave register (repeated START)
  * @details Performs combined write-read transaction without bus release:
  *          **Phase 1 (Write)**:

@@ -59,6 +59,18 @@ void I2C1_Config(void);
 void I2C1_Write(uint8_t slave, uint8_t addr, uint8_t data);
 
 /**
+ * @brief Write a single byte to an I2C slave (no register address)
+ * @details Master writes 1-byte transaction: [data_byte]
+ *          Used for devices like the PCA9548 that take a single control byte
+ *          directly after the device address, with no register address field.
+ * @param slave - 7-bit I2C slave address (pre-shifted, e.g., 0xE0 for PCA9548)
+ * @param data - Single control byte to write
+ * @return void
+ * @note Blocking; typical latency 20-30 µs
+ */
+void I2C1_WriteByte(uint8_t slave, uint8_t data);
+
+/**
  * @brief Read multiple bytes from I2C slave register (repeated START)
  * @details Master performs write-read sequence without releasing bus:
  *          - Write: [slave_addr + W] [register_addr]
